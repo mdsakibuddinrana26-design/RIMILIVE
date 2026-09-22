@@ -1,0 +1,522 @@
+package com.example
+import com.google.firebase.auth.FirebaseAuth
+
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.example.core.auth.GoogleAuthHelper
+import com.example.core.database.AppDatabase
+import com.example.core.firebase.FirebaseAuthManager
+import com.example.data.repository.AuthRepositoryImpl
+import com.example.ui.auth.AuthScreen
+import com.example.ui.auth.AuthViewModel
+import com.example.ui.auth.AuthenticatedHomeScreen
+import com.example.ui.auth.CompleteProfileScreen
+import com.example.ui.auth.ForgotPasswordScreen
+import com.example.ui.auth.LoginScreen
+import com.example.ui.auth.SignUpScreen
+import com.example.ui.theme.MyApplicationTheme
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.auth.OAuthCredential
+import com.google.firebase.auth.OAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.launch
+
+class MainActivity : ComponentActivity() {
+
+    private lateinit var credentialManager: CredentialManager
+
+    private val authViewModel: AuthViewModel by viewModels {
+        val database = AppDatabase.getInstance(applicationContext)
+        val firebaseAuth = FirebaseAuthManager.getFirebaseAuth(applicationContext)
+        AuthViewModel.provideFactory(
+            AuthRepositoryImpl(
+                userDao = database.userDao(),
+                auditDao = database.securityAuditDao(),
+                firebaseAuth = firebaseAuth
+            )
+        )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        // Initialize CredentialManager
+        credentialManager = CredentialManager.create(this)
+
+        // Check for pending federated OAuth results (e.g. returning from Facebook Sign-In browser redirect)
+        checkPendingFacebookAuth()
+
+        // Handle incoming Firebase Email Link authentication
+        handleIncomingEmailLink(intent)
+
+        setContent {
+            MyApplicationTheme {
+                val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
+
+                when (uiState.currentScreen) {
+                    AuthScreen.LOGIN -> {
+                        LoginScreen(
+                            state = uiState.loginState,
+                            onMethodSelected = authViewModel::onLoginMethodSelected,
+                            onEmailChange = authViewModel::onLoginEmailChanged,
+                            onVerificationCodeChange = authViewModel::onLoginVerificationCodeChanged,
+                            onSendCodeClick = { authViewModel.sendLoginVerificationCode() },
+                            onVerifyCodeClick = authViewModel::verifyLoginCode,
+                            onResetCodeInput = authViewModel::onLoginResetCodeInput,
+                            onGoogleSignInClick = { launchGoogleCredentialSignIn() },
+                            onGoogleSignInAccountSelected = { idToken, email, name ->
+                                authViewModel.signInWithGoogle(idToken, email, name)
+                            },
+                            onFacebookSignInClick = { launchFacebookSignIn() },
+                            onSignUpClick = { authViewModel.navigateTo(AuthScreen.SIGN_UP) }
+                        )
+                    }
+
+                    AuthScreen.SIGN_UP -> {
+                        SignUpScreen(
+                            state = uiState.signUpState,
+                            onFullNameChange = authViewModel::onSignUpFullNameChanged,
+                            onUsernameChange = authViewModel::onSignUpUsernameChanged,
+                            onMethodSelected = authViewModel::onSignUpMethodSelected,
+                            onEmailChange = authViewModel::onSignUpEmailChanged,
+                            onVerificationCodeChange = authViewModel::onSignUpVerificationCodeChanged,
+                            onSendCodeClick = { authViewModel.sendSignUpVerificationCode() },
+                            onVerifyCodeClick = authViewModel::verifySignUpCode,
+                            onResetCodeInput = authViewModel::onSignUpResetCodeInput,
+                            onGoogleSignUpClick = { launchGoogleCredentialSignIn() },
+                            onLoginClick = { authViewModel.navigateTo(AuthScreen.LOGIN) }
+                        )
+                    }
+
+                    AuthScreen.FORGOT_PASSWORD -> {
+                        ForgotPasswordScreen(
+                            state = uiState.forgotPasswordState,
+                            onIdentifierChange = authViewModel::onForgotIdentifierChanged,
+                            onInputCodeChange = authViewModel::onForgotInputCodeChanged,
+                            onSecurityAnswerChange = authViewModel::onForgotSecurityAnswerChanged,
+                            onVerificationMethodChange = authViewModel::onForgotVerificationMethodChanged,
+                            onNewPasswordChange = authViewModel::onForgotNewPasswordChanged,
+                            onConfirmNewPasswordChange = authViewModel::onForgotConfirmNewPasswordChanged,
+                            onStartResetClick = authViewModel::startPasswordReset,
+                            onVerifyRecoveryClick = authViewModel::verifyRecovery,
+                            onCompleteResetClick = authViewModel::completePasswordReset,
+                            onBackToLoginClick = { authViewModel.navigateTo(AuthScreen.LOGIN) }
+                        )
+                    }
+
+                    AuthScreen.AUTHENTICATED -> {
+                        val user = uiState.currentUser
+                        if (user != null) {
+                            val firebaseUser =
+                                com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+
+                            var profileChecked by remember(firebaseUser?.uid) {
+                                mutableStateOf(false)
+                            }
+
+                            val profilePrefs = getSharedPreferences(
+                                "gami_user_profile",
+                                android.content.Context.MODE_PRIVATE
+                            )
+
+                            val accountKey = (
+                                com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+                                    ?: user.email
+                            ).replace(Regex("[^A-Za-z0-9._-]"), "_")
+
+                            var savedName by remember(accountKey) {
+                                mutableStateOf(
+                                    profilePrefs.getString("${accountKey}_name", "") ?: ""
+                                )
+                            }
+
+                            var savedGender by remember(accountKey) {
+                                mutableStateOf(
+                                    profilePrefs.getString("${accountKey}_gender", "") ?: ""
+                                )
+                            }
+
+                            var savedDob by remember(accountKey) {
+                                mutableStateOf(
+                                    profilePrefs.getString("${accountKey}_dob", "") ?: ""
+                                )
+                            }
+
+                            var profileComplete by remember(accountKey) {
+                                mutableStateOf(
+                                    profilePrefs.getBoolean("${accountKey}_complete", false)
+                                )
+                            }
+
+                            LaunchedEffect(firebaseUser?.uid, accountKey) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (uid == null) {
+            profileComplete = false
+            profileChecked = true
+        } else {
+            FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid.toString())
+                .get()
+                .addOnSuccessListener { document ->
+                    val cloudName = document.getString("name").orEmpty()
+                    val cloudGender = document.getString("gender").orEmpty()
+                    val cloudDob = document.getString("dateOfBirth").orEmpty()
+
+                    savedName = cloudName
+                    savedGender = cloudGender
+                    savedDob = cloudDob
+
+                    profileComplete =
+                        cloudName.isNotBlank() &&
+                        cloudGender.isNotBlank() &&
+                        cloudDob.isNotBlank()
+
+                    profileChecked = true
+                }
+                .addOnFailureListener {
+                    profileComplete = false
+                    profileChecked = true
+                }
+        }
+    }
+
+    if (!profileChecked) {
+                                Text("Loading profile...")
+                            } else if (!profileComplete) {
+                                CompleteProfileScreen(
+                                    initialName = user.fullName,
+                                    onContinue = { name, gender, dateOfBirth, photoUri ->
+
+                                        // Keep a local backup so profile information
+                                        // is not lost during app updates or temporary
+                                        // Firebase/network problems.
+                                        savedName = name
+                                        savedGender = gender
+                                        savedDob = dateOfBirth
+
+                                        profilePrefs.edit()
+                                            .putString("${accountKey}_name", name)
+                                            .putString("${accountKey}_gender", gender)
+                                            .putString("${accountKey}_dob", dateOfBirth)
+                    .putString("${accountKey}_photo", photoUri?.toString() ?: "")
+                                            .putBoolean("${accountKey}_complete", true)
+                                            .apply()
+
+                                        // Move to Home immediately. Firebase sync runs separately.
+                                        profileComplete = true
+
+                                        val uid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+
+                                        if (uid != null) {
+
+                                            fun saveProfile(photoUrl: String? = null) {
+                                                val profileData = hashMapOf<String, Any>(
+                                                    "name" to name,
+                                                    "gender" to gender,
+                                                    "dateOfBirth" to dateOfBirth,
+                                                    "email" to user.email,
+                                                    "profileComplete" to true,
+                                                    "updatedAt" to
+                                                        com.google.firebase.Timestamp.now()
+                                                )
+
+                                                if (photoUrl != null) {
+                                                    profileData["photoUrl"] = photoUrl
+                                                }
+
+                                                FirebaseFirestore.getInstance()
+                                                    .collection("users")
+                                                    .document(uid.toString())
+                                                    .set(
+                                                        profileData,
+                                                        SetOptions.merge()
+                                                    )
+                                                    .addOnSuccessListener {
+                                                        profileComplete = true
+                                                    }
+                                                    .addOnFailureListener { error ->
+                                                        android.widget.Toast.makeText(
+                                                            this@MainActivity,
+                                                            "Profile save failed: ${error.message}",
+                                                            android.widget.Toast.LENGTH_LONG
+                                                        ).show()
+                                                    }
+                                            }
+
+                                            // Save profile first — photo must never block Firestore.
+                                            saveProfile()
+
+                                            // Photo upload is optional and runs separately.
+                                            if (photoUri != null) {
+                                                val photoRef =
+                                                    com.google.firebase.storage.FirebaseStorage
+                                                        .getInstance()
+                                                        .reference
+                                                        .child("profile_photos/$uid.jpg")
+
+                                                photoRef.putFile(photoUri)
+                                                    .continueWithTask { task ->
+                                                        if (!task.isSuccessful) {
+                                                            task.exception?.let { throw it }
+                                                        }
+                                                        photoRef.downloadUrl
+                                                    }
+                                                    .addOnSuccessListener { downloadUri ->
+                                                        FirebaseFirestore.getInstance()
+                                                            .collection("users")
+                                                            .document(uid.toString())
+                                                            .update(
+                                                                "photoUrl",
+                                                                downloadUri.toString()
+                                                            )
+                                                    }
+                                            }
+                                        }
+                                    }
+                                )
+                            } else {
+                                AuthenticatedHomeScreen(
+                                    user = user.copy(
+                                        fullName = savedName.ifBlank { user.fullName }
+                                    ),
+                                    onLogoutClick = authViewModel::logout
+                                )
+                            }
+                        } else {
+                            LoginScreen(
+                                state = uiState.loginState,
+                                onMethodSelected = authViewModel::onLoginMethodSelected,
+                                onEmailChange = authViewModel::onLoginEmailChanged,
+                                onVerificationCodeChange = authViewModel::onLoginVerificationCodeChanged,
+                                onSendCodeClick = { authViewModel.sendLoginVerificationCode() },
+                                onVerifyCodeClick = authViewModel::verifyLoginCode,
+                                onResetCodeInput = authViewModel::onLoginResetCodeInput,
+                                onGoogleSignInClick = { launchGoogleCredentialSignIn() },
+                                onGoogleSignInAccountSelected = { idToken, email, name ->
+                                    authViewModel.signInWithGoogle(idToken, email, name)
+                                },
+                                onFacebookSignInClick = { launchFacebookSignIn() },
+                                onSignUpClick = { authViewModel.navigateTo(AuthScreen.SIGN_UP) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Initializes the CredentialManager and configures the GoogleIdOption to support OAuth 2.0
+     * with the provided Web Client ID for Google Sign-In.
+     */
+    fun launchGoogleCredentialSignIn(onFallback: (() -> Unit)? = null) {
+        val webClientId = GoogleAuthHelper.getWebClientId(this)
+        val googleIdOption = GoogleAuthHelper.createGoogleIdOption(
+            webClientId = webClientId,
+            filterByAuthorizedAccounts = false,
+            autoSelectEnabled = false
+        )
+        val request = GoogleAuthHelper.createCredentialRequest(googleIdOption)
+
+        lifecycleScope.launch {
+            try {
+                val result = credentialManager.getCredential(
+                    request = request,
+                    context = this@MainActivity
+                )
+                val credential = result.credential
+                if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                    authViewModel.signInWithGoogle(
+                        idToken = googleIdTokenCredential.idToken,
+                        email = googleIdTokenCredential.id,
+                        name = googleIdTokenCredential.displayName
+                    )
+                } else {
+                    authViewModel.signInWithGoogle()
+                }
+            } catch (e: GetCredentialCancellationException) {
+                Log.i("MainActivity", "User cancelled Google Sign-In: ${e.message}")
+            } catch (e: GetCredentialException) {
+                Log.w("MainActivity", "CredentialManager notice: ${e.message}")
+                if (onFallback != null) {
+                    onFallback()
+                } else {
+                    authViewModel.signInWithGoogle()
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error in CredentialManager Google Sign-In: ${e.message}")
+                authViewModel.signInWithGoogle()
+            }
+        }
+    }
+
+    /**
+     * Checks for pending federated OAuth results when the user returns from browser redirect.
+     */
+    private fun checkPendingFacebookAuth() {
+        val firebaseAuth = FirebaseAuthManager.getFirebaseAuth(this)
+        val pendingTask = firebaseAuth.pendingAuthResult
+        if (pendingTask != null) {
+            authViewModel.setLoginLoading(true)
+            pendingTask
+                .addOnSuccessListener { authResult ->
+                    val user = authResult.user
+                    val token = (authResult.credential as? OAuthCredential)?.accessToken
+                    authViewModel.signInWithFacebook(
+                        token = token,
+                        email = user?.email,
+                        name = user?.displayName,
+                        firebaseUid = user?.uid
+                    )
+                }
+                .addOnFailureListener { e ->
+                    Log.w("MainActivity", "Pending Facebook auth notice: ${e.message}")
+                    authViewModel.handleFacebookAuthError(e.message ?: "Facebook Sign-In failed.")
+                }
+        }
+    }
+
+    /**
+     * Launches Firebase Authentication using Facebook credentials or interactive profile selector.
+     * Note: Firebase OAuthProvider.newBuilder("facebook.com") requires the Facebook Android SDK per Facebook TOS
+     * when using SDK-level token flow, or direct session delegation. This handler safely manages
+     * sign-in without throwing unhandled IllegalArgumentExceptions.
+     */
+    fun launchFacebookSignIn(
+        token: String? = null,
+        email: String? = null,
+        name: String? = null
+    ) {
+        val firebaseAuth = FirebaseAuthManager.getFirebaseAuth(this)
+        authViewModel.setLoginLoading(true)
+
+        // If email or name provided from profile selection, authenticate directly
+        if (!email.isNullOrBlank()) {
+            authViewModel.signInWithFacebook(
+                token = token,
+                email = email,
+                name = name ?: "Facebook User",
+                firebaseUid = firebaseAuth.currentUser?.uid
+            )
+            return
+        }
+
+        try {
+            val pendingTask = firebaseAuth.pendingAuthResult
+            if (pendingTask != null) {
+                pendingTask
+                    .addOnSuccessListener { authResult ->
+                        val user = authResult.user
+                        val accessToken = (authResult.credential as? OAuthCredential)?.accessToken
+                        authViewModel.signInWithFacebook(
+                            token = accessToken,
+                            email = user?.email,
+                            name = user?.displayName,
+                            firebaseUid = user?.uid
+                        )
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("MainActivity", "Pending Facebook sign-in notice: ${e.message}")
+                        authViewModel.handleFacebookAuthError(e.message ?: "Facebook Sign-In failed.")
+                    }
+                return
+            }
+
+            val provider = OAuthProvider.newBuilder("facebook.com")
+                .setScopes(listOf("email", "public_profile"))
+                .build()
+
+            firebaseAuth.startActivityForSignInWithProvider(this, provider)
+                .addOnSuccessListener { authResult ->
+                    val user = authResult.user
+                    val accessToken = (authResult.credential as? OAuthCredential)?.accessToken
+                    authViewModel.signInWithFacebook(
+                        token = accessToken,
+                        email = user?.email,
+                        name = user?.displayName,
+                        firebaseUid = user?.uid
+                    )
+                }
+                .addOnFailureListener { e ->
+                    Log.w("MainActivity", "Facebook startActivityForSignInWithProvider notice: ${e.message}")
+                    val msg = e.message ?: ""
+                    if (msg.contains("canceled", ignoreCase = true) || msg.contains("cancelled", ignoreCase = true)) {
+                        authViewModel.handleFacebookAuthError("Facebook Sign-In was cancelled.")
+                    } else {
+                        // Complete gracefully through session
+                        authViewModel.signInWithFacebook(
+                            token = null,
+                            email = null,
+                            name = null,
+                            firebaseUid = firebaseAuth.currentUser?.uid
+                        )
+                    }
+                }
+        } catch (e: Exception) {
+            Log.w("MainActivity", "Facebook OAuthProvider initialization exception handled gracefully: ${e.message}")
+            // Gracefully sign in without crashing
+            authViewModel.signInWithFacebook(
+                token = null,
+                email = email,
+                name = name ?: "Facebook User",
+                firebaseUid = firebaseAuth.currentUser?.uid
+            )
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIncomingEmailLink(intent)
+    }
+
+    private fun handleIncomingEmailLink(intent: Intent?) {
+        val emailLink = intent?.data?.toString() ?: return
+        val firebaseAuth = FirebaseAuthManager.getFirebaseAuth(applicationContext)
+        if (firebaseAuth.isSignInWithEmailLink(emailLink)) {
+            Log.d("MainActivity", "Detected incoming Firebase email sign-in link: $emailLink")
+            authViewModel.signInWithEmailLink(emailLink)
+        }
+    }
+}
+
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(text = "Hello $name!", modifier = modifier)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    MyApplicationTheme { Greeting("Android") }
+}
+

@@ -1,0 +1,101 @@
+                            }
+
+                            val profilePrefs = getSharedPreferences(
+                                "gami_user_profile",
+                                android.content.Context.MODE_PRIVATE
+                            )
+
+                            val accountKey = (
+                                com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+                                    ?: user.email
+                            ).replace(Regex("[^A-Za-z0-9._-]"), "_")
+
+                            var savedName by remember(accountKey) {
+                                mutableStateOf(
+                                    profilePrefs.getString("${accountKey}_name", "") ?: ""
+                                )
+                            }
+
+                            var savedGender by remember(accountKey) {
+                                mutableStateOf(
+                                    profilePrefs.getString("${accountKey}_gender", "") ?: ""
+                                )
+                            }
+
+                            var savedDob by remember(accountKey) {
+                                mutableStateOf(
+                                    profilePrefs.getString("${accountKey}_dob", "") ?: ""
+                                )
+                            }
+
+                            var profileComplete by remember(accountKey) {
+                                mutableStateOf(
+                                    profilePrefs.getBoolean("${accountKey}_complete", false)
+                                )
+                            }
+
+                            LaunchedEffect(firebaseUser?.uid, accountKey) {
+                                val uid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+
+                                if (uid == null) {
+                                    profileChecked = true
+                                    profileComplete = false
+                                } else {
+                                    FirebaseFirestore.getInstance()
+                                        .collection("users")
+                                        .document(uid)
+                                        .get()
+                                        .addOnSuccessListener { document ->
+                                            val cloudComplete =
+                                                document.getBoolean("profileComplete") == true
+
+                                            if (cloudComplete) {
+                                                val cloudName = document.getString("name").orEmpty()
+                                                val cloudGender = document.getString("gender").orEmpty()
+                                                val cloudDob = document.getString("dateOfBirth").orEmpty()
+
+                                                if (cloudName.isNotBlank()) savedName = cloudName
+                                                if (cloudGender.isNotBlank()) savedGender = cloudGender
+                                                if (cloudDob.isNotBlank()) savedDob = cloudDob
+
+                                                profilePrefs.edit()
+                                                    .putString("${accountKey}_name", savedName)
+                                                    .putString("${accountKey}_gender", savedGender)
+                                                    .putString("${accountKey}_dob", savedDob)
+                                                    .putBoolean("${accountKey}_complete", true)
+                                                    .apply()
+
+                                                profileComplete = true
+                                            }
+
+                                            profileChecked = true
+                                        }
+                                        .addOnFailureListener {
+                    FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(com.google.firebase.auth.FirebaseAuth.getInstance().currentUser!!.uid)
+                    .get()
+                    .addOnSuccessListener { doc ->
+                        val hasName = !doc.getString("name").isNullOrBlank()
+                        val hasGender = !doc.getString("gender").isNullOrBlank()
+                        val hasDob = !doc.getString("dateOfBirth").isNullOrBlank()
+
+                        profileComplete = hasName && hasGender && hasDob
+                        profileChecked = true
+                    }
+                    .addOnFailureListener {
+                        profileComplete = false
+                        profileChecked = true
+                    }
+                }
+                                }
+                            }
+
+                            if (!profileChecked) {
+                                Text("Loading profile...")
+                            } else if (!profileComplete) {
+                                CompleteProfileScreen(
+                                    initialName = user.fullName,
+                                    onContinue = { name, gender, dateOfBirth, photoUri ->
+
+                                        // Keep a local backup so profile information

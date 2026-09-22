@@ -1,0 +1,6 @@
+{
+  "name": "GAMI LIVE",
+  "description": "Native Android app for GAMI LIVE featuring secure authentication, sign up, and account recovery with role-based foundation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
