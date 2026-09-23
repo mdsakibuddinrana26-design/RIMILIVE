@@ -45,6 +45,7 @@ import com.example.ui.auth.ForgotPasswordScreen
 import com.example.ui.auth.LoginScreen
 import com.example.ui.auth.SignUpScreen
 import com.example.ui.theme.MyApplicationTheme
+import com.example.ui.theme.GamiBackgroundDark
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.OAuthCredential
 import com.google.firebase.auth.OAuthProvider
@@ -142,10 +143,6 @@ class MainActivity : ComponentActivity() {
                             val firebaseUser =
                                 com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
 
-                            var profileChecked by remember(firebaseUser?.uid) {
-                                mutableStateOf(false)
-                            }
-
                             val profilePrefs = getSharedPreferences(
                                 "gami_user_profile",
                                 android.content.Context.MODE_PRIVATE
@@ -180,54 +177,63 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
+                            var profileChecked by remember(accountKey) {
+                                mutableStateOf(
+                                    profileComplete && savedName.isNotBlank() &&
+                                        savedGender.isNotBlank() && savedDob.isNotBlank()
+                                )
+                            }
+
                             LaunchedEffect(firebaseUser?.uid, accountKey) {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
+                                val uid = FirebaseAuth.getInstance().currentUser?.uid
+                                if (uid == null) {
+                                    profileChecked = true
+                                } else {
+                                    FirebaseFirestore.getInstance()
+                                        .collection("users")
+                                        .document(uid)
+                                        .get()
+                                        .addOnSuccessListener { document ->
+                                            val cloudName = document.getString("name").orEmpty()
+                                            val cloudGender = document.getString("gender").orEmpty()
+                                            val cloudDob = document.getString("dateOfBirth").orEmpty()
+                                            val cloudComplete = cloudName.isNotBlank() &&
+                                                cloudGender.isNotBlank() && cloudDob.isNotBlank()
+                                            if (cloudComplete) {
+                                                savedName = cloudName
+                                                savedGender = cloudGender
+                                                savedDob = cloudDob
+                                                profilePrefs.edit()
+                                                    .putString("${accountKey}_name", cloudName)
+                                                    .putString("${accountKey}_gender", cloudGender)
+                                                    .putString("${accountKey}_dob", cloudDob)
+                                                    .putBoolean("${accountKey}_complete", true)
+                                                    .apply()
+                                            }
+                                            profileComplete = cloudComplete || profileComplete
+                                            profileChecked = true
+                                        }
+                                        .addOnFailureListener {
+                                            // Keep a previously completed local profile when offline.
+                                            profileChecked = true
+                                        }
+                                }
+                            }
 
-        if (uid == null) {
-            profileComplete = false
-            profileChecked = true
-        } else {
-            FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(uid.toString())
-                .get()
-                .addOnSuccessListener { document ->
-                    val cloudName = document.getString("name").orEmpty()
-                    val cloudGender = document.getString("gender").orEmpty()
-                    val cloudDob = document.getString("dateOfBirth").orEmpty()
-
-                    savedName = cloudName
-                    savedGender = cloudGender
-                    savedDob = cloudDob
-
-                    profileComplete =
-                        cloudName.isNotBlank() &&
-                        cloudGender.isNotBlank() &&
-                        cloudDob.isNotBlank()
-
-                    profileChecked = true
-                }
-                .addOnFailureListener {
-                    profileComplete = false
-                    profileChecked = true
-                }
-        }
-    }
-
-    if (!profileChecked) {
+                            if (!profileChecked) {
                                 Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFE9FFF8)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "RIMI",
-                color = Color(0xFF159B78),
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(GamiBackgroundDark),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "RIMI",
+                                        color = Color(0xFF22D3EE),
+                                        fontSize = 28.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                }
                             } else if (!profileComplete) {
                                 CompleteProfileScreen(
                                     initialName = user.fullName,

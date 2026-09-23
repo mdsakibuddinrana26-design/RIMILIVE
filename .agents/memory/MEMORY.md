@@ -1,0 +1,1 @@
+- [Android SDK persistence](android-sdk-persistence.md) — keep locally downloaded Android SDK tools in the workspace because the runner home can reset between sessions.

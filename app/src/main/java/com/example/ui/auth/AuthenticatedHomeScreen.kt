@@ -1,9 +1,14 @@
 package com.example.ui.auth
+import android.net.Uri
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import androidx.compose.runtime.DisposableEffect
 
 import androidx.compose.foundation.BorderStroke
@@ -39,6 +44,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -59,6 +65,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.example.core.model.User
 import com.example.core.security.RolePermissions
@@ -89,19 +96,68 @@ fun AuthenticatedHomeScreen(
     var createRoomRequest by remember { mutableStateOf(0) }
     var showCreateRoomSetup by remember { mutableStateOf(false) }
     var inRoom by remember { mutableStateOf(false) }
+    androidx.activity.compose.BackHandler(
+        enabled = selectedTab != "Party" && !showCreateRoomSetup && !inRoom
+    ) {
+        selectedTab = "Party"
+    }
+    // Keep the setup choices outside the conditional screen so they survive
+    // recomposition and can be written to the room document.
+    var createFriendsOnly by remember { mutableStateOf(false) }
+    var createRoomType by remember { mutableStateOf("Race") }
+    var createRoomLayout by remember { mutableStateOf("12-seat") }
+    var createPosterUrl by remember { mutableStateOf("") }
+    var createError by remember { mutableStateOf("") }
+    var creatingRoom by remember { mutableStateOf(false) }
+    var posterUploading by remember { mutableStateOf(false) }
+    var posterError by remember { mutableStateOf("") }
+    var chatActionMessage by remember { mutableStateOf("") }
     var countryExpanded by remember { mutableStateOf(false) }
     var selectedCountry by remember { mutableStateOf("All Countries") }
 
+    val posterPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uri == null) return@rememberLauncherForActivityResult
+        if (uid.isNullOrBlank()) {
+            posterError = "Please sign in before selecting a poster."
+        } else {
+            posterUploading = true
+            posterError = ""
+            val posterRef = FirebaseStorage.getInstance().reference
+                .child("roomPosters/$uid/${System.currentTimeMillis()}.jpg")
+            posterRef.putFile(uri)
+                .continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        throw (task.exception ?: IllegalStateException("Poster upload failed"))
+                    }
+                    posterRef.downloadUrl
+                }
+                .addOnSuccessListener { downloadUri ->
+                    createPosterUrl = downloadUri.toString()
+                    posterUploading = false
+                }
+                .addOnFailureListener { error ->
+                    posterUploading = false
+                    posterError = error.localizedMessage ?: "Poster upload failed."
+                }
+        }
+    }
+
+    androidx.activity.compose.BackHandler(enabled = showCreateRoomSetup) {
+        showCreateRoomSetup = false
+        creatingRoom = false
+    }
 
     if (showCreateRoomSetup) {
-        var friendsOnly by remember { mutableStateOf(false) }
-        var selectedRoomType by remember { mutableStateOf("Lucky Race") }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFF111111))
                 .statusBarsPadding()
+                .navigationBarsPadding()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 14.dp)
         ) {
             Row(
@@ -145,20 +201,39 @@ fun AuthenticatedHomeScreen(
                 color = Color(0xFF2A2A2A)
             ) {
                 Column(
+                    modifier = Modifier.clickable(enabled = !posterUploading) {
+                        posterPicker.launch("image/*")
+                    },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text("👤", fontSize = 54.sp)
+                    if (createPosterUrl.isNotBlank()) {
+                        AsyncImage(
+                            model = createPosterUrl,
+                            contentDescription = "Room poster",
+                            modifier = Modifier.size(70.dp).clip(RoundedCornerShape(14.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text("👤", fontSize = 54.sp)
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Profile",
+                        text = when {
+                            posterUploading -> "Uploading…"
+                            createPosterUrl.isBlank() -> "Tap to choose poster"
+                            else -> "Poster selected"
+                        },
                         color = Color.White,
                         fontSize = 14.sp
                     )
                 }
             }
+            if (posterError.isNotBlank()) {
+                Text(posterError, color = Color(0xFFFF8A80), fontSize = 12.sp)
+            }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -181,27 +256,33 @@ fun AuthenticatedHomeScreen(
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Switch(
-                    checked = friendsOnly,
-                    onCheckedChange = { friendsOnly = it }
+                    checked = createFriendsOnly,
+                    onCheckedChange = { createFriendsOnly = it }
                 )
             }
 
             Spacer(modifier = Modifier.height(18.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 listOf(
-                    "Lucky Race" to "🏁",
-                    "Teen Patti" to "🃏"
+                    "Number" to "🔢",
+                    "Race" to "🏁",
+                    "Lucky Race" to "🎲",
+                    "Teen Patti" to "🃏",
+                    "Chatroom" to "💬",
+                    "BlockMe PK" to "⚔️"
                 ).forEach { (name, icon) ->
-                    val selected = selectedRoomType == name
+                    val selected = createRoomType == name
 
                     Surface(
                         modifier = Modifier
-                            .weight(1f)
-                            .clickable { selectedRoomType = name },
+                            .width(120.dp)
+                            .clickable { createRoomType = name },
                         shape = RoundedCornerShape(18.dp),
                         color = if (selected) Color(0xFF1F8F78) else Color(0xFF252525),
                         border = if (selected)
@@ -224,13 +305,40 @@ fun AuthenticatedHomeScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Room layout", color = Color.White, fontSize = 18.sp)
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                listOf("12-seat" to "12 seats • 5 cameras", "15-seat" to "15 seats • 3 large cameras")
+                    .forEach { (layout, label) ->
+                        FilterChip(
+                            selected = createRoomLayout == layout,
+                            onClick = { createRoomLayout = layout },
+                            label = { Text(label, fontSize = 11.sp) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+            }
+            if (createError.isNotBlank()) {
+                Text(createError, color = Color(0xFFFF8A80), modifier = Modifier.padding(top = 8.dp))
+            }
+
             Spacer(modifier = Modifier.height(22.dp))
 
             Button(
+                enabled = !creatingRoom && !posterUploading,
                 onClick = {
-                    selectedTab = "Party"
-                    showCreateRoomSetup = false
-                    createRoomRequest++
+                    if (FirebaseAuth.getInstance().currentUser?.uid.isNullOrBlank()) {
+                        createError = "Please sign in before creating a room."
+                    } else {
+                        creatingRoom = true
+                        createError = ""
+                        selectedTab = "Party"
+                        showCreateRoomSetup = false
+                        createRoomRequest++
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -238,7 +346,7 @@ fun AuthenticatedHomeScreen(
                 shape = RoundedCornerShape(30.dp)
             ) {
                 Text(
-                    text = "Create",
+                    text = if (creatingRoom) "Creating…" else "Create",
                     fontSize = 19.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -469,7 +577,7 @@ fun AuthenticatedHomeScreen(
                         text = "Explore",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color(0xFF173F39)
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -477,7 +585,7 @@ fun AuthenticatedHomeScreen(
                     Text(
                         text = "Discover rooms, people and posts",
                         fontSize = 14.sp,
-                        color = Color.LightGray
+                        color = Color(0xFF455A55)
                     )
                 }
             }
@@ -493,7 +601,7 @@ fun AuthenticatedHomeScreen(
                         text = "Post",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color(0xFF173F39)
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -501,7 +609,7 @@ fun AuthenticatedHomeScreen(
                     Text(
                         text = "Create and share photos or short videos",
                         fontSize = 14.sp,
-                        color = Color.LightGray
+                        color = Color(0xFF455A55)
                     )
                 }
             }
@@ -517,7 +625,7 @@ fun AuthenticatedHomeScreen(
                         text = "Message",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color(0xFF173F39)
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -525,7 +633,7 @@ fun AuthenticatedHomeScreen(
                     Text(
                         text = "Your conversations will appear here",
                         fontSize = 14.sp,
-                        color = Color.LightGray
+                        color = Color(0xFF455A55)
                     )
                 }
             }
@@ -564,13 +672,15 @@ fun AuthenticatedHomeScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    Text("No followed users yet")
+                     Text("No followed users yet. Follow relationships are not available in the current backend.",
+                         color = Color(0xFF607D78))
                 }
             }
 
             "Party" -> {
     var roomId by remember { mutableStateOf("123456") }
     val firebaseUser = FirebaseAuth.getInstance().currentUser
+    val androidContext = LocalContext.current
     val firestore = remember { FirebaseFirestore.getInstance() }
     val roomRef = remember(roomId) {
         firestore.collection("partyRooms").document(roomId)
@@ -604,6 +714,13 @@ fun AuthenticatedHomeScreen(
 
     // PK control
     var roomHostUid by remember { mutableStateOf("") }
+    var roomHostName by remember { mutableStateOf("Host") }
+    var roomHostPhoto by remember { mutableStateOf("") }
+    // Older room documents did not carry layout metadata. Their established
+    // room is the 15-seat layout; newly created rooms always write a layout.
+    var roomLayout by remember { mutableStateOf("15-seat") }
+    var roomType by remember { mutableStateOf("Race") }
+    var roomFriendsOnly by remember { mutableStateOf(false) }
     val isHost = currentUid.isNotBlank() && currentUid == roomHostUid
     var showPkMenu by remember { mutableStateOf(false) }
     var pkRunning by remember { mutableStateOf(false) }
@@ -628,6 +745,7 @@ fun AuthenticatedHomeScreen(
 
     var micEnabled by remember { mutableStateOf(true) }
     var speakerEnabled by remember { mutableStateOf(true) }
+    var myMicEnabled by remember(roomId) { mutableStateOf(true) }
 
     // GAMI_CREATE_ROOM_REQUEST_HANDLER
     LaunchedEffect(createRoomRequest) {
@@ -642,11 +760,16 @@ fun AuthenticatedHomeScreen(
                 "roomId" to newRoomId,
                 "hostUid" to currentUid,
                 "hostName" to currentName,
+                "hostPhotoUrl" to currentPhotoUrl,
                 "notice" to "Welcome to the room",
                 "pkRunning" to false,
                 "pkMinutes" to 0,
                 "pkOpponentSeat" to 0,
                 "memberCount" to 1,
+                "roomType" to createRoomType,
+                "friendsOnly" to createFriendsOnly,
+                "layout" to createRoomLayout,
+                "posterUrl" to createPosterUrl,
                 "createdAt" to System.currentTimeMillis(),
                 "updatedAt" to System.currentTimeMillis()
             )
@@ -656,7 +779,12 @@ fun AuthenticatedHomeScreen(
                     roomId = newRoomId
                     inRoom = true
                     showRoomBrowser = false
-                    
+                    creatingRoom = false
+                }
+                .addOnFailureListener { error ->
+                    creatingRoom = false
+                    createError = error.localizedMessage ?: "Could not create room."
+                    showCreateRoomSetup = true
                 }
         }
     }
@@ -735,8 +863,8 @@ fun AuthenticatedHomeScreen(
     
 
     // GAMI_HOST_HEARTBEAT
-    LaunchedEffect(roomId, currentUid) {
-        while (roomId.isNotBlank() && currentUid.isNotBlank()) {
+    LaunchedEffect(roomId, currentUid, inRoom) {
+        while (inRoom && roomId.isNotBlank() && currentUid.isNotBlank()) {
 
             membersRef.document(currentUid).set(
                 mapOf(
@@ -850,7 +978,8 @@ fun AuthenticatedHomeScreen(
         currentUid,
         currentPhotoUrl,
         myJoinedSeat,
-        cameraEnabled
+        cameraEnabled,
+        myMicEnabled
     ) {
         if (currentUid.isNotBlank() && inRoom) {
             val memberData = hashMapOf<String, Any>(
@@ -859,6 +988,7 @@ fun AuthenticatedHomeScreen(
                 "photoUrl" to currentPhotoUrl,
                 "seat" to (myJoinedSeat ?: 0),
                 "cameraEnabled" to cameraEnabled,
+                "micEnabled" to myMicEnabled,
                 "isHost" to isHost,
                 "updatedAt" to System.currentTimeMillis()
             )
@@ -869,19 +999,23 @@ fun AuthenticatedHomeScreen(
     }
 
     // Create room document only if it does not exist yet
-    LaunchedEffect(roomId, currentUid) {
-        if (currentUid.isNotBlank()) {
+    LaunchedEffect(roomId, currentUid, inRoom) {
+        if (currentUid.isNotBlank() && inRoom) {
             roomRef.get().addOnSuccessListener { snapshot ->
                 if (!snapshot.exists()) {
                     val initialRoom = hashMapOf<String, Any>(
                         "roomId" to roomId,
                         "hostUid" to currentUid,
                         "hostName" to currentName,
+                        "hostPhotoUrl" to currentPhotoUrl,
                         "notice" to noticeText,
                         "pkRunning" to false,
                         "pkMinutes" to 0,
                         "pkOpponentSeat" to 0,
                         "memberCount" to 1,
+                        "roomType" to roomType,
+                        "friendsOnly" to roomFriendsOnly,
+                        "layout" to roomLayout,
                         "updatedAt" to System.currentTimeMillis()
                     )
 
@@ -957,13 +1091,24 @@ occupiedSeats = snapshot.documents.mapNotNull { doc ->
             if (snapshot != null && snapshot.exists()) {
                 snapshot.getString("hostUid")?.let {
                     roomHostUid = it
+                    if (roomHostPhoto.isBlank()) {
+                        firestore.collection("users").document(it).get()
+                            .addOnSuccessListener { hostDoc ->
+                                roomHostPhoto = hostDoc.getString("photoUrl").orEmpty()
+                            }
+                    }
                 }
+                snapshot.getString("hostName")?.let { roomHostName = it }
+                snapshot.getString("hostPhotoUrl")?.let { roomHostPhoto = it }
 
                 snapshot.getString("notice")?.let {
                     if (it != noticeText) {
                         noticeText = it
                     }
                 }
+                roomLayout = snapshot.getString("layout") ?: "15-seat"
+                snapshot.getString("roomType")?.let { roomType = it }
+                snapshot.getBoolean("friendsOnly")?.let { roomFriendsOnly = it }
 
                 snapshot.getBoolean("pkRunning")?.let {
                     pkRunning = it
@@ -1225,13 +1370,23 @@ androidx.activity.compose.BackHandler {
             title = { Text("Games") },
             text = {
                 Column {
-                    TextButton(onClick = { showGameMenu = false }) {
+                    TextButton(onClick = {
+                        showGameMenu = false
+                        if (isHost) showPkMenu = true
+                        else roomMessages = roomMessages + "System: Only the host can start PK"
+                    }) {
                         Text("PK Game")
                     }
-                    TextButton(onClick = { showGameMenu = false }) {
+                    TextButton(onClick = {
+                        showGameMenu = false
+                        roomMessages = roomMessages + "System: Lucky Race needs a game server"
+                    }) {
                         Text("Lucky Race")
                     }
-                    TextButton(onClick = { showGameMenu = false }) {
+                    TextButton(onClick = {
+                        showGameMenu = false
+                        roomMessages = roomMessages + "System: More games are not available yet"
+                    }) {
                         Text("More games later")
                     }
                 }
@@ -1514,6 +1669,12 @@ androidx.activity.compose.BackHandler {
                     TextButton(
                         onClick = {
                             showMoreMenu = false
+                            if (isHost) {
+                                noticeDraft = noticeText
+                                showNoticeDialog = true
+                            } else {
+                                roomMessages = roomMessages + "System: Only the host can edit the room notice"
+                            }
                         }
                     ) {
                         Text("Room Settings")
@@ -1522,6 +1683,11 @@ androidx.activity.compose.BackHandler {
                     TextButton(
                         onClick = {
                             showMoreMenu = false
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "Join my RIMILIVE room: $roomId")
+                            }
+                            androidContext.startActivity(Intent.createChooser(shareIntent, "Share room"))
                         }
                     ) {
                         Text("Share Room")
@@ -1667,7 +1833,7 @@ androidx.activity.compose.BackHandler {
                                 opponentPkScore = 0
 
                                 inRoom = false
-                                roomId = ""
+                                roomId = "123456"
                                 roomHostUid = ""
 
                                 showMoreMenu = false
@@ -1695,11 +1861,88 @@ androidx.activity.compose.BackHandler {
     }
 
     // GAMI_ROOM_ONLY_WHEN_JOINED
+    fun toggleCameraSeat(seatNo: Int) {
+        if (currentUid.isBlank()) {
+            roomMessages = roomMessages + "System: Please sign in first"
+            return
+        }
+        if (seatNo == 1 && !isHost) {
+            roomMessages = roomMessages + "System: Only the host can use seat 1"
+            return
+        }
+        val targetSeatRef = roomRef.collection("seats").document(seatNo.toString())
+        val oldSeatNo = myJoinedSeat
+        val oldSeatRef = oldSeatNo?.takeIf { it != seatNo }?.let {
+            roomRef.collection("seats").document(it.toString())
+        }
+        firestore.runTransaction { transaction ->
+            val targetSnapshot = transaction.get(targetSeatRef)
+            val oldSnapshot = oldSeatRef?.let { transaction.get(it) }
+            val targetOwner = targetSnapshot.getString("uid")
+            if (targetSnapshot.exists() && targetOwner != currentUid) {
+                throw IllegalStateException("SEAT_OCCUPIED")
+            }
+            if (oldSeatRef != null && oldSnapshot?.getString("uid") == currentUid) {
+                transaction.delete(oldSeatRef)
+            }
+            if (oldSeatNo == seatNo && targetOwner == currentUid) {
+                transaction.delete(targetSeatRef)
+                transaction.set(
+                    membersRef.document(currentUid),
+                    mapOf("seat" to 0, "updatedAt" to System.currentTimeMillis()),
+                    SetOptions.merge()
+                )
+            } else {
+                transaction.set(
+                    targetSeatRef,
+                    mapOf(
+                        "uid" to currentUid,
+                        "name" to currentName,
+                        "photoUrl" to currentPhotoUrl,
+                        "seat" to seatNo,
+                        "updatedAt" to System.currentTimeMillis()
+                    )
+                )
+                transaction.set(
+                    membersRef.document(currentUid),
+                    mapOf(
+                        "uid" to currentUid,
+                        "name" to currentName,
+                        "photoUrl" to currentPhotoUrl,
+                        "seat" to seatNo,
+                        "updatedAt" to System.currentTimeMillis()
+                    ),
+                    SetOptions.merge()
+                )
+            }
+            true
+        }.addOnSuccessListener {
+            if (oldSeatNo == seatNo) {
+                myJoinedSeat = null
+                cameraEnabled = false
+                roomMessages = roomMessages + "System: You left camera seat $seatNo"
+            } else {
+                myJoinedSeat = seatNo
+                cameraEnabled = false
+                roomMessages = roomMessages + "System: You joined camera seat $seatNo"
+            }
+        }.addOnFailureListener { error ->
+            val message = if (error.message?.contains("SEAT_OCCUPIED") == true) {
+                "System: Seat $seatNo is already occupied"
+            } else {
+                "System: Could not update camera seat"
+            }
+            roomMessages = roomMessages + message
+        }
+    }
+
         if (inRoom) {
 Column(
         modifier = Modifier
             .fillMaxSize()
-                        .background(Color(0xFFFF8A24))
+            .background(Color(0xFFFF8A24))
+            .navigationBarsPadding()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
 
@@ -1736,8 +1979,8 @@ Column(
                         Spacer(modifier = Modifier.width(10.dp))
 
                         Column {
-                            Text(
-                                text = "Lucky Race",
+                                Text(
+                                    text = "RIMILIVE • $roomType",
                                 color = Color.White,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
@@ -1779,8 +2022,11 @@ Column(
 
                     Surface(
                         modifier = Modifier.clickable {
-                            roomMessages = roomMessages +
-                                "System: Share room selected"
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "Join my RIMILIVE room: $roomId")
+                            }
+                            androidContext.startActivity(Intent.createChooser(shareIntent, "Share room"))
                         },
                         shape = RoundedCornerShape(18.dp),
                         color = Color(0xFF7A3A18)
@@ -1947,6 +2193,32 @@ Column(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        Text(
+            text = "$roomType • ${if (roomLayout == "15-seat") "15 seats / 3 large cameras" else "12 seats / 5 cameras"}",
+            color = Color(0xFF28565B),
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            val onCameraSeat = myJoinedSeat?.let { seat ->
+                seat in 1..(if (roomLayout == "15-seat") 3 else 5)
+            } == true
+            FilterChip(
+                selected = cameraEnabled,
+                enabled = onCameraSeat,
+                onClick = { cameraEnabled = !cameraEnabled },
+                label = { Text(if (cameraEnabled) "Camera on" else "Camera off (UI)") }
+            )
+            FilterChip(
+                selected = myMicEnabled,
+                onClick = { myMicEnabled = !myMicEnabled },
+                label = { Text(if (myMicEnabled) "Mic on (UI)" else "Mic muted") }
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (roomLayout == "12-seat") {
         // TOP 5 CAMERA SEATS: host seat 1 + seats 2-5
         Row(
             modifier = Modifier
@@ -1977,12 +2249,21 @@ Column(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("👤", fontSize = 58.sp)
+                        if (roomHostPhoto.isNotBlank()) {
+                            AsyncImage(
+                                model = roomHostPhoto,
+                                contentDescription = "Host profile",
+                                modifier = Modifier.size(58.dp).clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Text("👤", fontSize = 58.sp)
+                        }
 
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Text(
-                            text = currentName.ifBlank { "S A K I B" },
+                            text = roomHostName.ifBlank { "Host" },
                             color = Color.White,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -2025,32 +2306,7 @@ Column(
                                         selectedRoomSeat = seatNo
                                         giftReceiverSeat = seatNo
 
-                                        if (currentUid.isNotBlank()) {
-                                            roomRef.set(
-                                                mapOf(
-                                                    "lastSeat" to seatNo,
-                                                    "lastSeatUid" to currentUid,
-                                                    "lastSeatName" to currentName,
-                                                    "updatedAt" to System.currentTimeMillis()
-                                                ),
-                                                SetOptions.merge()
-                                            )
-                                        }
-
-                                        if (myJoinedSeat == seatNo) {
-                                            myJoinedSeat = null
-                                            cameraEnabled = false
-                                            roomMessages = roomMessages +
-                                                "System: You left seat $seatNo"
-                                        } else if (occupiedSeats.contains(seatNo)) {
-                                            roomMessages = roomMessages +
-                                                "System: Seat $seatNo is already occupied"
-                                        } else {
-                                            myJoinedSeat = seatNo
-                                            cameraEnabled = false
-                                            roomMessages = roomMessages +
-                                                "System: You joined camera seat $seatNo"
-                                        }
+                                        toggleCameraSeat(seatNo)
                                     },
                                 shape = RoundedCornerShape(12.dp),
                                 color = if (selectedRoomSeat == seatNo)
@@ -2131,6 +2387,39 @@ Column(
                 }
             }
         }
+        } else {
+            // Layout B: three deliberately larger camera positions.
+            Row(
+                modifier = Modifier.fillMaxWidth().height(150.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                (1..3).forEach { seatNo ->
+                    Surface(
+                        modifier = Modifier.weight(1f).fillMaxHeight().clickable {
+                            selectedRoomSeat = seatNo
+                            giftReceiverSeat = seatNo
+                            toggleCameraSeat(seatNo)
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        color = if (selectedRoomSeat == seatNo) Color(0x884F382B) else Color(0x55442F25),
+                        border = BorderStroke(1.dp, Color(0xFF7A3A18))
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(6.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(if (myJoinedSeat == seatNo || occupiedSeats.contains(seatNo)) "👤" else "+", fontSize = 34.sp)
+                            Text(
+                                if (myJoinedSeat == seatNo) "You" else seatMemberNames[seatNo] ?: "Seat $seatNo",
+                                color = Color.White, fontSize = 11.sp, maxLines = 1
+                            )
+                            Text(if (myJoinedSeat == seatNo || occupiedSeats.contains(seatNo)) "📷" else "Camera", color = Color(0xFFFFD88A), fontSize = 11.sp)
+                        }
+                    }
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -2144,13 +2433,20 @@ Column(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        repeat(2) { rowIndex ->
+        repeat(if (roomLayout == "15-seat") 4 else 2) { rowIndex ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                repeat(5) { colIndex ->
-                    val seatNo = 6 + rowIndex * 5 + colIndex
+                val columnCount = if (roomLayout == "15-seat") {
+                    3
+                } else if (rowIndex == 0) {
+                    5
+                } else {
+                    2
+                }
+                repeat(columnCount) { colIndex ->
+                    val seatNo = if (roomLayout == "15-seat") 4 + rowIndex * 3 + colIndex else 6 + rowIndex * 5 + colIndex
 
                     Surface(
                         modifier = Modifier
@@ -2724,7 +3020,13 @@ Column(
                     }
 
                     Button(
-                        onClick = { },
+                         onClick = {
+                             chatActionMessage = if (online) {
+                                 "Calling is unavailable until voice backend permissions are configured."
+                             } else {
+                                 "This user is offline."
+                             }
+                         },
                         enabled = online,
                         shape = CircleShape,
                         colors = ButtonDefaults.buttonColors(
@@ -2734,18 +3036,29 @@ Column(
                         Text("📞 Call")
                     }
                 }
+                 if (chatActionMessage.isNotBlank()) {
+                     Text(
+                         chatActionMessage,
+                         color = Color(0xFF8A3B2F),
+                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
+                         fontSize = 12.sp
+                     )
+                 }
             }
         }
     }
 }
 
 "Top" -> {
-                Text(
-                    text = "Active Players",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)
-                )
+                 Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp)) {
+                     Text("Active Players", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                     Spacer(modifier = Modifier.height(8.dp))
+                     Text(
+                         "Rankings are unavailable until the server provides ranking data.",
+                         color = Color(0xFF607D78),
+                         fontSize = 13.sp
+                     )
+                 }
             }
         }
 
@@ -2779,31 +3092,31 @@ Column(
         ) {
             NavigationBarItem(
                 selected = selectedTab in listOf("Party", "Follow", "Chat", "Top"),
-                onClick = { selectedTab = "Profile" },
+                onClick = { selectedTab = "Party" },
                 icon = { Text("⌂", fontSize = 23.sp) },
                 label = { Text("Home") }
             )
             NavigationBarItem(
                 selected = selectedTab == "Explore",
-                onClick = { },
+                onClick = { selectedTab = "Explore" },
                 icon = { Text("⌕", fontSize = 23.sp) },
                 label = { Text("Explore") }
             )
             NavigationBarItem(
                 selected = selectedTab == "Post",
-                onClick = { },
+                onClick = { selectedTab = "Post" },
                 icon = { Text("+", fontSize = 28.sp, fontWeight = FontWeight.Bold) },
                 label = { Text("Post") }
             )
             NavigationBarItem(
                 selected = selectedTab == "Message",
-                onClick = { },
+                onClick = { selectedTab = "Message" },
                 icon = { Text("💬", fontSize = 20.sp) },
                 label = { Text("Messages") }
             )
             NavigationBarItem(
                 selected = selectedTab == "Profile",
-                onClick = { },
+                onClick = { selectedTab = "Profile" },
                 icon = { Text("○", fontSize = 23.sp) },
                 label = { Text("Profile") }
             )

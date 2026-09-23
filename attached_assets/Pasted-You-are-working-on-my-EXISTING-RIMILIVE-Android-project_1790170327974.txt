@@ -1,0 +1,400 @@
+You are working on my EXISTING RIMILIVE Android project.
+
+This is NOT a new project.
+Do NOT recreate the app.
+Do NOT replace the existing project with a template.
+Do NOT unnecessarily redesign the UI.
+
+GOAL:
+Turn the current RIMILIVE Home + Party/Create Room flow into a stable, functional Android experience where every visible control works correctly on a real phone.
+
+==============================
+PHASE 1 — INSPECT FIRST
+==============================
+
+Before modifying anything:
+
+1. Inspect the complete existing project structure.
+2. Identify:
+   - Home screen files
+   - Bottom navigation
+   - Follow screen
+   - Party screen
+   - Chat screen
+   - Top/ranking screen
+   - Create Room screen
+   - Room screen/layout code
+   - Firebase Authentication
+   - Firestore/database code
+   - Profile persistence
+   - Android theme/startup/loading code
+3. Determine why the black screen/black flash appears during startup or navigation.
+4. Determine which buttons are currently decorative/non-functional.
+5. Determine which room functions already exist and which are incomplete.
+
+IMPORTANT:
+Create automatic backups before modifying existing source files.
+
+Do not ask me to manually edit files or create backups.
+
+After inspection, continue directly with implementation.
+Do NOT stop just to give me an analysis report.
+
+==============================
+PHASE 2 — PRESERVE WORKING FEATURES
+==============================
+
+Do not break or remove currently working functionality.
+
+Preserve:
+- Existing login system
+- Google login
+- Email login
+- Facebook-related code/configuration
+- Firebase Authentication
+- Firestore integration
+- Saved user profile information
+- Profile photo/data
+- Existing package/application ID
+- Existing Gradle/build configuration
+- Existing working navigation
+- Current RIMILIVE visual identity
+
+Do not delete a working feature just to make compilation easier.
+
+==============================
+PHASE 3 — HOME SCREEN
+==============================
+
+Make the Home screen fully functional.
+
+Every visible button must respond correctly.
+
+TOP/HOME SECTIONS:
+
+FOLLOW
+- Opens Follow content.
+- Shows the correct Follow state/content.
+- Selected tab must visibly indicate that Follow is active.
+
+PARTY
+- Opens the Party/room section.
+- Existing rooms should display correctly.
+- Create Room must be accessible.
+- Room cards/items must be tappable.
+
+CHAT
+- Opens the Chat section.
+- Existing UI must respond correctly.
+- No dead buttons.
+
+TOP
+- Opens the Top/ranking section.
+- Ranking UI must display correctly.
+- Navigation must work both entering and leaving this section.
+
+If the current app contains other Home tabs/options, preserve them and make them functional too.
+
+==============================
+PHASE 4 — BOTTOM NAVIGATION
+==============================
+
+Inspect every bottom navigation item currently visible in the app.
+
+Make EVERY item functional.
+
+Requirements:
+- Correct destination for every button.
+- Correct selected-state/highlight.
+- No button should do nothing.
+- Repeated tapping must not create duplicate screens.
+- Android Back must behave correctly.
+- Navigation state should remain stable.
+- No black/blank screen between normal navigation transitions.
+- No crashes.
+
+If a central + / Create / Post button exists, make its navigation/action work correctly while preserving the current design.
+
+==============================
+PHASE 5 — CREATE ROOM SCREEN
+==============================
+
+Keep the current Create Room visual style, but make the entire screen functional.
+
+ROOM POSTER:
+- Current poster must display correctly.
+- Edit/change poster control must respond.
+- Preserve existing image-selection logic where possible.
+
+ROOM TYPE:
+Make all currently displayed room types selectable and visibly highlight the selected type.
+
+Examples currently shown include:
+- Number
+- Race
+- Chatroom
+- BlockMe PK
+
+Do not remove them.
+
+FRIENDS ONLY:
+- Toggle must work.
+- Selected state must be stored in the room configuration.
+
+ROOM LAYOUT:
+- Every displayed layout selector must respond.
+- Selected layout must visibly highlight.
+- The selected layout must determine the actual room layout created.
+
+CREATE:
+- Create button must not be decorative.
+- Validate required room information.
+- Create/open the selected room.
+- Prevent accidental duplicate room creation from rapid repeated taps.
+- Show a sensible loading/progress state while creating.
+
+BACK:
+- Back button must return correctly without crashing or losing unrelated app state.
+
+==============================
+PHASE 6 — MAIN ROOM LAYOUT A
+12-SEAT ROOM
+==============================
+
+Create/finish a professional phone-responsive 12-seat room layout.
+
+TOTAL:
+12 participant seats.
+
+CAMERA:
+- Support up to 5 camera/video-capable positions in the upper section of the room.
+- Arrange the 5 camera positions cleanly.
+- Camera areas must not overlap.
+- Camera enable/disable state must respond correctly at the UI/state level.
+- When camera is unavailable/off, show the normal user/avatar state cleanly.
+
+OTHER SEATS:
+- Remaining participant/audio seats must be arranged below.
+- Show avatar/profile image where available.
+- Show username/short display name appropriately.
+- Clearly show empty vs occupied seat state.
+
+Everything must fit properly on normal Android phone screens.
+
+No:
+- clipped seats
+- overlapping text
+- controls outside the screen
+- broken scrolling
+- unusably tiny controls
+
+==============================
+PHASE 7 — MAIN ROOM LAYOUT B
+15-SEAT ROOM
+==============================
+
+Create/finish a second room layout.
+
+TOTAL:
+15 participant seats.
+
+TOP CAMERA SECTION:
+- 3 camera/video-capable seats at the top.
+- These 3 camera areas must be noticeably larger than normal participant seats.
+- Keep them visually balanced across the phone screen.
+
+LOWER SECTION:
+- Remaining 12 participant/audio seats below.
+- Arrange them in a clean responsive grid.
+- Empty/occupied states must be obvious.
+- Avatar/name/status must fit without overlap.
+
+The room must remain usable on a normal Android phone in portrait orientation.
+
+==============================
+PHASE 8 — ROOM INTERACTIONS
+==============================
+
+For both room layouts, make currently available room controls respond correctly.
+
+Where existing architecture supports it, implement:
+- Join room
+- Leave room
+- Take/open an available seat
+- Leave a seat
+- Seat occupied state
+- User avatar/name
+- Host indication
+- Camera on/off UI state
+- Microphone/mute UI state
+- Room member list/state
+- Correct back/leave behavior
+
+HOST BEHAVIOR:
+Preserve/implement deterministic host handoff:
+- If the host intentionally leaves or becomes unavailable, transfer host status to the next active room member using a deterministic order such as earliest active joined member.
+- Do not depend on seat number alone.
+- If no active member remains, close/delete the room where the backend architecture safely supports this.
+
+For actions that require server-authoritative backend work that is not yet available:
+- Implement the correct UI/state/navigation layer.
+- Keep the architecture ready for backend integration.
+- Clearly report what backend implementation remains.
+- Do NOT fake a real network/backend feature and claim it is complete.
+
+==============================
+PHASE 9 — BLACK SCREEN FIX
+==============================
+
+There is currently a noticeable black screen/black flash before the app or some screens appear.
+
+Investigate the REAL cause.
+
+Check:
+- Android theme
+- windowBackground
+- splash/startup theme
+- Firebase/profile loading
+- navigation transitions
+- unnecessary blocking work on the main thread
+- Compose initial state
+- loading screen logic
+
+Fix the underlying issue where possible.
+
+Use a RIMILIVE-compatible loading/splash state if loading is genuinely required.
+
+Do NOT simply add an artificial delay.
+
+==============================
+PHASE 10 — PHONE RESPONSIVENESS
+==============================
+
+Review all modified screens specifically for Android phone use.
+
+Make sure:
+- Content respects status/navigation bars.
+- No text is cut off.
+- No buttons overlap.
+- No controls are hidden behind system navigation.
+- Touch targets are usable.
+- Scrolling works where necessary.
+- Layout adapts reasonably to different phone heights/widths.
+- Keyboard does not permanently cover important form controls.
+
+Do not optimize only for desktop preview.
+
+The REAL Android phone experience is the priority.
+
+==============================
+PHASE 11 — FIREBASE / DATA SAFETY
+==============================
+
+Preserve existing Firebase behavior.
+
+Do not overwrite or destroy existing user data.
+
+Use the existing architecture wherever possible.
+
+Room state should be structured cleanly for later real-time Firebase/server synchronization.
+
+Do not put security-sensitive authority exclusively on the Android client for:
+- coins
+- host authority
+- moderation
+- paid actions
+- security-sensitive room operations
+
+If server-authoritative implementation is required later, clearly identify it in the final report.
+
+==============================
+PHASE 12 — TEST EVERYTHING
+==============================
+
+Before declaring completion, test the relevant code paths and verify:
+
+1. App startup
+2. Login/profile state still works
+3. Home opens correctly
+4. Follow works
+5. Party works
+6. Chat works
+7. Top works
+8. Every bottom navigation button works
+9. Create Room opens
+10. Poster control responds
+11. Room Type selections respond
+12. Friends Only works
+13. Room Layout selection works
+14. Create button works
+15. 12-seat room opens correctly
+16. 12-seat room has correct seat count
+17. Up to 5 camera positions are represented correctly
+18. 15-seat room opens correctly
+19. 15-seat room has correct seat count
+20. 3 larger top camera positions are represented correctly
+21. Join/leave navigation works
+22. Android Back works
+23. No obvious dead buttons remain in these flows
+24. No obvious screen overflow/overlap
+25. No startup/navigation crash
+26. Black-screen issue is fixed or materially reduced by addressing its actual cause
+
+Do not mark something as tested if it was not actually testable in the Replit environment.
+
+Clearly distinguish:
+- verified by build/static inspection
+- locally testable behavior
+- behavior that still requires testing on a physical Android device
+
+==============================
+PHASE 13 — BUILD
+==============================
+
+After implementation, run:
+
+./gradlew :app:assembleDebug
+
+If it fails:
+- inspect the actual error
+- fix it safely
+- rebuild
+- continue until BUILD SUCCESSFUL
+
+Do not stop at the first compilation error.
+
+After successful build, verify the APK exists at:
+
+app/build/outputs/apk/debug/app-debug.apk
+
+Then replace/update the root downloadable copy:
+
+RIMILIVE.apk
+
+IMPORTANT:
+RIMILIVE.apk must be the NEW APK from this final successful build, not the previous old APK.
+
+Verify the final copied APK matches the newly built app-debug.apk.
+
+==============================
+FINAL REPORT
+==============================
+
+Only after implementation and successful build, give me a concise final report containing:
+
+1. What you changed.
+2. Which Home buttons/tabs now work.
+3. Which Create Room functions now work.
+4. How the 12-seat / 5-camera layout works.
+5. How the 15-seat / 3-large-camera layout works.
+6. What was done about the black screen.
+7. Which functionality is genuinely connected to Firebase/backend.
+8. Which functionality still requires future server/backend implementation.
+9. Build result.
+10. Exact final APK paths.
+
+Do not claim unfinished functionality is complete.
+Do not redesign unrelated screens.
+Do not create a new project.
+Do not stop after planning.
+Continue until the implementation is complete and the APK builds successfully.

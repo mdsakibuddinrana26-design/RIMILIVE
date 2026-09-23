@@ -17,6 +17,7 @@ local.properties
 .env
 debug.keystore
 .android-sdk/
+.backups/
 
 # Temporary / generated files
 *.apk
