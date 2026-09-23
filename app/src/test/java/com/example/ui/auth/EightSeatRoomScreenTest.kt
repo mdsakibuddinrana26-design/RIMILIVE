@@ -1,5 +1,9 @@
 package com.example.ui.auth
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -7,6 +11,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -70,5 +76,67 @@ class EightSeatRoomScreenTest {
         assertTrue(sent)
         rule.onNodeWithContentDescription("Leave room").assertIsDisplayed()
         rule.onRoot().captureRoboImage(filePath = "build/eight-seat-room.png")
+    }
+
+    @Test
+    fun keyboardMovesOnlyDockAndKeepsTypedTextAndActionsUsable() {
+        var keyboardBottom by mutableStateOf(0.dp)
+        var message by mutableStateOf("")
+        val actionsClicked = mutableListOf<String>()
+        rule.setContent {
+            EightSeatRoomScreen(
+                state = EightSeatRoomState(
+                    hostName = "Host", hostPhoto = "", roomType = "Race",
+                    memberCount = 1, notice = "Welcome", isHost = true,
+                    mySeat = 1, myPhoto = "", occupied = emptySet(),
+                    names = emptyMap(), photos = emptyMap(),
+                    memberCameras = emptyMap(), memberMics = emptyMap(),
+                    cameraOn = false, micOn = true, pkRunning = false,
+                    pkSeconds = 0, lastMessage = "Member joined", chatInput = message
+                ),
+                actions = EightSeatRoomActions(
+                    onNotice = {}, onShare = {}, onLeave = {},
+                    onPk = { actionsClicked += "PK" },
+                    onCameraSeat = {}, onAudioSeat = {}, onCameraToggle = {},
+                    onMicToggle = {}, onChatChange = { message = it },
+                    onSend = { actionsClicked += "Send" },
+                    onGame = { actionsClicked += "Game" },
+                    onGift = { actionsClicked += "Gift" },
+                    onCoin = {}, onMore = { actionsClicked += "More" }
+                ),
+                imeInsets = WindowInsets(bottom = keyboardBottom)
+            )
+        }
+        val headerBefore = rule.onNodeWithContentDescription("Leave room")
+            .fetchSemanticsNode().boundsInRoot
+        val seatBefore = rule.onNodeWithContentDescription("Camera seat 1, Host")
+            .fetchSemanticsNode().boundsInRoot
+        val dockBefore = rule.onNodeWithContentDescription("SMS input")
+            .fetchSemanticsNode().boundsInRoot
+        rule.onNodeWithContentDescription("SMS input").performClick()
+        rule.runOnIdle { keyboardBottom = 260.dp }
+        rule.onNodeWithContentDescription("SMS input").performTextInput("Hello")
+        rule.onNodeWithContentDescription("SMS input").assertIsDisplayed()
+        rule.onNodeWithText("Hello").assertIsDisplayed()
+        assertEquals(headerBefore, rule.onNodeWithContentDescription("Leave room")
+            .fetchSemanticsNode().boundsInRoot)
+        assertEquals(seatBefore, rule.onNodeWithContentDescription("Camera seat 1, Host")
+            .fetchSemanticsNode().boundsInRoot)
+        val dockRaised = rule.onNodeWithContentDescription("SMS input")
+            .fetchSemanticsNode().boundsInRoot
+        assertTrue("Dock should follow the keyboard", dockRaised.bottom < dockBefore.bottom)
+        val expectedRise = 260f * rule.onRoot().fetchSemanticsNode().boundsInRoot.width / 360f
+        assertTrue("Dock rise ${dockBefore.bottom - dockRaised.bottom} vs inset $expectedRise",
+            kotlin.math.abs((dockBefore.bottom - dockRaised.bottom) - expectedRise) < 2f)
+        listOf("PK controls", "Games", "Gifts", "More room options").forEach {
+            rule.onNodeWithContentDescription(it).assertIsDisplayed()
+        }
+        rule.runOnIdle { keyboardBottom = 0.dp }
+        assertEquals(dockBefore, rule.onNodeWithContentDescription("SMS input")
+            .fetchSemanticsNode().boundsInRoot)
+        listOf("PK controls", "Games", "Gifts", "More room options").forEach {
+            rule.onNodeWithContentDescription(it).performClick()
+        }
+        assertEquals(listOf("PK", "Game", "Gift", "More"), actionsClicked)
     }
 }

@@ -33,13 +33,14 @@ private val DarkPanel = Color(0x995B392A)
 internal fun FifteenSeatRoomScreen(
     state: EightSeatRoomState,
     actions: EightSeatRoomActions,
-    pkScoreLine: String?
+    pkScoreLine: String?,
+    imeInsets: WindowInsets = WindowInsets.ime
 ) {
+    RoomImeWindowPolicy()
     BoxWithConstraints(
         Modifier.fillMaxSize()
             .background(Brush.verticalGradient(listOf(Color(0xFFFF9B40), Color(0xFFEF702E))))
             .navigationBarsPadding()
-            .imePadding()
     ) {
         val tight = maxHeight < 610.dp
         val cameraHeight = (maxHeight * 0.27f).coerceIn(102.dp, 180.dp)
@@ -155,8 +156,15 @@ internal fun FifteenSeatRoomScreen(
             }
 
             Spacer(Modifier.weight(1f))
-            RoomLowerSection(state, actions, tight, cameraSeats = 1..5, pkScoreLine = pkScoreLine)
+            RoomLowerSectionInfo(state, actions, tight, cameraSeats = 1..5,
+                pkScoreLine = pkScoreLine)
+            Spacer(Modifier.height(44.dp))
         }
+        RoomControlBar(state, actions,
+            Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                .windowInsetsPadding(imeInsets)
+                .padding(start = 12.dp, end = 12.dp,
+                    bottom = if (tight) 5.dp else 9.dp))
     }
 }
 

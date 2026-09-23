@@ -1,0 +1,141 @@
+FIX PARTY ROOM KEYBOARD + IMPROVE BOTTOM CONTROLS ONLY
+
+Please make ONLY the changes described below.
+
+Do NOT redesign or modify the completed Party Room layout, seats, header, Firebase room logic, or other screens.
+
+==================================================
+1. FIX THE KEYBOARD / SMS INPUT PROBLEM
+==================================================
+
+There is currently a problem inside the Party Room:
+
+When I tap the SMS/message input and the Android keyboard opens, the whole Party Room moves upward.
+
+The typed message/input area also moves too high on the screen.
+
+FIX THIS.
+
+Required behavior:
+
+- The main Party Room must remain visually stable.
+- Opening the keyboard must NOT push the entire room upward.
+- Do NOT move the seats/header/content to the top.
+- When the keyboard opens, keep the message input/control bar directly ABOVE the keyboard.
+- The user must be able to see what they are typing clearly.
+- When the keyboard closes, the bottom controls must return to their normal position.
+
+The bottom control area should remain together:
+
+SMS input | PK | Game | Gift | More
+
+Do not hide or separate these controls when the keyboard appears.
+
+Use the correct Android/Jetpack Compose IME/insets handling for the existing project architecture.
+
+Do NOT use a hack that causes layout problems on different phone sizes.
+
+==================================================
+2. IMPROVE THE BOTTOM CONTROL DESIGN
+==================================================
+
+The current bottom controls still look too basic.
+
+Improve ONLY their visual appearance:
+
+- SMS / Message
+- PK
+- Game
+- Gift
+- More
+
+Make them look polished, modern and suitable for a professional live-room app.
+
+Use:
+- cleaner original icons
+- better icon shapes
+- consistent sizing
+- clean spacing
+- subtle premium effects where appropriate
+- clear touch areas
+
+Do NOT make the icons excessively large.
+
+Keep the existing green/premium RIMILIVE visual style.
+
+Do NOT copy proprietary icon assets from another app.
+
+==================================================
+3. KEEP EXISTING FUNCTIONS
+==================================================
+
+Do NOT remove or replace existing working actions.
+
+PK must still use the existing PK action.
+
+Game must still open the existing Game/More flow.
+
+Gift must keep the existing Gift action.
+
+More must keep the More panel we already implemented.
+
+SMS/Message must continue using the existing room message functionality.
+
+This task is a UI/keyboard fix, NOT a room-system rewrite.
+
+==================================================
+4. DO NOT MODIFY
+==================================================
+
+Do NOT change:
+
+- 8-seat room layout
+- 15-seat room layout
+- seat positions
+- seat sizes
+- camera/audio seat configuration
+- room header
+- room background
+- Firebase
+- authentication
+- Profile
+- Follow
+- Login
+- Create Room
+- other completed screens
+
+Make the smallest safe code changes necessary.
+
+Before modifying files, create backups of the files you need to edit.
+
+==================================================
+5. TEST BEFORE FINISHING
+==================================================
+
+Test this exact flow:
+
+1. Open Party Room.
+2. Tap the SMS/message input.
+3. Android keyboard opens.
+4. Verify the Party Room itself does NOT jump upward.
+5. Verify the SMS input + PK + Game + Gift + More control area stays directly above the keyboard.
+6. Type a message and verify the typed text remains clearly visible.
+7. Close the keyboard.
+8. Verify the controls return to their normal bottom position.
+9. Verify PK, Game, Gift and More still work.
+
+Then run:
+
+./gradlew :app:assembleDebug
+
+Fix any relevant build errors until BUILD SUCCESSFUL.
+
+After BUILD SUCCESSFUL, replace the root RIMILIVE.apk with the newly built APK.
+
+Report:
+- Keyboard fix status
+- SMS input status
+- Bottom controls design status
+- Existing button functionality status
+- BUILD SUCCESSFUL
+- Final APK path

@@ -68,12 +68,16 @@ private val RoomBrown = Color(0xFF723B21)
 private val RoomText = Color.White
 
 @Composable
-internal fun EightSeatRoomScreen(state: EightSeatRoomState, actions: EightSeatRoomActions) {
+internal fun EightSeatRoomScreen(
+    state: EightSeatRoomState,
+    actions: EightSeatRoomActions,
+    imeInsets: WindowInsets = WindowInsets.ime
+) {
+    RoomImeWindowPolicy()
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
             .background(Brush.verticalGradient(listOf(Color(0xFFFF9B40), Color(0xFFEF702E))))
             .navigationBarsPadding()
-            .imePadding()
     ) {
         // Fixed-sized seat rows leave the remaining height to the chat region,
         // rather than stretching seats or pushing the controls off-screen.
@@ -194,8 +198,14 @@ internal fun EightSeatRoomScreen(state: EightSeatRoomState, actions: EightSeatRo
             }
 
             Spacer(Modifier.weight(1f))
-            RoomLowerSection(state, actions, tight, cameraSeats = 1..3)
+            RoomLowerSectionInfo(state, actions, tight, cameraSeats = 1..3)
+            Spacer(Modifier.height(44.dp))
         }
+        RoomControlBar(state, actions,
+            Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                .windowInsetsPadding(imeInsets)
+                .padding(start = 12.dp, end = 12.dp,
+                    bottom = if (tight) 5.dp else 9.dp))
     }
 }
 
