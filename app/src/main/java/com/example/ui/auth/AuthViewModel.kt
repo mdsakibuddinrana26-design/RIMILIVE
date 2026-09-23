@@ -79,6 +79,7 @@ data class ForgotPasswordUiState(
 data class MainAuthUiState(
     val currentScreen: AuthScreen = AuthScreen.LOGIN,
     val currentUser: User? = null,
+    val isRestoringSession: Boolean = true,
     val loginState: LoginUiState = LoginUiState(),
     val signUpState: SignUpUiState = SignUpUiState(),
     val forgotPasswordState: ForgotPasswordUiState = ForgotPasswordUiState(),
@@ -101,6 +102,7 @@ class AuthViewModel(
                 _uiState.update { current ->
                     current.copy(
                         currentUser = user,
+                        isRestoringSession = false,
                         currentScreen = if (user != null) AuthScreen.AUTHENTICATED else current.currentScreen
                     )
                 }

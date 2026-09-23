@@ -22,11 +22,15 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -36,8 +40,20 @@ class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth
 ) : AuthRepository {
 
-    private val _currentUserFlow = MutableStateFlow<User?>(null)
-    override val currentUserFlow: Flow<User?> = _currentUserFlow.asStateFlow()
+    /*
+     * Do not seed this flow with null.  A StateFlow(null) makes the UI treat the
+     * first, synchronous value as "signed out" while Firebase is still
+     * restoring its persisted session.  The auth listener publishes the first
+     * definitive result (a local profile or null) instead.
+     */
+    private val _currentUserFlow = MutableSharedFlow<User?>(
+        replay = 1,
+        extraBufferCapacity = 1
+    )
+    override val currentUserFlow: Flow<User?> = _currentUserFlow.asSharedFlow()
+    private var lastPublishedUser: User? = null
+    private val initialDataReady = CompletableDeferred<Unit>()
+    private val restorationMutex = Mutex()
 
     private var pendingEmailForSignIn: String? = null
 
@@ -67,21 +83,98 @@ class AuthRepositoryImpl(
         // Synchronize persistent Firebase Authentication session state
         firebaseAuth.addAuthStateListener { auth ->
             val fbUser = auth.currentUser
-            if (fbUser != null && _currentUserFlow.value == null) {
-                val email = fbUser.email
-                if (email != null) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val local = userDao.findByEmail(email)
-                        if (local != null) {
-                            _currentUserFlow.value = local.toDomainModel()
-                        }
-                    }
+            CoroutineScope(Dispatchers.IO).launch {
+                // A fresh install may still be seeding the built-in local
+                // profiles when Firebase invokes this listener.
+                initialDataReady.await()
+                /*
+                 * Firebase is the source of truth for session existence, but
+                 * the app's role/profile data remains local. Only hydrate from
+                 * an authenticated Firebase identity; never replace existing
+                 * profile fields or create a pretend Firebase session.
+                 */
+                // Anonymous sessions are intentionally not treated as an
+                // authenticated identity and are never turned into profiles.
+                val local = fbUser
+                    ?.takeUnless { it.isAnonymous }
+                    ?.let { hydrateFirebaseUser(it) }
+                if (local != null) {
+                    userDao.updateLastLogin(local.id, System.currentTimeMillis())
+                    lastPublishedUser = local.toDomainModel()
+                    _currentUserFlow.emit(lastPublishedUser)
+                } else {
+                    lastPublishedUser = null
+                    _currentUserFlow.emit(null)
                 }
             }
         }
     }
 
+    /**
+     * Resolves Firebase identity to the local profile without replacing any
+     * profile fields.  The existing Room schema has no Firebase UID column, so
+     * a private UID->local-id mapping is kept in app preferences for identities
+     * (notably Facebook accounts) that do not expose an email address.
+     */
+    private suspend fun hydrateFirebaseUser(firebaseUser: FirebaseUser): UserEntity? =
+        restorationMutex.withLock {
+            val prefs = firebaseAuth.app.applicationContext.getSharedPreferences(
+                "gami_auth_identity",
+                android.content.Context.MODE_PRIVATE
+            )
+            val mappedId = prefs.getLong("uid_${firebaseUser.uid}", 0L)
+            val byMappedId = mappedId.takeIf { it > 0 }?.let { userDao.findById(it) }
+            val email = firebaseUser.email?.trim()?.lowercase()?.takeIf { it.isNotEmpty() }
+            val existing = byMappedId ?: email?.let { userDao.findByEmail(it) }
+            if (existing != null) {
+                if (mappedId != existing.id) {
+                    prefs.edit().putLong("uid_${firebaseUser.uid}", existing.id).apply()
+                }
+                return@withLock existing
+            }
+
+            // A Firebase user without an email still needs a local profile for
+            // Home/profile routing. This is a local, stable identifier only;
+            // it is never used as a Firebase credential or email address.
+            val localEmail = email ?: "firebase-${firebaseUser.uid}@local.invalid"
+            val provider = firebaseUser.providerData
+                .firstOrNull { !it.providerId.isNullOrBlank() }
+                ?.providerId
+                ?: "firebase"
+            val baseUsername = "firebase_${firebaseUser.uid}"
+                .replace(Regex("[^A-Za-z0-9_]"), "_")
+                .take(40)
+                .ifBlank { "firebase_user" }
+            var username = baseUsername
+            var suffix = 1
+            while (userDao.findByUsername(username) != null) {
+                username = "${baseUsername.take(35)}_$suffix"
+                suffix++
+            }
+            val displayName = firebaseUser.displayName?.trim()
+                ?.takeIf { it.isNotEmpty() }
+                ?: email?.substringBefore("@")
+                ?: "Firebase User"
+            val entity = UserEntity(
+                username = username,
+                email = localEmail,
+                fullName = displayName,
+                passwordSalt = PasswordSecurity.generateSalt(),
+                passwordHash = "",
+                role = UserRole.USER.name,
+                securityQuestion = "$provider Authentication",
+                securityAnswerHash = "",
+                isEmailVerified = firebaseUser.isEmailVerified,
+                lastLoginAt = System.currentTimeMillis()
+            )
+            val insertedId = userDao.insert(entity)
+            val created = entity.copy(id = insertedId)
+            prefs.edit().putLong("uid_${firebaseUser.uid}", insertedId).apply()
+            created
+        }
+
     override suspend fun seedInitialDataIfEmpty() = withContext(Dispatchers.IO) {
+        try {
         val count = userDao.countUsers()
         if (count == 0) {
             // 1. Dedicated System Owner Account (Server/Cloud Architecture Blueprint)
@@ -138,6 +231,9 @@ class AuthRepositoryImpl(
                 )
             )
         }
+        } finally {
+            initialDataReady.complete(Unit)
+        }
     }
 
     override suspend fun login(identifier: String, password: String): Result<User> = withContext(Dispatchers.IO) {
@@ -153,14 +249,8 @@ class AuthRepositoryImpl(
         if (localUser != null && PasswordSecurity.verifyPassword(password, localUser.passwordSalt, localUser.passwordHash)) {
             userDao.updateLastLogin(localUser.id, System.currentTimeMillis())
             val domainUser = localUser.toDomainModel()
-            _currentUserFlow.value = domainUser
-
-            if (firebaseAuth.currentUser == null) {
-                try {
-                    firebaseAuth.signInAnonymously().await()
-                } catch (_: Exception) {
-                }
-            }
+            lastPublishedUser = domainUser
+            _currentUserFlow.emit(domainUser)
 
             auditDao.recordAuditLog(
                 SecurityAuditEntity(
@@ -213,7 +303,8 @@ class AuthRepositoryImpl(
                 newEntity.copy(id = insertedId).toDomainModel()
             }
 
-            _currentUserFlow.value = domainUser
+            lastPublishedUser = domainUser
+            _currentUserFlow.emit(domainUser)
 
             auditDao.recordAuditLog(
                 SecurityAuditEntity(
@@ -234,7 +325,8 @@ class AuthRepositoryImpl(
                 }
                 userDao.updateLastLogin(localUser.id, System.currentTimeMillis())
                 val domainUser = localUser.toDomainModel()
-                _currentUserFlow.value = domainUser
+                lastPublishedUser = domainUser
+                _currentUserFlow.emit(domainUser)
                 auditDao.recordAuditLog(
                     SecurityAuditEntity(
                         eventType = AuditEventType.LOGIN_SUCCESS.name,
@@ -258,7 +350,8 @@ class AuthRepositoryImpl(
             if (localUser != null && PasswordSecurity.verifyPassword(password, localUser.passwordSalt, localUser.passwordHash)) {
                 userDao.updateLastLogin(localUser.id, System.currentTimeMillis())
                 val domainUser = localUser.toDomainModel()
-                _currentUserFlow.value = domainUser
+                lastPublishedUser = domainUser
+                _currentUserFlow.emit(domainUser)
                 auditDao.recordAuditLog(
                     SecurityAuditEntity(
                         eventType = AuditEventType.LOGIN_SUCCESS.name,
@@ -282,7 +375,8 @@ class AuthRepositoryImpl(
             if (localUser != null && PasswordSecurity.verifyPassword(password, localUser.passwordSalt, localUser.passwordHash)) {
                 userDao.updateLastLogin(localUser.id, System.currentTimeMillis())
                 val domainUser = localUser.toDomainModel()
-                _currentUserFlow.value = domainUser
+                lastPublishedUser = domainUser
+                _currentUserFlow.emit(domainUser)
                 return@withContext Result.success(domainUser)
             }
             val errorMsg = when (e) {
@@ -295,8 +389,12 @@ class AuthRepositoryImpl(
 
     override suspend fun signInWithGoogle(idToken: String?, email: String?, name: String?): Result<User> = withContext(Dispatchers.IO) {
         try {
-            val targetEmail = email?.trim()?.lowercase() ?: "mdsakibuddinrana26@gmail.com"
-            val displayName = name?.trim()?.takeIf { it.isNotBlank() } ?: "Md Sakib Uddin Rana"
+            val targetEmail = email?.trim()?.lowercase()?.takeIf { it.isNotBlank() }
+                ?: firebaseAuth.currentUser?.email?.trim()?.lowercase()
+                ?: return@withContext Result.failure(IllegalArgumentException("Google account email was not provided."))
+            val displayName = name?.trim()?.takeIf { it.isNotBlank() }
+                ?: firebaseAuth.currentUser?.displayName?.takeIf { it.isNotBlank() }
+                ?: targetEmail.substringBefore("@")
             val username = targetEmail.substringBefore("@").replace(".", "_")
 
             var firebaseUid: String? = null
@@ -313,18 +411,10 @@ class AuthRepositoryImpl(
                 }
             }
 
-            // Ensure Firebase Auth session exists for the selected Google account
+            // A Firebase session is established only by the real Google
+            // credential above; never substitute an anonymous user.
             val activeFbUser = firebaseAuth.currentUser
-            if (activeFbUser == null) {
-                try {
-                    val anonResult = firebaseAuth.signInAnonymously().await()
-                    firebaseUid = anonResult.user?.uid
-                } catch (fbEx: Exception) {
-                    Log.w("AuthRepositoryImpl", "Firebase Authentication session note: ${fbEx.message}")
-                }
-            } else {
-                firebaseUid = activeFbUser.uid
-            }
+            if (activeFbUser != null) firebaseUid = activeFbUser.uid
 
             try {
                 val profileUpdates = UserProfileChangeRequest.Builder()
@@ -357,7 +447,8 @@ class AuthRepositoryImpl(
             }
 
             val domainUser = localUser.toDomainModel()
-            _currentUserFlow.value = domainUser
+            lastPublishedUser = domainUser
+            _currentUserFlow.emit(domainUser)
 
             val auditDetail = if (firebaseUid != null) {
                 "User successfully authenticated with Firebase Authentication (UID: $firebaseUid, provider: google.com)"
@@ -415,23 +506,15 @@ class AuthRepositoryImpl(
 
             val targetEmail = email?.trim()?.lowercase()
                 ?: activeFbUser?.email?.trim()?.lowercase()
-                ?: "facebook.user@gamilive.com"
+                ?: return@withContext Result.failure(IllegalArgumentException("Facebook account email was not provided."))
             val displayName = name?.trim()?.takeIf { it.isNotBlank() }
                 ?: activeFbUser?.displayName?.trim()?.takeIf { it.isNotBlank() }
                 ?: "Facebook User"
             val username = targetEmail.substringBefore("@").replace(".", "_") + "_fb"
 
-            // Ensure Firebase session exists without calling signInWithPassword
-            if (activeFbUser == null) {
-                try {
-                    val anonResult = firebaseAuth.signInAnonymously().await()
-                    effectiveUid = anonResult.user?.uid
-                } catch (fbEx: Exception) {
-                    Log.w("AuthRepositoryImpl", "Firebase Authentication Facebook note: ${fbEx.message}")
-                }
-            } else {
-                effectiveUid = activeFbUser.uid
-            }
+            // Only a real Facebook credential may establish a Firebase
+            // session; do not replace it with anonymous authentication.
+            if (activeFbUser != null) effectiveUid = activeFbUser.uid
 
             try {
                 val profileUpdates = UserProfileChangeRequest.Builder()
@@ -464,7 +547,8 @@ class AuthRepositoryImpl(
             }
 
             val domainUser = localUser.toDomainModel()
-            _currentUserFlow.value = domainUser
+            lastPublishedUser = domainUser
+            _currentUserFlow.emit(domainUser)
 
             val auditDetail = if (effectiveUid != null) {
                 "User successfully authenticated with Firebase Authentication (UID: $effectiveUid, provider: facebook.com)"
@@ -620,7 +704,8 @@ class AuthRepositoryImpl(
             }
 
             val domainUser = localUser.toDomainModel()
-            _currentUserFlow.value = domainUser
+            lastPublishedUser = domainUser
+            _currentUserFlow.emit(domainUser)
 
             auditDao.recordAuditLog(
                 SecurityAuditEntity(
@@ -709,7 +794,8 @@ class AuthRepositoryImpl(
 
             val insertedId = userDao.insert(newUserEntity)
             val createdUser = newUserEntity.copy(id = insertedId).toDomainModel()
-            _currentUserFlow.value = createdUser
+            lastPublishedUser = createdUser
+            _currentUserFlow.emit(createdUser)
 
             auditDao.recordAuditLog(
                 SecurityAuditEntity(
@@ -740,7 +826,8 @@ class AuthRepositoryImpl(
                 )
                 val insertedId = userDao.insert(newUserEntity)
                 val createdUser = newUserEntity.copy(id = insertedId).toDomainModel()
-                _currentUserFlow.value = createdUser
+                lastPublishedUser = createdUser
+                _currentUserFlow.emit(createdUser)
                 auditDao.recordAuditLog(
                     SecurityAuditEntity(
                         eventType = AuditEventType.SIGN_UP_USER.name,
@@ -881,13 +968,14 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun logout() = withContext(Dispatchers.IO) {
-        val current = _currentUserFlow.value
+        val current = lastPublishedUser
         try {
             firebaseAuth.signOut()
         } catch (e: Exception) {
             Log.w("AuthRepository", "Firebase signOut non-fatal: ${e.message}")
         }
-        _currentUserFlow.value = null
+        lastPublishedUser = null
+        _currentUserFlow.emit(null)
         if (current != null) {
             auditDao.recordAuditLog(
                 SecurityAuditEntity(

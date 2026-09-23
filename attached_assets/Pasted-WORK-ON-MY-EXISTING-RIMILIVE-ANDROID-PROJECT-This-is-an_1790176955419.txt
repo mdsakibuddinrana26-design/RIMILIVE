@@ -1,0 +1,851 @@
+WORK ON MY EXISTING RIMILIVE ANDROID PROJECT.
+
+This is an EXISTING project that already contains working features and room code.
+
+DO NOT:
+- create a new project
+- recreate the app from scratch
+- create duplicate versions of existing screens
+- create a new 8-seat room while leaving the old 12-seat room
+- unnecessarily redesign unrelated screens
+- remove working Firebase/login/profile functionality
+- copy personal information from the attached screenshots
+
+I have attached multiple screenshots from another app.
+
+THE SCREENSHOTS ARE VISUAL DESIGN REFERENCES ONLY.
+
+Study ALL screenshots carefully before modifying the UI.
+
+====================================================
+A. VERY IMPORTANT SCREENSHOT RULE
+====================================================
+
+Use the screenshots ONLY to reproduce the visual design and interaction structure.
+
+You may use them as references for:
+- layout
+- proportions
+- room/card shapes
+- spacing
+- positioning
+- seat arrangement
+- navigation placement
+- Create Room layout
+- buttons
+- tabs
+- avatar positioning
+- camera/video area positioning
+- audio-seat positioning
+- ranking/card structure
+- Chat/Call row structure
+- general visual hierarchy
+
+DO NOT COPY from the screenshots:
+- app name
+- app logo
+- usernames
+- user IDs
+- room IDs
+- profile photos
+- coin balances
+- rankings
+- personal information
+- reference-app branding
+- reference-app-specific copyrighted graphics/assets
+
+For example:
+If the screenshot contains my username, ID, photo or room number, DO NOT put those values into RIMILIVE.
+
+Use RIMILIVE branding and RIMILIVE's own dynamic user/room data.
+
+The goal is to reproduce the DESIGN STRUCTURE, not the screenshot's personal data.
+
+====================================================
+B. INSPECT THE EXISTING PROJECT FIRST
+====================================================
+
+Before changing code:
+
+1. Inspect the current project.
+2. Locate the existing:
+   - Home
+   - Follow
+   - Party
+   - Chat/Call
+   - Top
+   - bottom navigation
+   - Create Room
+   - existing 12-seat room
+   - existing 15-seat room
+   - authentication/session code
+   - Firebase/Firestore code
+   - profile persistence
+   - startup/loading/theme code
+   - APK signing/version configuration
+
+3. Understand what already works.
+
+4. Automatically create backups of files before modifying them.
+
+Do NOT ask me to make backups manually.
+
+After inspection, continue directly with implementation.
+
+Do not stop after giving me an analysis.
+
+====================================================
+C. PRESERVE EXISTING WORKING FEATURES
+====================================================
+
+Do not break existing working functionality.
+
+Preserve:
+- Google login
+- Facebook login/configuration
+- Email login
+- Firebase Authentication
+- Firestore
+- saved profile information
+- profile photo
+- name
+- gender
+- date of birth
+- country/region information
+- profile-completion state
+- current package/application ID
+- existing Firebase configuration
+- existing working navigation
+- existing room functionality that is already correct
+
+Modify existing implementations instead of replacing working systems unnecessarily.
+
+====================================================
+D. FIX LOGIN SESSION PERSISTENCE
+====================================================
+
+There is currently a regression.
+
+Previously:
+After logging in successfully once, I could close RIMILIVE and reopen it without logging in again.
+
+Now:
+After closing/reopening the app, it asks me to authenticate again.
+
+FIX THIS.
+
+Required behavior:
+
+Google:
+Login once successfully -> session persists.
+
+Facebook:
+Login once successfully -> session persists.
+
+Email:
+Login once successfully -> session persists.
+
+When RIMILIVE opens:
+
+If FirebaseAuth.currentUser is valid/authenticated:
+DO NOT show Login again.
+
+Automatically continue to the correct authenticated Home/Profile flow.
+
+Only show Login again when:
+- the user explicitly logs out
+- Firebase authentication is genuinely invalid/expired
+- authentication has been revoked
+
+Do not implement a fake local login system.
+
+Use the existing Firebase Authentication persisted session correctly.
+
+Do not destroy saved profile information.
+
+====================================================
+E. FIX APK UPDATE PROBLEM
+====================================================
+
+There is another important regression.
+
+Previously:
+I could install a newly built RIMILIVE APK over the previous installed RIMILIVE APK as an UPDATE.
+
+Now:
+The new APK does not update the existing installation.
+I have to uninstall the old app first and then install the new APK.
+
+Diagnose the real cause and fix it.
+
+Check carefully:
+- applicationId
+- package identity
+- signing key
+- debug keystore consistency
+- versionCode
+- versionName
+- build variants
+- manifest configuration
+
+IMPORTANT:
+
+Do NOT change the applicationId unnecessarily.
+
+Do NOT randomly generate a different signing key.
+
+Keep future development/debug builds consistently signed so that newer compatible APKs can update the previous RIMILIVE installation where Android permits it.
+
+Increase/configure versionCode correctly when necessary.
+
+The objective is:
+NEW RIMILIVE APK -> install over OLD compatible RIMILIVE APK -> Update
+
+without uninstalling and losing local app data.
+
+====================================================
+F. HOME SCREEN — FOLLOW
+====================================================
+
+Use the attached FOLLOW screenshot as the visual design reference.
+
+Match its general design closely:
+- room/card appearance
+- dimensions/proportions
+- spacing
+- avatar positioning
+- room information positioning
+- rounded corners
+- visual hierarchy
+- scrolling behavior
+- phone-screen layout
+
+Do NOT copy screenshot users/data.
+
+Use RIMILIVE dynamic data/placeholders.
+
+FOLLOW must actually work.
+
+When Follow is selected:
+- show Follow content
+- highlight Follow correctly
+- do not display the wrong tab content
+
+Keep the Create Room entry/control in the intended bottom area according to the reference design.
+
+====================================================
+G. HOME SCREEN — PARTY
+====================================================
+
+Use the attached PARTY screenshot as the main design reference.
+
+Match:
+- board/card shape
+- width/height
+- spacing
+- avatar/image positioning
+- room/user information placement
+- grid/list structure
+- rounded styling
+- overall phone proportions
+
+Do not guess whether cards should be square or long.
+
+Use the screenshot's proportions as the visual reference.
+
+Party tab must work.
+
+Party room/cards must respond when tapped.
+
+Keep Create Room accessible in the intended position.
+
+====================================================
+H. CHAT / CALL SCREEN
+====================================================
+
+Use the attached Chat/Call screenshot as the visual reference.
+
+Match the general structure:
+- avatar
+- user name
+- user information/ID placement style
+- online/offline status
+- call action placement
+- row/card proportions
+- spacing
+- phone-screen presentation
+
+Do not copy real IDs or names from the screenshot.
+
+Use RIMILIVE's data.
+
+All visible buttons must respond.
+
+Do not leave fake/dead call controls.
+
+If actual real-time calling infrastructure is not implemented yet, implement the correct UI/navigation/state layer and clearly report what backend/RTC work remains.
+
+====================================================
+I. TOP SCREEN
+====================================================
+
+Use the attached TOP screenshot as the visual design reference.
+
+Match:
+- board/card proportions
+- ranking presentation
+- avatar placement
+- text hierarchy
+- spacing
+- layout structure
+- scrolling
+
+Use RIMILIVE data.
+
+Do not copy screenshot rankings/users.
+
+TOP must actually work and show its selected state correctly.
+
+====================================================
+J. HOME + BOTTOM NAVIGATION
+====================================================
+
+Make the entire Home navigation functional.
+
+Required main sections:
+
+FOLLOW
+PARTY
+CHAT
+TOP
+
+Every visible navigation control must:
+- respond to tap
+- open the correct section
+- show correct selected state
+- not create duplicate screens
+- preserve sensible navigation state
+
+Inspect the bottom navigation too.
+
+EVERY currently visible bottom-navigation control must work.
+
+If there is:
+- Home
+- Create/+
+- Profile
+- Gift
+- Call
+- Ranking
+or another existing item,
+
+make the displayed controls respond according to the current intended RIMILIVE flow.
+
+Do not leave decorative dead buttons.
+
+Android Back must work correctly.
+
+====================================================
+K. CREATE ROOM — FOLLOW THE SCREENSHOT CLOSELY
+====================================================
+
+Use the attached CREATE ROOM screenshot as the main design reference.
+
+This screen should visually follow the screenshot closely while keeping RIMILIVE branding.
+
+Match the general:
+- header
+- back button
+- Room Poster section
+- Edit control
+- Room Type section
+- Friends Only control
+- Room Layout section
+- layout previews
+- selected state
+- Create button
+- spacing
+- cards
+- rounded corners
+- alignment
+- proportions
+
+Make these controls FUNCTIONAL.
+
+ROOM POSTER:
+- display current poster
+- Edit/change action responds
+
+ROOM TYPE:
+Preserve the existing room types where already implemented, including:
+- Number
+- Race
+- Chatroom
+- BlockMe PK
+
+Each displayed option must be selectable.
+
+Selected option must visibly highlight.
+
+FRIENDS ONLY:
+Toggle must work and be included in room state/configuration.
+
+ROOM LAYOUT:
+Layout selector must work.
+
+The selected layout MUST determine the room that actually opens.
+
+CREATE:
+Create button must work.
+
+Do not let rapid repeated taps create duplicate rooms.
+
+Show appropriate progress/loading state while creating.
+
+BACK:
+Back button must work.
+
+====================================================
+L. CRITICAL CHANGE — MODIFY EXISTING 12-SEAT ROOM
+====================================================
+
+THIS IS VERY IMPORTANT.
+
+The current project already has an EXISTING 12-SEAT ROOM/LAYOUT.
+
+DO NOT create a separate new 8-seat room while leaving the existing 12-seat room unchanged.
+
+FIND THE EXISTING 12-SEAT ROOM IMPLEMENTATION.
+
+MODIFY THAT SAME EXISTING ROOM INTO THE NEW 8-SEAT ROOM.
+
+OLD:
+12 total seats
+
+NEW:
+8 TOTAL SEATS
+
+EXACT CONFIGURATION:
+
+TOP:
+3 CAMERA / VIDEO SEATS
+
+LOWER AREA:
+5 AUDIO SEATS
+
+Therefore:
+
+3 CAMERA
++
+5 AUDIO
+=
+8 TOTAL SEATS
+
+Remove the 4 unnecessary seats from the existing 12-seat implementation.
+
+Update ALL associated logic that depends on the old 12-seat count, including where applicable:
+- UI layout
+- seat list
+- seat indexing
+- room-layout selection
+- room configuration
+- occupied-seat state
+- empty-seat state
+- Firestore/local room model
+- serialization/deserialization
+- validation
+- camera-seat count
+- audio-seat count
+
+Do not leave hidden 12-seat logic behind that causes incorrect behavior.
+
+Preserve the existing room flow and working functionality.
+
+This is a MODIFICATION:
+
+EXISTING 12-SEAT ROOM
+        ↓
+NEW 8-SEAT ROOM
+        ↓
+3 CAMERA + 5 AUDIO
+
+====================================================
+M. 8-SEAT ROOM DESIGN
+====================================================
+
+Use the attached corresponding room screenshot as the visual reference.
+
+The new modified 8-seat room must contain:
+
+3 camera/video positions in the upper area.
+
+5 audio seats below.
+
+The camera areas should be clearly larger/more visually prominent than normal audio seats where appropriate to the reference.
+
+Audio seats should show:
+- avatar/profile state
+- name where appropriate
+- empty/occupied state
+- microphone state where appropriate
+
+Everything must fit properly on a portrait Android phone.
+
+No overlap.
+No clipping.
+No invisible controls.
+
+====================================================
+N. EXISTING 15-SEAT ROOM
+====================================================
+
+The existing 15-seat room remains a 15-seat room.
+
+Do NOT convert it to another total.
+
+Correct its internal camera/audio configuration.
+
+EXACT CONFIGURATION:
+
+TOTAL:
+15 seats
+
+TOP:
+5 CAMERA / VIDEO SEATS
+
+LOWER AREA:
+10 AUDIO SEATS
+
+Therefore:
+
+5 CAMERA
++
+10 AUDIO
+=
+15 TOTAL SEATS
+
+Previous implementation had the camera counts mixed up.
+
+Correct this.
+
+DO NOT REVERSE IT AGAIN.
+
+FINAL RULE:
+
+8-seat room:
+3 CAMERA + 5 AUDIO
+
+15-seat room:
+5 CAMERA + 10 AUDIO
+
+====================================================
+O. 15-SEAT ROOM DESIGN
+====================================================
+
+Use the attached 15-seat room screenshot as the visual reference.
+
+The 5 video/camera areas must be in the upper area.
+
+The remaining 10 audio seats must be arranged cleanly below.
+
+Match the reference's general:
+- proportions
+- spacing
+- seat presentation
+- camera area
+- audio area
+- room controls
+- bottom controls
+- gift control
+- host information
+- room information
+
+Everything must fit a normal Android portrait phone.
+
+====================================================
+P. ROOM FUNCTIONALITY
+====================================================
+
+For BOTH room types, make the existing room interactions functional wherever supported by the current architecture.
+
+Verify/implement:
+- open room
+- enter room
+- leave room
+- select/take available seat
+- leave seat
+- occupied seat state
+- empty seat state
+- avatar display
+- username display
+- host indication
+- microphone UI/state
+- camera UI/state
+- member state
+- gift button/control
+- bottom room controls
+- Android Back/leave behavior
+
+Every visible room control should respond appropriately.
+
+Do not leave controls that look tappable but do nothing.
+
+====================================================
+Q. CAMERA / MICROPHONE
+====================================================
+
+The room must have proper camera and microphone controls/states.
+
+For 8-seat:
+maximum intended video positions = 3.
+
+For 15-seat:
+maximum intended video positions = 5.
+
+Camera/video state and microphone state must be represented correctly in the UI/state model.
+
+IMPORTANT:
+
+Do NOT pretend real live video/audio streaming is complete if the app does not yet contain a proper RTC/live-media service.
+
+If real audio/video requires Agora, WebRTC or another RTC backend/service later:
+
+- implement the correct UI
+- implement state/model interfaces
+- keep the architecture ready
+- clearly report the missing RTC requirement
+
+Do not fake real streaming and call it complete.
+
+====================================================
+R. GIFTS / ROOM CONTROLS
+====================================================
+
+Use the room screenshots as references for the general location and style of the Gift and bottom room controls.
+
+Gift button must respond.
+
+If real gift sending/coin transfer is not safely implemented server-side yet:
+do not implement insecure client-authoritative coin transfers.
+
+Prepare the correct UI/navigation/state and clearly report the remaining secure backend requirement.
+
+====================================================
+S. HOST HANDOFF
+====================================================
+
+Preserve/implement deterministic host handoff.
+
+If the current host:
+- intentionally leaves
+OR
+- becomes unavailable/disconnected
+
+then choose the next ACTIVE joined room member as host.
+
+Prefer deterministic earliest-active-joined-member ordering.
+
+Do NOT choose the new host purely based on seat number.
+
+If there are no other active members:
+close/delete the room where the existing backend architecture safely supports it.
+
+Host authority and security-sensitive actions should ultimately be server-authoritative.
+
+====================================================
+T. FIX BLACK STARTUP / BLACK FLASH
+====================================================
+
+There is still a black screen/black flash when opening the app or during some transitions.
+
+Diagnose the REAL cause.
+
+Inspect:
+- splash theme
+- startup theme
+- windowBackground
+- Compose initialization
+- authentication-state loading
+- profile loading
+- navigation initialization
+- Firebase initialization
+- blocking work on main thread
+- screen transitions
+
+Fix the underlying cause.
+
+Do NOT simply add a fake delay.
+
+If the app genuinely needs a short loading period:
+show a clean RIMILIVE-branded loading/splash state instead of a black screen.
+
+====================================================
+U. FIREBASE / DATA SAFETY
+====================================================
+
+Preserve the existing Firebase architecture.
+
+Do NOT erase existing user data.
+
+Preserve:
+- users
+- profiles
+- authentication
+- profile-completion state
+- country/region data
+- existing Firestore integration
+
+When changing room seat counts, make sure old 12-seat assumptions do not corrupt the new 8-seat room state.
+
+Do not make security-sensitive operations client-authoritative.
+
+====================================================
+V. PHONE-FIRST RESPONSIVENESS
+====================================================
+
+The REAL Android phone is the priority.
+
+Review all modified screens for portrait Android phone use.
+
+Check:
+- status bar
+- navigation bar
+- safe areas
+- scrolling
+- touch sizes
+- different phone widths/heights
+- text clipping
+- card clipping
+- seat overlap
+- camera-area scaling
+- keyboard interaction
+
+Do not optimize only for Replit desktop preview.
+
+====================================================
+W. TEST THE COMPLETE FLOW
+====================================================
+
+Before declaring completion, systematically verify:
+
+1. App startup
+2. Black-screen behavior
+3. Login screen
+4. Google login/session persistence
+5. Facebook login/session persistence where configuration permits
+6. Email login/session persistence
+7. Close/reopen app while logged in
+8. Profile persistence
+9. Follow
+10. Party
+11. Chat/Call
+12. Top
+13. All visible Home controls
+14. Bottom navigation
+15. Create Room
+16. Room Poster
+17. Room Type
+18. Friends Only
+19. Room Layout selection
+20. Create button
+21. Old 12-seat implementation is no longer exposed as 12 seats
+22. Modified room now contains exactly 8 total seats
+23. 8-seat room contains exactly 3 camera + 5 audio
+24. 15-seat room contains exactly 15 total seats
+25. 15-seat room contains exactly 5 camera + 10 audio
+26. Camera state/control
+27. Microphone state/control
+28. Gift control
+29. Seat selection/state
+30. Join/leave room
+31. Android Back
+32. No obvious dead buttons
+33. No obvious clipping/overlap
+34. No crashes in these flows
+35. APK update/signing/version configuration
+
+IMPORTANT:
+Do not claim something was tested on a physical Android phone if Replit cannot physically test it.
+
+Clearly distinguish:
+- code/static verification
+- build verification
+- automated tests
+- physical-device testing still required
+
+====================================================
+X. BUILD THE FINAL APK
+====================================================
+
+Only after implementation is complete, run:
+
+./gradlew :app:assembleDebug
+
+If build fails:
+- inspect the actual error
+- fix it safely
+- rebuild
+
+Continue until:
+
+BUILD SUCCESSFUL
+
+Verify the newly generated APK:
+
+app/build/outputs/apk/debug/app-debug.apk
+
+Then update/replace the project-root downloadable copy:
+
+RIMILIVE.apk
+
+IMPORTANT:
+
+The root RIMILIVE.apk MUST be copied from the NEW final successful build.
+
+Do not leave the previous old RIMILIVE.apk in the root.
+
+Verify that:
+RIMILIVE.apk
+and
+app/build/outputs/apk/debug/app-debug.apk
+
+match.
+
+====================================================
+Y. FINAL REPORT
+====================================================
+
+Only after the work and successful build, give me a concise report.
+
+Tell me:
+
+1. APK update problem — FIXED / NOT FIXED and why
+2. Login persistence — FIXED / NOT FIXED
+3. Google session — status
+4. Facebook session — status
+5. Email session — status
+6. Follow — status
+7. Party — status
+8. Chat/Call — status
+9. Top — status
+10. Bottom navigation — status
+11. Create Room — status
+12. Existing 12-seat room successfully converted to 8-seat — status
+13. 8-seat = 3 camera + 5 audio — verify exact count
+14. 15-seat = 5 camera + 10 audio — verify exact count
+15. Camera/microphone controls — status
+16. Gift controls — status
+17. Black screen — status
+18. Firebase/Firestore — status
+19. What still requires RTC/backend/server implementation
+20. Build result
+21. Final APK path
+22. Root RIMILIVE.apk path
+
+Do not claim unfinished functionality is complete.
+
+Do not stop halfway just to give me a progress report.
+
+Do not repeatedly redesign the same screen.
+
+Inspect ALL attached screenshots and the existing code FIRST, then perform the changes as ONE coordinated implementation pass to minimize unnecessary Agent usage and credit consumption.

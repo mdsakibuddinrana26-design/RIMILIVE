@@ -1,1 +1,2 @@
 - [Android SDK persistence](android-sdk-persistence.md) — keep locally downloaded Android SDK tools in the workspace because the runner home can reset between sessions.
+- [Legacy room seat safety](legacy-room-seat-safety.md) — normalize old layouts in the app without silently deleting occupied Firestore seats during conversion.

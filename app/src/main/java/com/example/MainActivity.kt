@@ -1,10 +1,14 @@
 package com.example
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 
 import android.content.Intent
@@ -18,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -86,7 +91,18 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 val uiState by authViewModel.uiState.collectAsStateWithLifecycle()
 
-                when (uiState.currentScreen) {
+                if (uiState.isRestoringSession) {
+                    Box(
+                        modifier = Modifier.fillMaxSize().background(Color(0xFF0A0C16)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("RIMILIVE", color = Color(0xFF22D3EE), fontSize = 24.sp)
+                            Spacer(Modifier.height(18.dp))
+                            CircularProgressIndicator(color = Color(0xFF22D3EE))
+                        }
+                    }
+                } else when (uiState.currentScreen) {
                     AuthScreen.LOGIN -> {
                         LoginScreen(
                             state = uiState.loginState,
