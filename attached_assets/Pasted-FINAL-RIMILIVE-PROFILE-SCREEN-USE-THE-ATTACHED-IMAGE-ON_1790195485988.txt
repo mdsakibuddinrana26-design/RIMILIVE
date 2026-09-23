@@ -1,0 +1,173 @@
+FINAL RIMILIVE PROFILE SCREEN — USE THE ATTACHED IMAGE ONLY AS A UI DESIGN REFERENCE.
+
+IMPORTANT:
+Do NOT blindly copy everything visible in the screenshot.
+
+The screenshot contains sample/personal user information.
+NONE of that personal information should be copied into RIMILIVE.
+
+==================================================
+WHAT TO COPY FROM THE REFERENCE
+==================================================
+
+Copy ONLY the useful UI design, layout and required features:
+
+• Full premium green background and visual style
+• Profile-header layout/position
+• Friends / Following / Fans / Visitors layout
+• My Wallet section
+• Diamond wallet card
+• Coin wallet card
+• Activity/notification strip
+• Menu-row design
+• Bottom-navigation design
+• Spacing, rounded corners, proportions and overall premium appearance
+
+Make the RIMILIVE implementation visually as close to the attached reference as possible.
+
+==================================================
+DO NOT COPY PERSONAL/SAMPLE DATA
+==================================================
+
+DO NOT copy from the screenshot:
+
+• SAKIB
+• profile photo
+• Bangladesh
+• age 25
+• LV7
+• VIP status
+• Friends/Following/Fans/Visitors numbers
+• Diamond amount
+• Coin amount
+• KHAN SaB
+• withdrawal amount
+• any user ID
+• any other personal/sample information
+
+Instead, display the REAL CURRENT RIMILIVE USER'S DATA from the existing Firebase/Firestore system.
+
+If some real value is unavailable, use the app's existing safe/default state.
+Do NOT hardcode the screenshot values.
+
+==================================================
+PROFILE MENU — KEEP THESE REQUIRED FEATURES
+==================================================
+
+Keep these options in this exact order:
+
+1. Invite
+2. Sign-in PK
+3. My Level
+4. My Mission
+5. My Profile
+6. Store
+7. FAQ
+8. Settings
+
+Use new/original icons appropriate for each option.
+
+Keep the names exactly as written.
+
+Do not add unnecessary menu options.
+
+==================================================
+BOTTOM NAVIGATION — EXACT ORDER
+==================================================
+
+The bottom navigation must contain ONLY these 5 items:
+
+1. My Mission
+   - mission/target icon
+
+2. Follow
+   - people/follow icon
+
+3. Photo/Video Post
+   - large center image/post + button
+   - this is the CENTER button
+
+4. SMS
+   - clear message/chat icon
+
+5. Profile
+   - circular RIMILIVE "G" icon
+   - G must be at the FAR RIGHT only
+
+Do NOT add Party or Top here.
+
+==================================================
+IMPORTANT FUNCTIONAL RULE
+==================================================
+
+This screenshot is ONLY a design/layout reference.
+
+Keep RIMILIVE's existing real functionality and backend.
+
+DO NOT replace or damage:
+
+• Firebase Authentication
+• Firestore
+• logged-in user's profile
+• saved profile photo
+• login/session persistence
+• existing wallet data
+• existing Follow functionality
+• existing SMS/Chat functionality
+• existing navigation
+
+Where functionality already exists, connect the new UI to that EXISTING functionality.
+
+For features that are not implemented yet, create only the required UI/navigation entry safely.
+Do not invent unnecessary backend systems in this task.
+
+==================================================
+STRICT SCOPE
+==================================================
+
+ONLY redesign the Profile screen.
+
+DO NOT change:
+• Login
+• Complete Profile
+• Follow screen
+• Party screen
+• Chat/SMS screen
+• Create Room
+• 8-seat room
+• 15-seat room
+• existing room functionality
+
+Do not perform broad refactoring.
+
+==================================================
+FINAL RESULT
+==================================================
+
+The final screen should LOOK like the attached reference in:
+
+• background
+• structure
+• card shapes
+• spacing
+• proportions
+• menu arrangement
+• bottom navigation
+• premium visual style
+
+But all USER INFORMATION must belong to the actual logged-in RIMILIVE user.
+
+REFERENCE IMAGE = DESIGN ONLY.
+RIMILIVE/FIREBASE = REAL DATA.
+
+Before changing code, make a backup of every file you need to modify.
+
+After implementation run:
+
+./gradlew :app:assembleDebug
+
+Fix only relevant build errors until BUILD SUCCESSFUL.
+
+Do not finish until the project builds successfully.
+
+Then replace/update the root RIMILIVE.apk with the successful new APK and report the final APK path.

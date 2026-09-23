@@ -403,7 +403,7 @@ fun AuthenticatedHomeScreen(
     ) {
         // Top app header removed to maximize room/content space
 
-    if (!inRoom) {
+    if (!inRoom && selectedTab != "Profile") {
         // Banner
         Box(
             modifier = Modifier
@@ -673,47 +673,13 @@ fun AuthenticatedHomeScreen(
 
             
             "Profile" -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                ) {
-                    Text(
-                        text = "Profile",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(18.dp),
-                        color = Color(0xFFF7FFFC)
-                    ) {
-                        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                            if (profilePhotoUrl.isNotBlank()) {
-                                AsyncImage(profilePhotoUrl, "Your profile photo",
-                                    Modifier.size(62.dp).clip(CircleShape), contentScale = ContentScale.Crop)
-                            } else {
-                                Box(Modifier.size(62.dp).background(Color(0xFFD4F3E8), CircleShape),
-                                    contentAlignment = Alignment.Center) {
-                                    Text(user.fullName.ifBlank { user.username }.take(1).uppercase(),
-                                        color = Color(0xFF087D69), fontSize = 25.sp)
-                                }
-                            }
-                            Spacer(Modifier.width(14.dp))
-                            Column(Modifier.weight(1f)) {
-                                Text(user.fullName.ifBlank { user.username },
-                                    color = Color(0xFF173F39), fontWeight = FontWeight.Bold)
-                                Text(user.email, color = Color(0xFF567E75), fontSize = 12.sp,
-                                    maxLines = 1)
-                            }
-                        }
-                    }
-                    TextButton(onClick = onLogoutClick) { Text("Sign out", color = Color.White) }
-                }
+                RimiProfileScreen(
+                    user = user,
+                    firestore = firestore,
+                    onNavigate = { selectedTab = it },
+                    onLogout = onLogoutClick,
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             "Follow" -> {
@@ -3239,13 +3205,13 @@ Column(
         }
 
         // GAMI_FINAL_BOTTOM_SPACER
-            if (selectedTab !in listOf("Party", "Chat", "Top") || inRoom ||
+            if (selectedTab !in listOf("Party", "Chat", "Top", "Profile") || inRoom ||
                 (selectedTab == "Party" && !partyHasRooms)) {
                 Spacer(modifier = Modifier.weight(1f))
             }
 
             // Create room
-        if (!inRoom) Button(
+        if (!inRoom && selectedTab != "Profile") Button(
             onClick = {
                     showCreateRoomSetup = true
                 },
@@ -3266,7 +3232,9 @@ Column(
         }
 
         // Bottom navigation
-        if (!inRoom) NavigationBar(
+        if (!inRoom && selectedTab == "Profile") {
+            RimiProfileBottomBar(onNavigate = { selectedTab = it })
+        } else if (!inRoom) NavigationBar(
             containerColor = Color.White
         ) {
             NavigationBarItem(
