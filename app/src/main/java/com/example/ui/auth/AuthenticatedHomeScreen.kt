@@ -130,7 +130,7 @@ fun AuthenticatedHomeScreen(
     var createFriendsOnly by remember { mutableStateOf(false) }
     var createRoomType by remember { mutableStateOf("Race") }
     var createRoomLayout by remember { mutableStateOf("8-seat") }
-    var selectedLayoutPreview by remember { mutableIntStateOf(1) }
+    var selectedLayoutPreview by remember { mutableIntStateOf(0) }
     var createPosterUrl by remember { mutableStateOf("") }
     var createError by remember { mutableStateOf("") }
     var creatingRoom by remember { mutableStateOf(false) }
@@ -2008,6 +2008,61 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
         }
     }
 
+    fun toggleFifteenSeatAudio(seatNo: Int) {
+        if (seatNo !in 6..15 || currentUid.isBlank()) {
+            roomMessages = roomMessages + "System: Please sign in first"
+            return
+        }
+        selectedRoomSeat = seatNo
+        giftReceiverSeat = seatNo
+        val oldSeatNo = myJoinedSeat
+        val target = roomRef.collection("seats").document(seatNo.toString())
+        val old = oldSeatNo?.takeIf { it != seatNo }?.let {
+            roomRef.collection("seats").document(it.toString())
+        }
+        firestore.runTransaction { transaction ->
+            val targetSnapshot = transaction.get(target)
+            val oldSnapshot = old?.let { transaction.get(it) }
+            val owner = targetSnapshot.getString("uid")
+            if (targetSnapshot.exists() && owner != null && owner != currentUid) {
+                throw IllegalStateException("SEAT_OCCUPIED")
+            }
+            if (old != null && oldSnapshot?.getString("uid") == currentUid) {
+                transaction.delete(old)
+            }
+            if (oldSeatNo == seatNo) {
+                if (owner == currentUid) transaction.delete(target)
+                transaction.set(membersRef.document(currentUid), mapOf(
+                    "seat" to 0, "updatedAt" to System.currentTimeMillis()
+                ), SetOptions.merge())
+            } else {
+                transaction.set(target, mapOf(
+                    "uid" to currentUid, "name" to currentName, "photoUrl" to currentPhotoUrl,
+                    "seat" to seatNo, "updatedAt" to System.currentTimeMillis()
+                ))
+                transaction.set(membersRef.document(currentUid), mapOf(
+                    "uid" to currentUid, "name" to currentName, "photoUrl" to currentPhotoUrl,
+                    "seat" to seatNo, "updatedAt" to System.currentTimeMillis()
+                ), SetOptions.merge())
+            }
+            true
+        }.addOnSuccessListener {
+            myJoinedSeat = if (oldSeatNo == seatNo) null else seatNo
+            cameraEnabled = false
+            roomMessages = roomMessages + if (oldSeatNo == seatNo) {
+                "System: You left seat $seatNo"
+            } else {
+                "System: You joined seat $seatNo"
+            }
+        }.addOnFailureListener { error ->
+            roomMessages = roomMessages + if (error.message?.contains("SEAT_OCCUPIED") == true) {
+                "System: Seat $seatNo is already occupied"
+            } else {
+                "System: Could not update seat"
+            }
+        }
+    }
+
         if (inRoom && layoutSpec.key == "8-seat") {
             EightSeatRoomScreen(
                 state = EightSeatRoomState(
@@ -2063,6 +2118,65 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
                     onCoin = { showCoinMenu = true },
                     onMore = { showMoreMenu = true }
                 )
+            )
+        } else if (inRoom && layoutSpec.key == "15-seat") {
+            FifteenSeatRoomScreen(
+                state = EightSeatRoomState(
+                    hostName = roomHostName,
+                    hostPhoto = roomHostPhoto,
+                    roomType = roomType,
+                    memberCount = liveMemberCount,
+                    notice = noticeText,
+                    isHost = isHost,
+                    mySeat = myJoinedSeat,
+                    myPhoto = currentPhotoUrl,
+                    occupied = occupiedSeats,
+                    names = seatMemberNames,
+                    photos = seatMemberPhotos,
+                    memberCameras = seatMemberCameras,
+                    memberMics = seatMemberMics,
+                    cameraOn = cameraEnabled,
+                    micOn = myMicEnabled,
+                    pkRunning = pkRunning,
+                    pkSeconds = pkSecondsRemaining,
+                    lastMessage = roomMessages.lastOrNull().orEmpty(),
+                    chatInput = chatInput
+                ),
+                actions = EightSeatRoomActions(
+                    onNotice = { noticeDraft = noticeText; showNoticeDialog = true },
+                    onShare = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, "Join my RIMILIVE room: $roomId")
+                        }
+                        androidContext.startActivity(Intent.createChooser(shareIntent, "Share room"))
+                    },
+                    onLeave = { showLeaveRoomDialog = true },
+                    onPk = { if (isHost) showPkMenu = true },
+                    onCameraSeat = { seat ->
+                        selectedRoomSeat = seat
+                        giftReceiverSeat = seat
+                        toggleCameraSeat(seat)
+                    },
+                    onAudioSeat = ::toggleFifteenSeatAudio,
+                    onCameraToggle = { cameraEnabled = !cameraEnabled },
+                    onMicToggle = { myMicEnabled = !myMicEnabled },
+                    onChatChange = { chatInput = it },
+                    onSend = {
+                        val message = chatInput.trim()
+                        if (message.isNotEmpty()) {
+                            roomMessages = roomMessages + "You: $message"
+                            chatInput = ""
+                        }
+                    },
+                    onGame = { showGameMenu = true },
+                    onGift = { showGiftMenu = true },
+                    onCoin = { showCoinMenu = true },
+                    onMore = { showMoreMenu = true }
+                ),
+                pkScoreLine = if (pkRunning && pkOpponentSeat != null) {
+                    "Host: $hostPkScore    Seat $pkOpponentSeat: $opponentPkScore"
+                } else null
             )
         } else if (inRoom) {
 Column(

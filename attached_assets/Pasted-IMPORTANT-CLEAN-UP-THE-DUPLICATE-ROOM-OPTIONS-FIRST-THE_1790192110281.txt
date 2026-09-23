@@ -1,0 +1,255 @@
+IMPORTANT — CLEAN UP THE DUPLICATE ROOM OPTIONS FIRST, THEN FIX ONLY THE 15-SEAT ROOM.
+
+Please inspect the CURRENT implementation carefully before editing.
+
+There is currently a duplication problem:
+
+- TWO 8-seat room/layout options were created.
+- TWO 15-seat room/layout options were created.
+
+THIS IS WRONG.
+
+==================================================
+STEP 1 — REMOVE THE DUPLICATES
+==================================================
+
+First, remove ONLY the duplicate room/layout options.
+
+After cleanup there must be EXACTLY TWO room-layout choices in total:
+
+1. ONE 8-seat room
+2. ONE 15-seat room
+
+NOT:
+- two 8-seat rooms
+- two 15-seat rooms
+
+Do not delete the working room logic accidentally.
+
+Keep the currently approved/working 8-seat implementation.
+
+Keep ONE existing 15-seat implementation as the room that will be redesigned below.
+
+Remove only the redundant duplicate entries/options and any duplicate mapping that was accidentally introduced.
+
+After cleanup, verify that Create Room can select only:
+
+ONE 8-seat layout
+and
+ONE 15-seat layout.
+
+==================================================
+STEP 2 — DO NOT TOUCH THE APPROVED 8-SEAT ROOM
+==================================================
+
+The currently working/approved 8-seat room is CORRECT.
+
+DO NOT redesign it.
+DO NOT change its seat sizes.
+DO NOT change its spacing.
+DO NOT change its UI.
+DO NOT change its seat arrangement.
+DO NOT change its functionality.
+
+It must remain:
+
+3 camera/video seats
++
+5 audio seats
+=
+8 total seats.
+
+Use this approved 8-seat room ONLY as the VISUAL TEMPLATE for the 15-seat room.
+
+==================================================
+STEP 3 — FIX ONLY THE ONE REMAINING 15-SEAT ROOM
+==================================================
+
+Redesign ONLY the remaining 15-seat room.
+
+It must look like the approved 8-seat room.
+
+Use the SAME:
+
+- overall room design
+- compact visual style
+- header style
+- Notice Board style
+- camera-seat design
+- audio-seat design
+- empty-seat design
+- avatar style
+- "+" style
+- Invite style
+- Gift area
+- SMS/Chat area
+- PK controls
+- microphone/camera controls
+- bottom action-bar style
+- spacing philosophy
+- proportions
+
+DO NOT invent another visual design.
+
+The approved 8-seat room is the visual source of truth.
+
+==================================================
+15-SEAT ROOM MUST BE EXACTLY:
+==================================================
+
+5 CAMERA / VIDEO SEATS
++
+10 AUDIO SEATS
+=
+15 TOTAL SEATS.
+
+This is mandatory.
+
+The FIVE camera seats must be kept together in the upper camera section.
+
+The TEN audio seats must be placed compactly below the camera section.
+
+Do not mix up camera and audio seat counts.
+
+==================================================
+STRICT ONE-SCREEN REQUIREMENT
+==================================================
+
+THIS IS VERY IMPORTANT.
+
+ALL 15 SEATS MUST BE VISIBLE ON THE SAME NORMAL PORTRAIT PHONE SCREEN.
+
+The user must be able to see:
+
+ALL 5 CAMERA SEATS
+AND
+ALL 10 AUDIO SEATS
+
+at the same time.
+
+Do NOT create a long vertical seat list.
+
+Do NOT make the user scroll to find the remaining seats.
+
+Do NOT use oversized seat cards.
+
+Scale the 15-seat room appropriately while preserving the same visual style as the approved 8-seat room.
+
+For the 15-seat version, seats may need to be slightly smaller and gaps/padding tighter so everything fits cleanly.
+
+The 5 camera seats should remain visually distinct as CAMERA seats.
+
+The 10 audio seats should remain visually distinct as AUDIO seats.
+
+Arrange the 10 audio seats in compact rows as necessary.
+
+Nothing should overlap.
+Nothing should be clipped.
+
+==================================================
+BOTTOM CONTROLS MUST ALSO REMAIN ACCESSIBLE
+==================================================
+
+Do not use the entire screen only for seats.
+
+Keep the important existing room controls available in the SAME screen layout as closely as possible:
+
+- Chat/SMS
+- Gift
+- PK
+- microphone
+- camera
+- other existing room actions
+
+The 15-seat room should feel like the approved 8-seat room, just adapted intelligently to hold 5 camera + 10 audio seats.
+
+==================================================
+DO NOT MODIFY OTHER PARTS OF THE APP
+==================================================
+
+Do NOT modify:
+
+- approved 8-seat room
+- Login
+- authentication
+- Profile
+- Follow
+- Party
+- main Chat tab
+- Top
+- unrelated Firebase/Firestore logic
+- unrelated screens
+
+Do not perform broad refactoring.
+
+Make only the minimum controlled changes necessary for:
+1. removing the duplicate room options
+2. redesigning the ONE remaining 15-seat room.
+
+==================================================
+PRESERVE FUNCTIONALITY
+==================================================
+
+Do not replace working functionality with decorative UI.
+
+Preserve existing:
+
+- Create Room
+- join room
+- leave room
+- host state
+- seat state
+- seat selection
+- camera state
+- microphone state
+- Gift
+- Chat/SMS
+- PK
+- Back
+- Firebase/Firestore room behavior
+
+==================================================
+FINAL VERIFICATION BEFORE BUILD
+==================================================
+
+Before building, verify ALL of these:
+
+1. There is exactly ONE 8-seat room/layout option.
+2. There is exactly ONE 15-seat room/layout option.
+3. No duplicate 8-seat option remains.
+4. No duplicate 15-seat option remains.
+5. The approved 8-seat room UI was NOT changed.
+6. The 8-seat room remains exactly 3 camera + 5 audio.
+7. The 15-seat room is exactly 5 camera + 10 audio.
+8. All 5 camera seats are visible.
+9. All 10 audio seats are visible.
+10. ALL 15 seats fit on the SAME portrait screen.
+11. No seats overlap.
+12. No seats are clipped.
+13. Chat/SMS and Gift remain accessible.
+14. Existing room functions still call the existing logic.
+
+If all 15 seats do not fit on the same screen, reduce ONLY the 15-seat room's seat sizes, gaps, padding, and unnecessary empty space until they do.
+
+DO NOT solve this by changing the approved 8-seat room.
+
+Then run:
+
+./gradlew :app:assembleDebug
+
+Continue fixing ONLY relevant errors until:
+
+BUILD SUCCESSFUL
+
+Then replace the root RIMILIVE.apk with the newly built successful APK.
+
+Finally report clearly:
+
+- Duplicate 8-seat option removed: YES/NO
+- Duplicate 15-seat option removed: YES/NO
+- Final room choices = ONE 8-seat + ONE 15-seat
+- Approved 8-seat room untouched: YES/NO
+- 15-seat configuration = 5 camera + 10 audio
+- All 15 seats visible on one screen: YES/NO
+- BUILD SUCCESSFUL
+- Final APK path

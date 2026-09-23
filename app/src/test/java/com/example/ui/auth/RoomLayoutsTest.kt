@@ -25,8 +25,7 @@ class RoomLayoutsTest {
     }
 
     @Test
-    fun allFourVisualPreviewsKeepTheTwoSupportedRoomCapacities() {
-        assertEquals(listOf("8-seat", "8-seat", "15-seat", "15-seat"),
-            (0..3).map(::roomLayoutForPreview))
+    fun onePreviewPerSupportedRoomCapacity() {
+        assertEquals(listOf("8-seat", "15-seat"), (0..1).map(::roomLayoutForPreview))
     }
 }

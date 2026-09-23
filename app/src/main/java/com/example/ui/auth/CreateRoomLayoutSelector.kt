@@ -20,10 +20,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Canvas
 
-/** The four compact previews are two visual representations of each supported seat capacity. */
+/** Create Room offers one choice for each supported room capacity. */
 internal fun roomLayoutForPreview(preview: Int): String {
-    require(preview in 0..3)
-    return if (preview < 2) "8-seat" else "15-seat"
+    require(preview in 0..1)
+    return if (preview == 0) "8-seat" else "15-seat"
 }
 
 @Composable
@@ -32,13 +32,13 @@ internal fun CreateRoomLayoutSelector(
     onSelect: (Int) -> Unit
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
-        repeat(4) { preview ->
+        repeat(2) { preview ->
             val isSelected = selectedPreview == preview
             Surface(
                 modifier = Modifier
                     .size(43.dp)
                     .semantics {
-                        contentDescription = if (preview < 2) "Eight-seat room layout" else "Fifteen-seat room layout"
+                        contentDescription = if (preview == 0) "Eight-seat room layout" else "Fifteen-seat room layout"
                         selected = isSelected
                     }
                     .clickable { onSelect(preview) },
@@ -59,24 +59,13 @@ internal fun CreateRoomLayoutSelector(
                     }
                     when (preview) {
                         0 -> {
-                            tile(1f, 5f, 8f, 18f)
-                            tile(10f, 5f, 8f, 18f)
-                            tile(19f, 5f, 8f, 18f)
-                        }
-                        1 -> {
                             tile(2f, 3f, 11f, 10f)
                             tile(15f, 3f, 11f, 10f)
                             tile(2f, 15f, 11f, 10f)
                             tile(15f, 15f, 11f, 10f)
                         }
-                        2 -> for (row in 0..2) for (col in 0..2) {
+                        else -> for (row in 0..2) for (col in 0..2) {
                             tile(2f + col * 9f, 2f + row * 9f, 7f, 7f)
-                        }
-                        else -> {
-                            tile(1f, 5f, 12f, 8f)
-                            tile(15f, 5f, 12f, 8f)
-                            tile(1f, 15f, 12f, 8f)
-                            tile(15f, 15f, 12f, 8f)
                         }
                     }
                 }
