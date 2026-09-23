@@ -1,0 +1,293 @@
+IMPORTANT — FIX ONLY ONE ROOM LAYOUT IN THIS TASK.
+
+I attached TWO screenshots:
+
+SCREENSHOT 1 = the CURRENT RIMILIVE room UI.
+SCREENSHOT 2 = the TARGET VISUAL REFERENCE.
+
+For this task, work ONLY on the room that was previously the EXISTING 12-SEAT room and has now been converted to an 8-SEAT room.
+
+DO NOT MODIFY THE 15-SEAT ROOM AT ALL.
+We will fix the 15-seat room separately later.
+
+Do not modify unrelated screens.
+
+==================================================
+ONLY TARGET THIS ROOM
+==================================================
+
+The old existing 12-seat room has been converted to:
+
+8 TOTAL SEATS
+
+3 CAMERA / VIDEO SEATS
++
+5 AUDIO SEATS
+
+Keep exactly this configuration.
+
+Do NOT change the seat count.
+
+This task is ONLY to redesign this existing 8-seat room so that it visually matches SCREENSHOT 2 much more closely.
+
+==================================================
+SCREENSHOT 2 IS THE VISUAL SOURCE OF TRUTH
+==================================================
+
+SCREENSHOT 1 shows the current RIMILIVE implementation.
+
+Its seat boxes are much too large.
+
+SCREENSHOT 2 shows the desired proportions, compactness and arrangement.
+
+Use SCREENSHOT 2 to determine:
+
+- camera seat size
+- audio seat size
+- seat shape
+- empty-seat size
+- avatar size
+- "+" size
+- Invite positioning
+- gaps between seats
+- padding
+- vertical spacing
+- room-content positioning
+- bottom-control positioning
+- overall room density
+
+Do NOT just copy the seat COUNT.
+
+The actual visible SIZE and PROPORTIONS of the seats must closely match SCREENSHOT 2.
+
+==================================================
+ALL 8 SEATS MUST FIT ON ONE SCREEN
+==================================================
+
+THIS IS A STRICT REQUIREMENT.
+
+All 8 seats must be visible together on ONE normal portrait Android screen.
+
+The user must NOT need to scroll to see the remaining seats.
+
+All 3 camera seats and all 5 audio seats must be visible simultaneously.
+
+The layout must remain stable.
+
+Do NOT make the seats dynamically huge.
+
+Do NOT make the seats stretch vertically.
+
+Do NOT use the current oversized card design.
+
+Do NOT place some seats below the visible screen.
+
+The complete seat arrangement should stay fixed/compact like SCREENSHOT 2.
+
+==================================================
+3 CAMERA SEATS
+==================================================
+
+The upper room area must contain exactly:
+
+3 CAMERA / VIDEO SEATS.
+
+Make their dimensions and arrangement closely follow SCREENSHOT 2.
+
+The current RIMILIVE camera cards are too large.
+
+Shrink and reposition them.
+
+The camera section must NOT consume most of the phone screen.
+
+The host/occupied camera seat and empty camera seats must all use a coherent compact layout.
+
+Do NOT use giant rounded cards.
+
+Use the proportions from SCREENSHOT 2.
+
+==================================================
+5 AUDIO SEATS
+==================================================
+
+Below the camera section must be exactly:
+
+5 AUDIO SEATS.
+
+All 5 must be visible at the same time.
+
+Match SCREENSHOT 2 closely:
+
+- small circular seat/avatar presentation
+- compact "+" for empty seat
+- small Invite label
+- compact horizontal arrangement
+- similar spacing between seats
+
+REMOVE the current large rectangular/tall audio-seat cards.
+
+Do NOT display large seat numbers inside the seat UI.
+
+The 5 audio seats should occupy only a compact portion of the screen.
+
+==================================================
+ONE COMPLETE ROOM SCREEN
+==================================================
+
+The goal is to make the room feel like SCREENSHOT 2.
+
+Within ONE portrait screen, the user should be able to see:
+
+TOP:
+compact room/header information
+
+THEN:
+Notice Board / compact room controls
+
+THEN:
+all 3 camera seats
+
+THEN:
+all 5 audio seats
+
+THEN:
+room/chat content area
+
+BOTTOM:
+SMS/chat input
+PK control where applicable
+message/chat control
+Gift control
+microphone/camera controls where applicable
+other existing RIMILIVE room controls
+
+The seat area must leave enough space for the bottom controls.
+
+Do NOT require scrolling through the seats to reach Gift or Chat.
+
+==================================================
+REMOVE UNNECESSARY TECHNICAL TEXT
+==================================================
+
+Do not show developer-style labels prominently in the normal room UI.
+
+Remove unnecessary visible text such as:
+
+"8 seats / 3 cameras"
+"Audio Seats"
+"Camera"
+"Camera off (UI)"
+"Mic on (UI)"
+
+The room should look like a finished consumer app, similar in structure to SCREENSHOT 2.
+
+Use compact icons/states where appropriate.
+
+==================================================
+KEEP RIMILIVE DATA
+==================================================
+
+Do NOT copy from SCREENSHOT 2:
+
+- username
+- ID
+- profile photo
+- balance
+- room number
+- advertisements
+- app logo
+- branding
+- personal information
+
+SCREENSHOT 2 is ONLY for layout/design reference.
+
+Use RIMILIVE's own users, data and branding.
+
+==================================================
+PRESERVE EXISTING FUNCTIONALITY
+==================================================
+
+Do not destroy the existing room logic.
+
+Preserve:
+
+- room creation
+- room entry
+- room exit
+- host state
+- occupied/empty seat state
+- seat selection
+- camera state
+- microphone state
+- Gift
+- Chat
+- Firebase/Firestore room integration
+- Android Back behavior
+
+This task is primarily a VISUAL/LAYOUT correction of this ONE room.
+
+==================================================
+DO NOT TOUCH THESE
+==================================================
+
+DO NOT modify:
+
+- 15-seat room
+- Login
+- Profile
+- Follow
+- Party
+- main Chat tab
+- Top
+- Create Room screen
+- authentication
+- unrelated Firebase code
+
+Especially:
+
+DO NOT redesign the 15-seat room.
+DO NOT change its seat count.
+DO NOT change its camera count.
+DO NOT change its UI.
+
+Leave the 15-seat room exactly as it currently is.
+
+We will handle it in a separate task later.
+
+==================================================
+FINAL CHECK BEFORE BUILD
+==================================================
+
+Before building, compare this modified 8-seat room directly against SCREENSHOT 2.
+
+Verify:
+
+1. Exactly 3 camera seats exist.
+2. Exactly 5 audio seats exist.
+3. All 8 seats are visible together.
+4. No seat requires scrolling to find.
+5. Camera seats are compact like Screenshot 2.
+6. Audio seats are compact like Screenshot 2.
+7. Empty seats have similar compact size.
+8. Seat spacing closely follows Screenshot 2.
+9. Bottom Chat/SMS/Gift controls remain visible and accessible.
+10. No seat overlaps another.
+11. Nothing is clipped by the phone screen.
+12. The 15-seat room was NOT modified.
+
+If the 8 seats still look oversized compared with SCREENSHOT 2, reduce their dimensions and spacing BEFORE building.
+
+Then run:
+
+./gradlew :app:assembleDebug
+
+Continue until BUILD SUCCESSFUL.
+
+Replace the root RIMILIVE.apk with the new successful APK.
+
+Report:
+- 8-seat room UI status
+- confirmation that all 8 seats fit on one screen
+- confirmation that 15-seat room was untouched
+- BUILD SUCCESSFUL
+- final APK path

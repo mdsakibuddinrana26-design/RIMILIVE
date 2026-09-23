@@ -1949,7 +1949,122 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
         }
     }
 
-        if (inRoom) {
+    // This is the 8-seat screen's audio action. Keep the existing 15-seat
+    // click handler below unchanged while sharing the same Firestore seat locks.
+    fun toggleEightSeatAudio(seatNo: Int) {
+        if (seatNo !in 4..8 || currentUid.isBlank()) {
+            roomMessages = roomMessages + "System: Please sign in first"
+            return
+        }
+        selectedRoomSeat = seatNo
+        giftReceiverSeat = seatNo
+        val oldSeatNo = myJoinedSeat
+        val target = roomRef.collection("seats").document(seatNo.toString())
+        val old = oldSeatNo?.takeIf { it != seatNo }?.let {
+            roomRef.collection("seats").document(it.toString())
+        }
+        firestore.runTransaction { transaction ->
+            val targetSnapshot = transaction.get(target)
+            val oldSnapshot = old?.let { transaction.get(it) }
+            val owner = targetSnapshot.getString("uid")
+            if (targetSnapshot.exists() && owner != currentUid) {
+                throw IllegalStateException("SEAT_OCCUPIED")
+            }
+            if (old != null && oldSnapshot?.getString("uid") == currentUid) {
+                transaction.delete(old)
+            }
+            if (oldSeatNo == seatNo && owner == currentUid) {
+                transaction.delete(target)
+                transaction.set(
+                    membersRef.document(currentUid),
+                    mapOf("seat" to 0, "updatedAt" to System.currentTimeMillis()),
+                    SetOptions.merge()
+                )
+            } else {
+                transaction.set(target, mapOf(
+                    "uid" to currentUid, "name" to currentName, "photoUrl" to currentPhotoUrl,
+                    "seat" to seatNo, "updatedAt" to System.currentTimeMillis()
+                ))
+                transaction.set(membersRef.document(currentUid), mapOf(
+                    "uid" to currentUid, "name" to currentName, "photoUrl" to currentPhotoUrl,
+                    "seat" to seatNo, "updatedAt" to System.currentTimeMillis()
+                ), SetOptions.merge())
+            }
+            true
+        }.addOnSuccessListener {
+            myJoinedSeat = if (oldSeatNo == seatNo) null else seatNo
+            cameraEnabled = false
+            roomMessages = roomMessages + if (oldSeatNo == seatNo) {
+                "System: You left seat $seatNo"
+            } else {
+                "System: You joined audio seat $seatNo"
+            }
+        }.addOnFailureListener { error ->
+            roomMessages = roomMessages + if (error.message?.contains("SEAT_OCCUPIED") == true) {
+                "System: Seat $seatNo is already occupied"
+            } else {
+                "System: Could not update audio seat"
+            }
+        }
+    }
+
+        if (inRoom && layoutSpec.key == "8-seat") {
+            EightSeatRoomScreen(
+                state = EightSeatRoomState(
+                    hostName = roomHostName,
+                    hostPhoto = roomHostPhoto,
+                    roomType = roomType,
+                    memberCount = liveMemberCount,
+                    notice = noticeText,
+                    isHost = isHost,
+                    mySeat = myJoinedSeat,
+                    myPhoto = currentPhotoUrl,
+                    occupied = occupiedSeats,
+                    names = seatMemberNames,
+                    photos = seatMemberPhotos,
+                    memberCameras = seatMemberCameras,
+                    memberMics = seatMemberMics,
+                    cameraOn = cameraEnabled,
+                    micOn = myMicEnabled,
+                    pkRunning = pkRunning,
+                    pkSeconds = pkSecondsRemaining,
+                    lastMessage = roomMessages.lastOrNull().orEmpty(),
+                    chatInput = chatInput
+                ),
+                actions = EightSeatRoomActions(
+                    onNotice = { noticeDraft = noticeText; showNoticeDialog = true },
+                    onShare = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, "Join my RIMILIVE room: $roomId")
+                        }
+                        androidContext.startActivity(Intent.createChooser(shareIntent, "Share room"))
+                    },
+                    onLeave = { showLeaveRoomDialog = true },
+                    onPk = { if (isHost) showPkMenu = true },
+                    onCameraSeat = { seat ->
+                        selectedRoomSeat = seat
+                        giftReceiverSeat = seat
+                        toggleCameraSeat(seat)
+                    },
+                    onAudioSeat = ::toggleEightSeatAudio,
+                    onCameraToggle = { cameraEnabled = !cameraEnabled },
+                    onMicToggle = { myMicEnabled = !myMicEnabled },
+                    onChatChange = { chatInput = it },
+                    onSend = {
+                        val message = chatInput.trim()
+                        if (message.isNotEmpty()) {
+                            roomMessages = roomMessages + "You: $message"
+                            chatInput = ""
+                        }
+                    },
+                    onGame = { showGameMenu = true },
+                    onGift = { showGiftMenu = true },
+                    onCoin = { showCoinMenu = true },
+                    onMore = { showMoreMenu = true }
+                )
+            )
+        } else if (inRoom) {
 Column(
         modifier = Modifier
             .fillMaxSize()
