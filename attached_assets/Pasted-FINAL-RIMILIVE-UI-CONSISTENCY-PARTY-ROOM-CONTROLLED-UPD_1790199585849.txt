@@ -1,0 +1,532 @@
+FINAL RIMILIVE UI CONSISTENCY + PARTY ROOM CONTROLLED UPDATE
+
+Use my attached screenshots to understand the CURRENT UI.
+
+IMPORTANT:
+Follow these instructions carefully and complete ALL sections.
+
+This is NOT a full app redesign.
+Make only the requested changes.
+
+Do NOT remove, replace, or break existing working functionality.
+
+Before modifying any file, create a backup of every file that needs to be changed.
+
+==================================================
+1. MAIN APP — ONE PERMANENT PREMIUM GREEN THEME
+==================================================
+
+The current Profile area already has the approved premium green RIMILIVE visual style.
+
+Use that SAME approved premium green visual identity consistently across the normal MAIN APP screens, including:
+
+- Follow
+- Party
+- Chat / SMS
+- Top
+- Profile
+
+When the user moves between these screens, the app must NOT suddenly switch to an older/basic/different background.
+
+Keep the same:
+
+- premium green background style
+- visual language
+- navigation appearance
+- icon style
+- spacing
+- overall RIMILIVE identity
+
+Reuse/adapt the EXISTING approved RIMILIVE green design.
+
+Do NOT create a completely different theme.
+
+Do NOT copy any sample username, profile picture, ID, balance, age, country, or other personal information from screenshots.
+
+Screenshots are design references only.
+
+==================================================
+2. PARTY ROOM IS THE ONLY VISUAL EXCEPTION
+==================================================
+
+The inside of the Party Room has its own approved room design.
+
+KEEP IT.
+
+Do NOT apply the main premium green background to the Party Room interior.
+
+RULE:
+
+MAIN APP SCREENS
+= SAME approved premium green RIMILIVE theme.
+
+INSIDE PARTY ROOM
+= KEEP the existing approved Party Room background/design.
+
+Do not mix these two designs.
+
+==================================================
+3. SAME RIMILIVE BOTTOM NAVIGATION ICONS EVERYWHERE
+==================================================
+
+This is VERY IMPORTANT.
+
+Currently the bottom-navigation design/icons can change when moving between screens.
+
+Fix this completely.
+
+Use ONE permanent set of RIMILIVE bottom-navigation icons across all relevant MAIN APP screens.
+
+When navigating between:
+
+- Follow
+- Party
+- Chat / SMS
+- Top
+- Profile
+
+the SAME navigation icons must remain.
+
+Do NOT load or display a different/basic/old icon set on another screen.
+
+The icons must keep the same:
+
+- design
+- shape
+- size
+- position
+- spacing
+- visual style
+
+Only the CURRENTLY SELECTED navigation item may change its highlight/glow/selected state.
+
+The actual icon design must NOT change.
+
+In simple terms:
+
+SAME ICON
++ SAME SIZE
++ SAME POSITION
++ SAME STYLE
+
+on every main screen.
+
+ONLY THE ACTIVE HIGHLIGHT CHANGES.
+
+Do NOT accidentally change the navigation destinations or click actions.
+
+IMPORTANT:
+Party Room internal controls are separate from the main bottom navigation.
+
+==================================================
+4. PARTY ROOM TOP — REMOVE ONLY THE TOP PK
+==================================================
+
+At the TOP area of the Party Room there is currently a PK text/logo/button.
+
+REMOVE ONLY that TOP PK element.
+
+Do NOT remove unrelated room controls.
+
+IMPORTANT:
+
+TOP PK = REMOVE
+
+BOTTOM PK = KEEP
+
+The PK control beside the SMS input at the BOTTOM of the Party Room must remain and continue working.
+
+==================================================
+5. PARTY ROOM TOP — KEEP AND REDESIGN SHARE
+==================================================
+
+There is an existing Share button/control in the TOP area of the Party Room.
+
+DO NOT remove it.
+
+Keep its existing Share functionality.
+
+ONLY improve its visual appearance.
+
+Make the Share control:
+
+- modern
+- clean
+- professional
+- premium
+- easy to recognize
+- appropriately sized
+- visually matched with the Party Room
+
+Use a clear original Share icon.
+
+Do NOT make it excessively large.
+
+Do NOT replace or break the existing Share action.
+
+==================================================
+6. PARTY ROOM BOTTOM CONTROLS — PROFESSIONAL REDESIGN
+==================================================
+
+The current Party Room bottom controls look too basic.
+
+Improve the visual design of:
+
+SMS / Message input
+PK
+Game
+Gift
+More
+
+Keep the exact order:
+
+SMS input → PK → Game → Gift → More
+
+The SMS/message input remains the larger control on the LEFT.
+
+PK, Game, Gift and More remain compact controls beside it.
+
+Improve them using:
+
+- clean original icons
+- professional rounded shapes
+- consistent icon sizing
+- balanced spacing
+- clear touch areas
+- subtle premium effects
+- good contrast
+- polished RIMILIVE styling
+
+Do NOT make the controls excessively large.
+
+Do NOT copy proprietary icons/assets from another app.
+
+IMPORTANT:
+Keep all existing click actions and functionality connected.
+
+This is mainly a visual improvement, NOT a rewrite of these features.
+
+==================================================
+7. SMS / ANDROID KEYBOARD FIX
+==================================================
+
+There is an important Party Room keyboard problem.
+
+When the user taps the SMS/message input and the Android keyboard opens, the WHOLE Party Room must NOT move upward.
+
+Required behavior:
+
+- room header remains stable
+- room background remains stable
+- Notice Board remains stable
+- seat area remains stable
+- the entire room must NOT jump upward
+
+Only the bottom control area should correctly position itself DIRECTLY ABOVE the Android keyboard.
+
+Keep this whole control group together:
+
+SMS + PK + Game + Gift + More
+
+The user must clearly see the message being typed.
+
+When the keyboard closes:
+
+SMS + PK + Game + Gift + More
+
+must return to their normal bottom position.
+
+Use proper Android / Jetpack Compose IME and WindowInsets handling.
+
+Do NOT solve this using fragile hardcoded screen coordinates.
+
+==================================================
+8. MORE MENU — PRESERVE THE REQUIRED STRUCTURE
+==================================================
+
+Do NOT break the existing More menu.
+
+When More is tapped, keep the required entries:
+
+GAME:
+
+- Ludo
+- GAMI Race
+
+TOOLS:
+
+- Settings
+- Music
+- Top-up
+- Messages
+
+The racing game name must be exactly:
+
+GAMI Race
+
+Do NOT rename it to Lucky Race.
+
+Use professional original icons.
+
+If a future feature is not fully implemented yet, keep a safe clickable entry point without inventing fake backend functionality.
+
+==================================================
+9. SETTINGS MENU
+==================================================
+
+When Settings is tapped from More, keep these options:
+
+- Sticker
+- Beautification
+- Hide entrance effects
+- Microphone
+- Camera
+- Switch camera
+- Background
+
+Keep the Settings panel clean, professional and consistent with the Party Room design.
+
+Use existing functionality where it already exists.
+
+Do NOT fake unfinished functionality.
+
+==================================================
+10. 8-SEAT ROOM — SAME DESIGN, SLIGHTLY BIGGER SEATS
+==================================================
+
+The current 8-seat room design is APPROVED.
+
+DO NOT redesign it.
+
+Keep exactly the existing:
+
+- 8-seat structure
+- number of seats
+- seat arrangement
+- camera/audio configuration
+- visual style
+- seat functionality
+- room functionality
+
+ONLY make the individual seat areas slightly larger.
+
+Increase them moderately.
+
+All 8 seats must still fit correctly on a normal Android portrait screen.
+
+Do NOT:
+
+- overlap seats
+- clip seats
+- push seats outside the screen
+- create horizontal scrolling
+- change the seat arrangement
+- damage the Notice Board
+- interfere with the bottom controls
+
+Goal:
+
+SAME DESIGN
++ SAME LAYOUT
++ SAME FUNCTIONS
++ SLIGHTLY BIGGER SEATS
+
+==================================================
+11. 15-SEAT ROOM — SAME DESIGN, SLIGHTLY BIGGER SEATS
+==================================================
+
+The current 15-seat room design is also APPROVED.
+
+DO NOT redesign it.
+
+Keep exactly the existing:
+
+- 15-seat structure
+- number of seats
+- seat arrangement
+- camera/audio configuration
+- visual style
+- seat functionality
+- room functionality
+
+ONLY make the individual seat areas slightly larger.
+
+Increase them ONLY as much as safely possible.
+
+All 15 seats must remain visible and usable on normal Android portrait phones.
+
+Do NOT:
+
+- overlap seats
+- clip seats
+- push seats outside the screen
+- create horizontal scrolling
+- change the seat arrangement
+- damage spacing
+- interfere with the bottom controls
+
+IMPORTANT PRIORITY:
+
+Keeping ALL 15 seats correctly visible is more important than making them significantly larger.
+
+==================================================
+12. STRICTLY PRESERVE EXISTING WORKING SYSTEMS
+==================================================
+
+Do NOT unnecessarily modify, replace or break:
+
+- Firebase Authentication
+- Firestore
+- saved user profile data
+- login/session persistence
+- wallet/backend data
+- Follow functionality
+- Chat/SMS functionality
+- Create Room functionality
+- existing room backend logic
+- existing seat actions
+- existing host/member logic
+- existing user data
+- other completed screens
+
+Do NOT perform broad refactoring.
+
+Make the smallest safe code changes necessary.
+
+==================================================
+13. FINAL VISUAL + FUNCTIONAL TEST
+==================================================
+
+Before finishing, test EVERYTHING below.
+
+MAIN APP:
+
+Open:
+
+1. Follow
+2. Party
+3. Chat/SMS
+4. Top
+5. Profile
+
+Verify:
+
+- the same approved premium green RIMILIVE theme remains
+- the background does not randomly change
+- the SAME navigation icons remain
+- icon size does not change
+- icon position does not change
+- icon style does not change
+- only the selected item's highlight changes
+- all navigation buttons still open the correct screens
+
+PARTY ROOM:
+
+Enter the Party Room.
+
+Verify:
+
+- existing Party Room background is preserved
+- TOP PK is removed
+- BOTTOM PK is preserved
+- Share button remains
+- Share design is improved
+- Share functionality still works
+
+BOTTOM CONTROLS:
+
+Verify:
+
+SMS → PK → Game → Gift → More
+
+are present in that exact order and have the improved professional design.
+
+KEYBOARD:
+
+Tap SMS.
+
+Verify:
+
+- Android keyboard opens
+- whole Party Room does NOT move upward
+- header stays stable
+- Notice Board stays stable
+- seats stay stable
+- SMS + PK + Game + Gift + More remain together directly above the keyboard
+
+Type a message and verify the typed text remains visible.
+
+Close the keyboard and verify the controls return correctly.
+
+FUNCTIONS:
+
+Test:
+
+- SMS
+- bottom PK
+- Game
+- Gift
+- More
+- Settings
+- Share
+
+ROOM SIZE:
+
+Check 8-seat room:
+
+- SAME approved design
+- SAME arrangement
+- slightly larger seats
+- all 8 seats visible
+- no overlap
+- no clipping
+
+Check 15-seat room:
+
+- SAME approved design
+- SAME arrangement
+- slightly larger seats
+- all 15 seats visible
+- no overlap
+- no clipping
+
+==================================================
+14. BUILD
+==================================================
+
+After ALL requested changes are completed and tested, run:
+
+./gradlew :app:assembleDebug
+
+Fix relevant compilation/build errors until:
+
+BUILD SUCCESSFUL
+
+After BUILD SUCCESSFUL:
+
+Replace/update the root:
+
+RIMILIVE.apk
+
+with the newly built successful APK.
+
+Do NOT report completion before the build succeeds.
+
+Finally report clearly:
+
+- Main premium green theme consistency: DONE / NOT DONE
+- Same RIMILIVE navigation icons everywhere: DONE / NOT DONE
+- Navigation functions preserved: WORKING / NOT WORKING
+- Party Room original background preserved: DONE / NOT DONE
+- TOP PK removed: DONE / NOT DONE
+- BOTTOM PK preserved: DONE / NOT DONE
+- Share button redesigned: DONE / NOT DONE
+- Share functionality: WORKING / NOT WORKING
+- SMS/PK/Game/Gift/More redesign: DONE / NOT DONE
+- Keyboard/SMS issue: FIXED / NOT FIXED
+- More menu: WORKING / NOT WORKING
+- Settings menu: WORKING / NOT WORKING
+- 8-seat size update: DONE / NOT DONE
+- 15-seat size update: DONE / NOT DONE
+- BUILD SUCCESSFUL
+- Final APK path

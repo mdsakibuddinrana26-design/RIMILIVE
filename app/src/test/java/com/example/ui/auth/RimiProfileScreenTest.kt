@@ -37,20 +37,20 @@ class RimiProfileScreenTest {
                     ), onNavigate = { destination = it }, onLogout = {},
                     modifier = Modifier.weight(1f)
                 )
-                RimiProfileBottomBar(onNavigate = { destination = it })
+                RimiMainBottomBar(selectedTab = "Profile", onNavigate = { destination = it })
             }
         }
         rule.onNodeWithText("Current member").assertIsDisplayed()
         rule.onNodeWithText("member@example.test").assertIsDisplayed()
         rule.onNodeWithText("42").assertIsDisplayed()
         rule.onNodeWithText("13").assertIsDisplayed()
-        val labels = listOf("My Mission", "Follow", "Post", "SMS", "Profile")
+        val labels = listOf("Home", "Explore", "Post", "Messages", "Profile")
         val bounds = labels.map { rule.onAllNodesWithText(it).onLast().assertIsDisplayed()
             .fetchSemanticsNode().boundsInRoot }
         bounds.zipWithNext().forEach { (left, right) ->
             assertTrue("Profile navigation order is incorrect", left.right <= right.left)
         }
-        rule.onNodeWithText("SMS").performClick()
+        rule.onNodeWithText("Messages").performClick()
         assertEquals("Message", destination)
         rule.onNodeWithText("Profile").performClick()
         assertEquals("Profile", destination)

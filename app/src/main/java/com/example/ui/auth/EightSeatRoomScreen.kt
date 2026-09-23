@@ -82,7 +82,7 @@ internal fun EightSeatRoomScreen(
         // Fixed-sized seat rows leave the remaining height to the chat region,
         // rather than stretching seats or pushing the controls off-screen.
         val tight = maxHeight < 610.dp
-        val cameraHeight = (maxHeight * 0.29f).coerceIn(110.dp, 226.dp)
+        val cameraHeight = (maxHeight * 0.31f).coerceIn(114.dp, 236.dp)
         Column(Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = if (tight) 5.dp else 9.dp)) {
             Row(Modifier.fillMaxWidth().height(52.dp), verticalAlignment = Alignment.CenterVertically) {
                 Surface(
@@ -110,35 +110,19 @@ internal fun EightSeatRoomScreen(
                     }
                 }
                 Spacer(Modifier.width(5.dp))
-                RoomIcon("↗", "Share room", actions.onShare)
+                RoomHeaderShare(actions.onShare)
                 Spacer(Modifier.width(5.dp))
                 RoomIcon("×", "Leave room", actions.onLeave)
             }
             Spacer(Modifier.height(7.dp))
-            Row(Modifier.fillMaxWidth().height(32.dp), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                Surface(
-                    modifier = Modifier.weight(1f).fillMaxHeight()
-                        .semantics { contentDescription = "Notice Board: ${state.notice}" }
-                        .clickable(onClick = actions.onNotice),
-                    color = Color(0x995B392A), shape = RoundedCornerShape(16.dp)
-                ) {
-                    Box(Modifier.padding(horizontal = 11.dp), contentAlignment = Alignment.CenterStart) {
-                        Text("🔊  Notice Board", color = RoomText, fontSize = 12.sp, maxLines = 1)
-                    }
-                }
-                Surface(
-                    modifier = Modifier.height(32.dp)
-                        .clickable(enabled = state.isHost, onClick = actions.onPk),
-                    color = Color(0x995B392A), shape = RoundedCornerShape(16.dp)
-                ) {
-                    Box(Modifier.padding(horizontal = 13.dp), contentAlignment = Alignment.Center) {
-                        Text(
-                            if (state.pkRunning) "PK  %02d:%02d".format(
-                                state.pkSeconds / 60, state.pkSeconds % 60
-                            ) else "PK",
-                            color = RoomText, fontSize = 11.sp
-                        )
-                    }
+            Surface(
+                modifier = Modifier.fillMaxWidth().height(32.dp)
+                    .semantics { contentDescription = "Notice Board: ${state.notice}" }
+                    .clickable(onClick = actions.onNotice),
+                color = Color(0x995B392A), shape = RoundedCornerShape(16.dp)
+            ) {
+                Box(Modifier.padding(horizontal = 11.dp), contentAlignment = Alignment.CenterStart) {
+                    Text("🔊  Notice Board", color = RoomText, fontSize = 12.sp, maxLines = 1)
                 }
             }
             Spacer(Modifier.height(if (tight) 7.dp else 12.dp))
@@ -165,7 +149,7 @@ internal fun EightSeatRoomScreen(
             }
             Spacer(Modifier.height(if (tight) 6.dp else 11.dp))
             Row(
-                Modifier.fillMaxWidth().height(65.dp),
+                Modifier.fillMaxWidth().height(70.dp),
                 horizontalArrangement = Arrangement.spacedBy(3.dp)
             ) {
                 (4..8).forEach { seat ->
@@ -179,9 +163,9 @@ internal fun EightSeatRoomScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         if (occupied) {
-                            Avatar(photo, name, 42.dp)
+                            Avatar(photo, name, 45.dp)
                         } else {
-                            Surface(Modifier.size(42.dp), shape = CircleShape, color = Color(0x8858392B)) {
+                            Surface(Modifier.size(45.dp), shape = CircleShape, color = Color(0x8858392B)) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Text("+", color = RoomText, fontSize = 24.sp)
                                 }
@@ -243,8 +227,8 @@ private fun CameraSeat(
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                if (occupied) Avatar(photo, name, if (isHostCard) 54.dp else 42.dp)
-                else Surface(Modifier.size(43.dp), shape = CircleShape, color = Color(0x8858392B)) {
+                if (occupied) Avatar(photo, name, if (isHostCard) 58.dp else 46.dp)
+                else Surface(Modifier.size(47.dp), shape = CircleShape, color = Color(0x8858392B)) {
                     Box(contentAlignment = Alignment.Center) {
                         Text("+", color = RoomText, fontSize = 26.sp)
                     }

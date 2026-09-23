@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
@@ -110,6 +111,7 @@ class FifteenSeatRoomScreenTest {
     @Test
     fun keyboardLeavesAllSeatPositionsFixedAndReturnsDockToBottom() {
         var keyboardBottom by mutableStateOf(0.dp)
+        var shared = false
         rule.setContent {
             FifteenSeatRoomScreen(
                 state = EightSeatRoomState(
@@ -122,7 +124,7 @@ class FifteenSeatRoomScreenTest {
                     pkSeconds = 0, lastMessage = "Member joined", chatInput = ""
                 ),
                 actions = EightSeatRoomActions(
-                    onNotice = {}, onShare = {}, onLeave = {}, onPk = {},
+                    onNotice = {}, onShare = { shared = true }, onLeave = {}, onPk = {},
                     onCameraSeat = {}, onAudioSeat = {}, onCameraToggle = {},
                     onMicToggle = {}, onChatChange = {}, onSend = {},
                     onGame = {}, onGift = {}, onCoin = {}, onMore = {}
@@ -132,6 +134,8 @@ class FifteenSeatRoomScreenTest {
             )
         }
         val headerBefore = rule.onNodeWithContentDescription("Leave room")
+            .fetchSemanticsNode().boundsInRoot
+        val noticeBefore = rule.onNodeWithContentDescription("Notice Board: Welcome")
             .fetchSemanticsNode().boundsInRoot
         val seatsBefore = (1..15).map { seat ->
             val label = when (seat) {
@@ -145,6 +149,8 @@ class FifteenSeatRoomScreenTest {
             .fetchSemanticsNode().boundsInRoot
         rule.runOnIdle { keyboardBottom = 260.dp }
         assertEquals(headerBefore, rule.onNodeWithContentDescription("Leave room")
+            .fetchSemanticsNode().boundsInRoot)
+        assertEquals(noticeBefore, rule.onNodeWithContentDescription("Notice Board: Welcome")
             .fetchSemanticsNode().boundsInRoot)
         (1..15).forEach { seat ->
             val label = when (seat) {
@@ -168,5 +174,9 @@ class FifteenSeatRoomScreenTest {
         rule.runOnIdle { keyboardBottom = 0.dp }
         assertEquals(dockBefore, rule.onNodeWithContentDescription("SMS input")
             .fetchSemanticsNode().boundsInRoot)
+        assertEquals("Only bottom PK should remain", 1,
+            rule.onAllNodesWithText("PK", useUnmergedTree = true).fetchSemanticsNodes().size)
+        rule.onNodeWithContentDescription("Share room").performClick()
+        assertTrue(shared)
     }
 }

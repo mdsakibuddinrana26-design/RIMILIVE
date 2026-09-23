@@ -43,8 +43,8 @@ internal fun FifteenSeatRoomScreen(
             .navigationBarsPadding()
     ) {
         val tight = maxHeight < 610.dp
-        val cameraHeight = (maxHeight * 0.27f).coerceIn(102.dp, 180.dp)
-        val audioRowHeight = if (tight) 50.dp else 55.dp
+        val cameraHeight = (maxHeight * 0.29f).coerceIn(106.dp, 186.dp)
+        val audioRowHeight = if (tight) 53.dp else 58.dp
         Column(Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = if (tight) 5.dp else 9.dp)) {
             Row(Modifier.fillMaxWidth().height(52.dp), verticalAlignment = Alignment.CenterVertically) {
                 Surface(Modifier.weight(1f).fillMaxHeight(), color = DarkPanel,
@@ -68,29 +68,19 @@ internal fun FifteenSeatRoomScreen(
                     }
                 }
                 Spacer(Modifier.width(5.dp))
-                FifteenIcon("↗", "Share room", actions.onShare)
+                RoomHeaderShare(actions.onShare)
                 Spacer(Modifier.width(5.dp))
                 FifteenIcon("×", "Leave room", actions.onLeave)
             }
             Spacer(Modifier.height(7.dp))
-            Row(Modifier.fillMaxWidth().height(32.dp), horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                Surface(
-                    Modifier.weight(1f).fillMaxHeight()
-                        .semantics { contentDescription = "Notice Board: ${state.notice}" }
-                        .clickable(onClick = actions.onNotice),
-                    color = DarkPanel, shape = RoundedCornerShape(16.dp)
-                ) {
-                    Box(Modifier.padding(horizontal = 11.dp), contentAlignment = Alignment.CenterStart) {
-                        Text("🔊  Notice Board", color = LightText, fontSize = 12.sp, maxLines = 1)
-                    }
-                }
-                Surface(Modifier.height(32.dp).clickable(enabled = state.isHost, onClick = actions.onPk),
-                    color = DarkPanel, shape = RoundedCornerShape(16.dp)) {
-                    Box(Modifier.padding(horizontal = 13.dp), contentAlignment = Alignment.Center) {
-                        Text(if (state.pkRunning) "PK  %02d:%02d".format(
-                            state.pkSeconds / 60, state.pkSeconds % 60
-                        ) else "PK", color = LightText, fontSize = 11.sp)
-                    }
+            Surface(
+                Modifier.fillMaxWidth().height(32.dp)
+                    .semantics { contentDescription = "Notice Board: ${state.notice}" }
+                    .clickable(onClick = actions.onNotice),
+                color = DarkPanel, shape = RoundedCornerShape(16.dp)
+            ) {
+                Box(Modifier.padding(horizontal = 11.dp), contentAlignment = Alignment.CenterStart) {
+                    Text("🔊  Notice Board", color = LightText, fontSize = 12.sp, maxLines = 1)
                 }
             }
             Spacer(Modifier.height(if (tight) 7.dp else 12.dp))
@@ -137,9 +127,9 @@ internal fun FifteenSeatRoomScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             if (occupied) {
-                                FifteenAvatar(photo, name, 33.dp)
+                                FifteenAvatar(photo, name, 35.dp)
                             } else {
-                                Surface(Modifier.size(33.dp), shape = CircleShape,
+                                Surface(Modifier.size(35.dp), shape = CircleShape,
                                     color = Color(0x8858392B)) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Text("+", color = LightText, fontSize = 21.sp)
@@ -200,8 +190,8 @@ private fun FifteenCameraSeat(
         color = Color(0x994C382C)) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                if (occupied) FifteenAvatar(photo, name, if (host) 48.dp else 29.dp)
-                else Surface(Modifier.size(30.dp), shape = CircleShape,
+                if (occupied) FifteenAvatar(photo, name, if (host) 51.dp else 32.dp)
+                else Surface(Modifier.size(33.dp), shape = CircleShape,
                     color = Color(0x8858392B)) {
                     Box(contentAlignment = Alignment.Center) {
                         Text("+", color = LightText, fontSize = 21.sp)

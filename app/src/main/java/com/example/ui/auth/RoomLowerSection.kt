@@ -6,6 +6,7 @@ import android.content.ContextWrapper
 import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -142,9 +143,10 @@ internal fun RoomControlBar(
     Row(modifier.fillMaxWidth().height(44.dp), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(
-            Modifier.weight(1f).fillMaxHeight().shadow(4.dp, RoundedCornerShape(16.dp))
-                .background(Brush.horizontalGradient(listOf(Color(0xFF064E4A), Color(0xFF137F74))),
+            Modifier.weight(1f).fillMaxHeight().shadow(3.dp, RoundedCornerShape(16.dp))
+                .background(Brush.horizontalGradient(listOf(Color(0xFF074D44), Color(0xFF106B5B))),
                     RoundedCornerShape(16.dp))
+                .border(1.dp, Color(0x99D6CA88), RoundedCornerShape(16.dp))
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -179,20 +181,22 @@ internal fun RoomControlBar(
             )
         }
         BottomRoomIcon("PK", "PK controls", actions.onPk,
-            enabled = state.isHost, color = Color(0xFF634388), accent = Color(0xFFDDC2FF))
+            enabled = state.isHost, color = Color(0xFF125548), accent = Color(0xFFFFDC82),
+            countdown = if (state.pkRunning) "%02d:%02d".format(
+                state.pkSeconds / 60, state.pkSeconds % 60) else null)
         BottomRoomIcon("game", "Games", actions.onGame,
-            color = Color(0xFF087E90), accent = Color(0xFFA5EDF2))
+            color = Color(0xFF125548), accent = Color(0xFFB9EBD7))
         BottomRoomIcon("gift", "Gifts", actions.onGift,
-            color = Color(0xFFAD4E7B), accent = Color(0xFFFFC0D8))
+            color = Color(0xFF125548), accent = Color(0xFFFFD9A0))
         BottomRoomIcon("more", "More room options", actions.onMore,
-            color = Color(0xFF087B65), accent = Color(0xFFA6F2D1))
+            color = Color(0xFF125548), accent = Color(0xFFB9EBD7))
     }
 }
 
 @Composable
 private fun BottomRoomIcon(
     glyph: String, label: String, onClick: () -> Unit,
-    enabled: Boolean = true, color: Color, accent: Color
+    enabled: Boolean = true, color: Color, accent: Color, countdown: String? = null
 ) {
     Surface(Modifier.size(40.dp).shadow(3.dp, RoundedCornerShape(13.dp))
         .semantics { contentDescription = label }
@@ -201,8 +205,15 @@ private fun BottomRoomIcon(
         border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.8f))) {
         Box(Modifier.background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.22f),
             color, color.copy(alpha = 0.94f)))), contentAlignment = Alignment.Center) {
-            if (glyph == "PK") Text("PK", color = if (enabled) Color.White else Color(0x99FFFFFF),
-                fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            if (glyph == "PK") Column(horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center) {
+                Text("PK", color = if (enabled) Color.White else Color(0x99FFFFFF),
+                    fontSize = if (countdown == null) 13.sp else 11.sp,
+                    lineHeight = 12.sp, fontWeight = FontWeight.Bold)
+                if (countdown != null) Text(countdown,
+                    color = if (enabled) Color(0xFFFFDC82) else Color(0x99FFFFFF),
+                    fontSize = 8.sp, lineHeight = 9.sp)
+            }
             else RoomControlGlyph(glyph, if (enabled) Color.White else Color(0x99FFFFFF))
         }
     }

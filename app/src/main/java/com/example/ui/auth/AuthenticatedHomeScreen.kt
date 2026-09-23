@@ -398,7 +398,9 @@ fun AuthenticatedHomeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color(0xFF087B68), Color(0xFF10AA88))))
+            .background(Brush.verticalGradient(listOf(
+                Color(0xFF00755B), Color(0xFF004838), Color(0xFF00694D), Color(0xFF00372F)
+            )))
             .statusBarsPadding()
     ) {
         // Top app header removed to maximize room/content space
@@ -411,7 +413,7 @@ fun AuthenticatedHomeScreen(
                 .fillMaxWidth()
                 .height(92.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .background(Brush.horizontalGradient(listOf(Color(0xFF126B5B), Color(0xFF21B28F)))),
+                .background(Brush.horizontalGradient(listOf(Color(0xFF086556), Color(0xFF139F7E)))),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -3233,7 +3235,7 @@ Column(
                 .height(54.dp),
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF079A7B)
+                containerColor = Color(0xFF057C67)
             )
         ) {
             Text(
@@ -3243,43 +3245,9 @@ Column(
             )
         }
 
-        // Bottom navigation
-        if (!inRoom && selectedTab == "Profile") {
-            RimiProfileBottomBar(onNavigate = { selectedTab = it })
-        } else if (!inRoom) NavigationBar(
-            containerColor = Color.White
-        ) {
-            NavigationBarItem(
-                selected = selectedTab in listOf("Party", "Follow", "Chat", "Top"),
-                onClick = { selectedTab = "Party" },
-                icon = { Text("⌂", fontSize = 23.sp) },
-                label = { Text("Home") }
-            )
-            NavigationBarItem(
-                selected = selectedTab == "Explore",
-                onClick = { selectedTab = "Explore" },
-                icon = { Text("⌕", fontSize = 23.sp) },
-                label = { Text("Explore") }
-            )
-            NavigationBarItem(
-                selected = selectedTab == "Post",
-                onClick = { selectedTab = "Post" },
-                icon = { Text("+", fontSize = 28.sp, fontWeight = FontWeight.Bold) },
-                label = { Text("Post") }
-            )
-            NavigationBarItem(
-                selected = selectedTab == "Message",
-                onClick = { selectedTab = "Message" },
-                icon = { Text("💬", fontSize = 20.sp) },
-                label = { Text("Messages") }
-            )
-            NavigationBarItem(
-                selected = selectedTab == "Profile",
-                onClick = { selectedTab = "Profile" },
-                icon = { Text("○", fontSize = 23.sp) },
-                label = { Text("Profile") }
-            )
-        }
+        // One navigation component, including Profile. Subtabs are part of Home.
+        if (!inRoom) RimiMainBottomBar(selectedTab = selectedTab,
+            onNavigate = { selectedTab = it })
     }
     }
 }

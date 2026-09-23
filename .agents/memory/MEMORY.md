@@ -3,3 +3,4 @@
 - [Android UI capture in Robolectric](android-ui-capture.md) — Compose visibility assertions work, but image capture has not produced a usable PNG in this runner.
 - [Compact Compose bottom sheets](compact-compose-bottom-sheets.md) — skip partial expansion and allow scrolling so controls remain reachable in compact portrait.
 - [Room keyboard stability](room-keyboard-stability.md) — keep seat geometry outside IME padding; dock only the message controls above the keyboard.
+- [Main navigation consistency](main-navigation-consistency.md) — keep one five-destination bar across main screens; room controls remain separate.

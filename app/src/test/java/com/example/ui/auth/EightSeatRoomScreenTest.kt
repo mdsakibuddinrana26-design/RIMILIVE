@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
@@ -55,6 +56,22 @@ class EightSeatRoomScreenTest {
         rule.onNodeWithContentDescription("Camera seat 1, Host").assertIsDisplayed()
         (2..3).forEach { rule.onNodeWithContentDescription("Empty camera seat $it, invite").assertIsDisplayed() }
         (4..8).forEach { rule.onNodeWithContentDescription("Empty audio seat $it, invite").assertIsDisplayed() }
+        val roomBounds = rule.onRoot().fetchSemanticsNode().boundsInRoot
+        val seatBounds = listOf("Camera seat 1, Host") +
+            (2..3).map { "Empty camera seat $it, invite" } +
+            (4..8).map { "Empty audio seat $it, invite" }
+        val seats = seatBounds.map {
+            rule.onNodeWithContentDescription(it).fetchSemanticsNode().boundsInRoot
+        }
+        seats.forEachIndexed { index, seat ->
+            assertTrue("Seat outside room: $seat", seat.left >= roomBounds.left &&
+                seat.right <= roomBounds.right && seat.top >= roomBounds.top &&
+                seat.bottom <= roomBounds.bottom)
+            seats.drop(index + 1).forEach { other ->
+                assertTrue("Seats overlap", seat.right <= other.left || other.right <= seat.left ||
+                    seat.bottom <= other.top || other.bottom <= seat.top)
+            }
+        }
         rule.onNodeWithText("Welcome to RIMILIVE!").assertIsDisplayed()
         rule.onNodeWithText("Guest joined the room").assertIsDisplayed()
         rule.onNodeWithText("Enter something...").assertIsDisplayed()
@@ -95,7 +112,7 @@ class EightSeatRoomScreenTest {
                     pkSeconds = 0, lastMessage = "Member joined", chatInput = message
                 ),
                 actions = EightSeatRoomActions(
-                    onNotice = {}, onShare = {}, onLeave = {},
+                    onNotice = {}, onShare = { actionsClicked += "Share" }, onLeave = {},
                     onPk = { actionsClicked += "PK" },
                     onCameraSeat = {}, onAudioSeat = {}, onCameraToggle = {},
                     onMicToggle = {}, onChatChange = { message = it },
@@ -109,6 +126,8 @@ class EightSeatRoomScreenTest {
         }
         val headerBefore = rule.onNodeWithContentDescription("Leave room")
             .fetchSemanticsNode().boundsInRoot
+        val noticeBefore = rule.onNodeWithContentDescription("Notice Board: Welcome")
+            .fetchSemanticsNode().boundsInRoot
         val seatBefore = rule.onNodeWithContentDescription("Camera seat 1, Host")
             .fetchSemanticsNode().boundsInRoot
         val dockBefore = rule.onNodeWithContentDescription("SMS input")
@@ -119,6 +138,8 @@ class EightSeatRoomScreenTest {
         rule.onNodeWithContentDescription("SMS input").assertIsDisplayed()
         rule.onNodeWithText("Hello").assertIsDisplayed()
         assertEquals(headerBefore, rule.onNodeWithContentDescription("Leave room")
+            .fetchSemanticsNode().boundsInRoot)
+        assertEquals(noticeBefore, rule.onNodeWithContentDescription("Notice Board: Welcome")
             .fetchSemanticsNode().boundsInRoot)
         assertEquals(seatBefore, rule.onNodeWithContentDescription("Camera seat 1, Host")
             .fetchSemanticsNode().boundsInRoot)
@@ -134,9 +155,12 @@ class EightSeatRoomScreenTest {
         rule.runOnIdle { keyboardBottom = 0.dp }
         assertEquals(dockBefore, rule.onNodeWithContentDescription("SMS input")
             .fetchSemanticsNode().boundsInRoot)
+        assertEquals("Only bottom PK should remain", 1,
+            rule.onAllNodesWithText("PK", useUnmergedTree = true).fetchSemanticsNodes().size)
         listOf("PK controls", "Games", "Gifts", "More room options").forEach {
             rule.onNodeWithContentDescription(it).performClick()
         }
-        assertEquals(listOf("PK", "Game", "Gift", "More"), actionsClicked)
+        rule.onNodeWithContentDescription("Share room").performClick()
+        assertEquals(listOf("PK", "Game", "Gift", "More", "Share"), actionsClicked)
     }
 }
