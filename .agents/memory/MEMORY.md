@@ -1,3 +1,4 @@
 - [Android SDK persistence](android-sdk-persistence.md) — keep locally downloaded Android SDK tools in the workspace because the runner home can reset between sessions.
 - [Legacy room seat safety](legacy-room-seat-safety.md) — normalize old layouts in the app without silently deleting occupied Firestore seats during conversion.
 - [Android UI capture in Robolectric](android-ui-capture.md) — Compose visibility assertions work, but image capture has not produced a usable PNG in this runner.
+- [Compact Compose bottom sheets](compact-compose-bottom-sheets.md) — skip partial expansion and allow scrolling so controls remain reachable in compact portrait.

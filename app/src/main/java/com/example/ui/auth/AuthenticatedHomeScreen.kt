@@ -758,6 +758,9 @@ fun AuthenticatedHomeScreen(
     var opponentPkScore by remember { mutableStateOf(0) }
     var pkSecondsRemaining by remember { mutableStateOf(0) }
     var showMoreMenu by remember { mutableStateOf(false) }
+    var showRoomSettingsMenu by remember { mutableStateOf(false) }
+    var roomFeatureNotice by remember { mutableStateOf<String?>(null) }
+    var chatFocusRequest by remember { mutableIntStateOf(0) }
     var showJoinRoomDialog by remember { mutableStateOf(false) }
     var joinRoomInput by remember { mutableStateOf("") }
     var joinRoomError by remember { mutableStateOf("") }
@@ -1417,15 +1420,15 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
                     }
                     TextButton(onClick = {
                         showGameMenu = false
-                        roomMessages = roomMessages + "System: Lucky Race needs a game server"
+                        roomFeatureNotice = "Ludo is not available yet."
                     }) {
-                        Text("Lucky Race")
+                        Text("Ludo")
                     }
                     TextButton(onClick = {
                         showGameMenu = false
-                        roomMessages = roomMessages + "System: More games are not available yet"
+                        roomFeatureNotice = "GAMI Race is not available yet."
                     }) {
-                        Text("More games later")
+                        Text("GAMI Race")
                     }
                 }
             },
@@ -1643,64 +1646,71 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
     }
 
     if (showMoreMenu) {
-        AlertDialog(
-            onDismissRequest = { showMoreMenu = false },
-            title = { Text("More") },
-            text = {
-                Column {
-                    TextButton(
-                        onClick = {
-                            showMoreMenu = false
-                            showRoomBrowser = true
-                        }
-                    ) {
-                        Text("Browse Rooms")
-                    }
-
-                    TextButton(
-                        onClick = {
-                            showMoreMenu = false
-                            showJoinRoomDialog = true
-                        }
-                    ) {
-                        Text("Join by Room ID")
-                    }
-
-                    TextButton(
-                        onClick = {
-                            showMoreMenu = false
-                            if (isHost) {
-                                noticeDraft = noticeText
-                                showNoticeDialog = true
-                            } else {
-                                roomMessages = roomMessages + "System: Only the host can edit the room notice"
-                            }
-                        }
-                    ) {
-                        Text("Room Settings")
-                    }
-
-                    TextButton(
-                        onClick = {
-                            showMoreMenu = false
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, "Join my RIMILIVE room: $roomId")
-                            }
-                            androidContext.startActivity(Intent.createChooser(shareIntent, "Share room"))
-                        }
-                    ) {
-                        Text("Share Room")
-                    }
+        RoomMoreSheet(
+            onDismiss = { showMoreMenu = false },
+            onSettings = { showMoreMenu = false; showRoomSettingsMenu = true },
+            onLudo = { showMoreMenu = false; roomFeatureNotice = "Ludo is not available yet." },
+            onGamiRace = {
+                showMoreMenu = false
+                roomFeatureNotice = "GAMI Race is not available yet."
+            },
+            onMusic = {
+                showMoreMenu = false
+                roomFeatureNotice = "Music is not available yet."
+            },
+            onTopUp = { showMoreMenu = false; showCoinMenu = true },
+            onMessages = {
+                showMoreMenu = false
+                chatFocusRequest++
+            },
+            onBrowseRooms = { showMoreMenu = false; showRoomBrowser = true },
+            onJoinRoom = { showMoreMenu = false; showJoinRoomDialog = true },
+            onEditNotice = {
+                showMoreMenu = false
+                if (isHost) {
+                    noticeDraft = noticeText
+                    showNoticeDialog = true
+                } else {
+                    roomFeatureNotice = "Only the host can edit the room notice."
                 }
             },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(
-                    onClick = { showMoreMenu = false }
-                ) {
-                    Text("Close")
+            onShareRoom = {
+                showMoreMenu = false
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, "Join my RIMILIVE room: $roomId")
                 }
+                androidContext.startActivity(Intent.createChooser(shareIntent, "Share room"))
+            }
+        )
+    }
+    if (showRoomSettingsMenu) {
+        RoomSettingsSheet(
+            micOn = myMicEnabled,
+            cameraOn = cameraEnabled,
+            cameraAvailable = myJoinedSeat in layoutSpec.cameraSeats,
+            onDismiss = { showRoomSettingsMenu = false },
+            onMicrophone = { myMicEnabled = !myMicEnabled },
+            onCamera = {
+                if (myJoinedSeat in layoutSpec.cameraSeats) cameraEnabled = !cameraEnabled
+                else {
+                    showRoomSettingsMenu = false
+                    roomFeatureNotice = "Join a camera seat to use the camera."
+                }
+            },
+            onUnavailable = { feature ->
+                showRoomSettingsMenu = false
+                roomFeatureNotice = "$feature is not available yet."
+            }
+        )
+    }
+    roomFeatureNotice?.let { message ->
+        AlertDialog(
+            onDismissRequest = { roomFeatureNotice = null },
+            title = { Text("Room feature") },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = { roomFeatureNotice = null }) { Text("OK") }
             }
         )
     }
@@ -2071,7 +2081,8 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
                     pkRunning = pkRunning,
                     pkSeconds = pkSecondsRemaining,
                     lastMessage = latestRoomActivity,
-                    chatInput = chatInput
+                    chatInput = chatInput,
+                    chatFocusRequest = chatFocusRequest
                 ),
                 actions = EightSeatRoomActions(
                     onNotice = { noticeDraft = noticeText; showNoticeDialog = true },
@@ -2127,7 +2138,8 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
                     pkRunning = pkRunning,
                     pkSeconds = pkSecondsRemaining,
                     lastMessage = latestRoomActivity,
-                    chatInput = chatInput
+                    chatInput = chatInput,
+                    chatFocusRequest = chatFocusRequest
                 ),
                 actions = EightSeatRoomActions(
                     onNotice = { noticeDraft = noticeText; showNoticeDialog = true },

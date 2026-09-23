@@ -1,0 +1,142 @@
+Update ONLY the Party Room bottom controls and More/Settings menus.
+
+Use my attached screenshots as DESIGN REFERENCES only.
+
+IMPORTANT:
+Do NOT change the completed 8-seat or 15-seat room layouts.
+Do NOT change Login, Profile, Firebase, or other completed screens.
+
+1. BOTTOM ROOM CONTROLS
+
+The current bottom buttons look too basic.
+
+Redesign these existing controls to look modern, colorful and professional:
+
+SMS / Chat
+PK
+Game
+Gift
+More
+
+Keep the current functions connected.
+This is mainly a visual improvement.
+
+Use clean, attractive original icons.
+Do not copy proprietary icons/assets from the reference app.
+
+Keep the bottom order:
+
+SMS → PK → Game → Gift → More
+
+
+2. MORE BUTTON
+
+When the user taps More, open a bottom-sheet/panel similar to my first reference screenshot.
+
+Inside it show:
+
+GAME
+- Ludo
+- GAMI Race
+
+The racing game name must be:
+
+GAMI Race
+
+Do NOT call it Lucky Race.
+
+Then show these tools:
+
+- Settings
+- Music
+- Top-up
+- Messages
+
+Use attractive icons and a clean grid layout similar to the reference.
+
+
+3. SETTINGS
+
+When the user taps Settings inside More, open the Settings panel similar to my second reference screenshot.
+
+Show exactly these options:
+
+- Sticker
+- Beautification
+- Hide entrance effects
+- Microphone
+- Camera
+- Switch camera
+- Background
+
+Use clear professional icons.
+
+Keep the layout clean and easy to understand.
+
+
+4. FUNCTIONAL BEHAVIOR
+
+More → opens More panel.
+
+Settings → opens Settings panel.
+
+Ludo → opens/uses the existing Ludo entry if available.
+
+GAMI Race → create/connect the entry point for our future GAMI Race game.
+
+Music → use existing music functionality if available.
+
+Top-up → connect to existing Top-up navigation if available.
+
+Messages → connect to existing message/chat functionality.
+
+Microphone → use existing microphone state.
+
+Camera → use existing camera state.
+
+Switch camera → use existing front/back camera switching if already supported.
+
+Do NOT fake functionality that requires systems not implemented yet.
+If a backend/game feature is not ready, keep a safe clickable entry point for later implementation.
+
+
+5. VERY IMPORTANT
+
+Do NOT redesign the Party Room again.
+
+Do NOT change:
+- seat sizes
+- seat positions
+- 8-seat room
+- 15-seat room
+- camera-seat counts
+- audio-seat counts
+- room header
+- existing Firebase room logic
+
+Only improve:
+
+Bottom buttons
++
+More panel
++
+Settings panel.
+
+
+After finishing, verify that the existing room still works correctly.
+
+Then run:
+
+./gradlew :app:assembleDebug
+
+Continue until BUILD SUCCESSFUL.
+
+Replace the root RIMILIVE.apk with the newly built APK.
+
+Finally tell me:
+- Bottom controls status
+- More menu status
+- Settings menu status
+- GAMI Race entry status
+- BUILD SUCCESSFUL
+- APK path

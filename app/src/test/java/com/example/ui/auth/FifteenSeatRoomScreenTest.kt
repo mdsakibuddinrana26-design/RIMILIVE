@@ -76,8 +76,8 @@ class FifteenSeatRoomScreenTest {
             "Mute microphone", "Leave room").forEach {
             rule.onNodeWithContentDescription(it).assertIsDisplayed()
         }
-        val labels = listOf("SMS input", "PK controls", "Message / Chat",
-            "Games", "Gifts", "More room options")
+        val labels = listOf("SMS input", "PK controls", "Games", "Gifts",
+            "More room options")
         val buttons = labels.map {
             rule.onNodeWithContentDescription(it).assertIsDisplayed()
                 .fetchSemanticsNode().boundsInRoot

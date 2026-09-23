@@ -43,7 +43,8 @@ internal data class EightSeatRoomState(
     val pkRunning: Boolean,
     val pkSeconds: Int,
     val lastMessage: String,
-    val chatInput: String
+    val chatInput: String,
+    val chatFocusRequest: Int = 0
 )
 
 internal data class EightSeatRoomActions(

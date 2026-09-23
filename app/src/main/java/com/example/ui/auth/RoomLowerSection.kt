@@ -11,12 +11,15 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -38,6 +41,12 @@ internal fun RoomLowerSection(
 ) {
     val inputFocus = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
+    LaunchedEffect(state.chatFocusRequest) {
+        if (state.chatFocusRequest > 0) {
+            inputFocus.requestFocus()
+            keyboard?.show()
+        }
+    }
 
     Surface(
         Modifier.fillMaxWidth().height(
@@ -87,54 +96,70 @@ internal fun RoomLowerSection(
     }
     Spacer(Modifier.height(if (tight) 5.dp else 7.dp))
     Row(Modifier.fillMaxWidth().height(44.dp), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-        BasicTextField(
-            value = state.chatInput,
-            onValueChange = actions.onChatChange,
-            modifier = Modifier.weight(1f).fillMaxHeight()
-                .focusRequester(inputFocus)
-                .semantics { contentDescription = "SMS input" }
-                .background(Color(0xAA5B392A), RoundedCornerShape(24.dp))
-                .padding(horizontal = 11.dp, vertical = 11.dp),
-            textStyle = TextStyle(color = Color.White, fontSize = 12.sp),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = { actions.onSend() }),
-            decorationBox = { inner ->
-                Box {
-                    if (state.chatInput.isEmpty()) {
-                        Text("Enter something...", color = Color(0xCCFFFFFF),
-                            fontSize = 12.sp, maxLines = 1)
-                    }
-                    inner()
-                }
+        horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(
+            Modifier.weight(1f).fillMaxHeight().shadow(3.dp, RoundedCornerShape(24.dp))
+                .background(Brush.horizontalGradient(listOf(Color(0xFF063F40), Color(0xFF147C72))),
+                    RoundedCornerShape(24.dp))
+                .padding(horizontal = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(Modifier.size(30.dp).clickable {
+                inputFocus.requestFocus()
+                keyboard?.show()
+            }.semantics { contentDescription = "Message / Chat" },
+                contentAlignment = Alignment.Center) {
+                Text("✉", color = Color(0xFF91FFE2), fontSize = 19.sp)
             }
-        )
+            BasicTextField(
+                value = state.chatInput,
+                onValueChange = actions.onChatChange,
+                modifier = Modifier.weight(1f).fillMaxHeight()
+                    .focusRequester(inputFocus)
+                    .semantics { contentDescription = "SMS input" }
+                    .padding(start = 2.dp, end = 6.dp, top = 11.dp, bottom = 9.dp),
+                textStyle = TextStyle(color = Color.White, fontSize = 12.sp),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(onSend = { actions.onSend() }),
+                decorationBox = { inner ->
+                    Box {
+                        if (state.chatInput.isEmpty()) {
+                            Text("Enter something...", color = Color(0xDFFFFFFF),
+                                fontSize = 11.sp, maxLines = 1,
+                                overflow = TextOverflow.Ellipsis)
+                        }
+                        inner()
+                    }
+                }
+            )
+        }
         BottomRoomIcon("PK", "PK controls", actions.onPk,
-            enabled = state.isHost, color = Color(0xFF633C99))
-        BottomRoomIcon("💬", "Message / Chat", {
-            inputFocus.requestFocus()
-            keyboard?.show()
-        }, color = Color(0xFF10A98E))
-        BottomRoomIcon("🎮", "Games", actions.onGame, color = Color(0xFF25895C))
-        BottomRoomIcon("🎁", "Gifts", actions.onGift, color = Color(0xFFD74C91))
+            enabled = state.isHost, color = Color(0xFF8745C3), accent = Color(0xFFD9A6FF))
+        BottomRoomIcon("✦", "Games", actions.onGame,
+            color = Color(0xFF168DB2), accent = Color(0xFF9EF4FF))
+        BottomRoomIcon("🎁", "Gifts", actions.onGift,
+            color = Color(0xFFD03D8D), accent = Color(0xFFFFAFD5))
         BottomRoomIcon("•••", "More room options", actions.onMore,
-            color = Color(0xFF723B21))
+            color = Color(0xFFEC9B28), accent = Color(0xFFFFDB86))
     }
 }
 
 @Composable
 private fun BottomRoomIcon(
     glyph: String, label: String, onClick: () -> Unit,
-    enabled: Boolean = true, color: Color
+    enabled: Boolean = true, color: Color, accent: Color
 ) {
-    Surface(Modifier.size(36.dp).semantics { contentDescription = label }
+    Surface(Modifier.size(40.dp).shadow(4.dp, RoundedCornerShape(13.dp))
+        .semantics { contentDescription = label }
         .clickable(enabled = enabled, onClick = onClick),
-        shape = CircleShape, color = color) {
-        Box(contentAlignment = Alignment.Center) {
+        shape = RoundedCornerShape(13.dp), color = color,
+        border = androidx.compose.foundation.BorderStroke(1.dp, accent)) {
+        Box(Modifier.background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.35f),
+            color, color))), contentAlignment = Alignment.Center) {
             Text(glyph, color = if (enabled) Color.White else Color(0x99FFFFFF),
                 fontSize = if (glyph == "PK") 13.sp else 18.sp,
-                fontWeight = if (glyph == "PK") FontWeight.Bold else FontWeight.Normal)
+                fontWeight = FontWeight.Bold)
         }
     }
 }
