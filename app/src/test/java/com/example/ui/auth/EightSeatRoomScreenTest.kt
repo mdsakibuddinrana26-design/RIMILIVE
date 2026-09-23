@@ -74,7 +74,7 @@ class EightSeatRoomScreenTest {
         }
         rule.onNodeWithText("Welcome to RIMILIVE!").assertIsDisplayed()
         rule.onNodeWithText("Guest joined the room").assertIsDisplayed()
-        rule.onNodeWithText("Enter something...").assertIsDisplayed()
+        rule.onNodeWithText("SMS · Message...").assertIsDisplayed()
         rule.onNodeWithContentDescription("Gifts").assertIsDisplayed()
         rule.onNodeWithContentDescription("Message / Chat").assertIsDisplayed()
         val labels = listOf("SMS input", "PK controls", "Games", "Gifts",

@@ -141,12 +141,12 @@ internal fun RoomControlBar(
         }
     }
     Row(modifier.fillMaxWidth().height(44.dp), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        horizontalArrangement = Arrangement.spacedBy(5.dp)) {
         Row(
-            Modifier.weight(1f).fillMaxHeight().shadow(3.dp, RoundedCornerShape(16.dp))
+            Modifier.weight(1f).fillMaxHeight().shadow(2.dp, RoundedCornerShape(22.dp))
                 .background(Brush.horizontalGradient(listOf(Color(0xFF074D44), Color(0xFF106B5B))),
-                    RoundedCornerShape(16.dp))
-                .border(1.dp, Color(0x99D6CA88), RoundedCornerShape(16.dp))
+                    RoundedCornerShape(22.dp))
+                .border(1.dp, Color(0xB3D6CA88), RoundedCornerShape(22.dp))
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -171,7 +171,7 @@ internal fun RoomControlBar(
                 decorationBox = { inner ->
                     Box {
                         if (state.chatInput.isEmpty()) {
-                            Text("Enter something...", color = Color(0xDFFFFFFF),
+                            Text("SMS · Message...", color = Color(0xDFFFFFFF),
                                 fontSize = 11.sp, maxLines = 1,
                                 overflow = TextOverflow.Ellipsis)
                         }
@@ -198,7 +198,7 @@ private fun BottomRoomIcon(
     glyph: String, label: String, onClick: () -> Unit,
     enabled: Boolean = true, color: Color, accent: Color, countdown: String? = null
 ) {
-    Surface(Modifier.size(40.dp).shadow(3.dp, RoundedCornerShape(13.dp))
+    Surface(Modifier.size(44.dp).shadow(2.dp, RoundedCornerShape(13.dp))
         .semantics { contentDescription = label }
         .clickable(enabled = enabled, onClick = onClick),
         shape = RoundedCornerShape(13.dp), color = color,

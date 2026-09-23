@@ -1454,38 +1454,20 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
     }
 
     if (showGiftMenu) {
-        AlertDialog(
-            onDismissRequest = { showGiftMenu = false },
-            title = { Text("Send Gift") },
-            text = {
-                Column {
-                    Text(
-                        text = if (giftReceiverSeat == 1)
-                            "To: Host"
-                        else
-                            "To: Seat $giftReceiverSeat"
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    listOf("Rose", "Heart", "Star", "Crown").forEach { gift ->
-                        TextButton(
-                            onClick = {
-                                roomMessages = roomMessages + "System: $gift is unavailable until gifts and coins are verified by a server"
-                                showGiftMenu = false
-                            }
-                        ) {
-                            Text(gift)
-                        }
+        var giftCoinBalance by remember(currentUid) { mutableStateOf<Long?>(null) }
+        DisposableEffect(currentUid) {
+            val listener = if (currentUid.isNotBlank()) {
+                firestore.collection("users").document(currentUid)
+                    .addSnapshotListener { doc, error ->
+                        giftCoinBalance = if (error == null) doc?.getLong("coins") else null
                     }
-                }
-            },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(onClick = { showGiftMenu = false }) {
-                    Text("Close")
-                }
-            }
+            } else null
+            onDispose { listener?.remove() }
+        }
+        RoomGiftSheet(
+            receiverSeat = giftReceiverSeat,
+            coinBalance = giftCoinBalance,
+            onDismiss = { showGiftMenu = false }
         )
     }
 

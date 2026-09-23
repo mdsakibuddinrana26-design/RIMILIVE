@@ -1,0 +1,274 @@
+RIMILIVE — GIFT PANEL CATEGORIES + PARTY ROOM BOTTOM CONTROL UI UPDATE
+
+First inspect the current Party Room and existing Gift implementation.
+
+IMPORTANT:
+This is a controlled UI update.
+Do NOT redesign the completed Party Room.
+Do NOT modify Firebase/backend/seat/host logic unnecessarily.
+Before modifying files, create backups of every file that will be changed.
+
+I am attaching a Gift panel screenshot ONLY as a visual/layout reference.
+Do NOT copy its app branding, username, profile, coin balance, gift artwork, proprietary icons, or personal data.
+
+==================================================
+PART 1 — GIFT CATEGORY TABS
+==================================================
+
+Update the RIMILIVE Gift panel to contain these 6 categories, exactly in this order:
+
+1. Popular
+2. Lucky
+3. Luxury
+4. VIP
+5. Romantic
+6. Festival
+
+Create a clean horizontally scrollable category/tab row if necessary.
+
+Requirements:
+
+- All 6 categories must be clickable.
+- The currently selected category must have a clear premium highlight.
+- Use the existing RIMILIVE green/premium visual language.
+- Keep text readable and spacing balanced.
+- Do not let category names overlap or get cut off.
+- Do not hardcode another app's data or branding.
+
+For now, if real gift items for every category are not yet available:
+- create/prepare the category structure safely,
+- preserve any existing RIMILIVE gift items,
+- do NOT invent fake backend gift transactions,
+- do NOT duplicate the same gift purchase transaction logic unnecessarily.
+
+We will add/finalize individual gift assets, prices and animations later.
+
+==================================================
+PART 2 — GIFT PANEL STRUCTURE
+==================================================
+
+Keep the Gift panel as a professional bottom sheet.
+
+The basic structure should be:
+
+Top:
+Gift category tabs
+
+Middle:
+Gift grid/items
+
+Each gift item area should support:
+- gift image/icon
+- gift name
+- Coin price
+
+Bottom:
+- current Coin balance
+- quantity selector
+- Send button
+
+Prepare a clean quantity selector with:
+
+1 | 10 | 99 | 999
+
+and a clear premium "Send" button.
+
+IMPORTANT:
+Do not allow the UI to perform fake successful purchases/sends.
+
+If secure existing gift/coin transaction logic is already implemented,
+reuse it.
+
+If it is not implemented yet, keep the UI safely prepared for later backend integration.
+
+Never trust a client-side Coin balance for a real gift transaction.
+
+==================================================
+PART 3 — UPGRADE PARTY ROOM BOTTOM CONTROLS
+==================================================
+
+Also visually improve the existing Party Room bottom control row:
+
+SMS | PK | Game | Gift | More
+
+DO NOT change this order.
+
+Keep every existing action/function connected.
+
+Make the bottom controls look more polished and premium.
+
+SMS BOX:
+- Make the SMS/message box slightly cleaner and more modern.
+- Rounded pill/capsule shape.
+- Comfortable typing area.
+- Clear SMS/message indicator.
+- Do not make it too tall.
+- It should receive the largest horizontal space.
+
+PK:
+- Keep the BOTTOM PK button.
+- Do NOT restore the previously removed TOP PK.
+- Make bottom PK icon/text cleaner and easier to recognize.
+
+GAME:
+- Keep existing Game action.
+- Improve visual consistency only.
+
+GIFT:
+- Keep existing Gift action.
+- Gift button opens the updated Gift panel.
+
+MORE:
+- Keep existing More action.
+- Do not remove or break the existing More menu.
+
+All four compact action buttons should have:
+- consistent icon size
+- consistent visual weight
+- balanced spacing
+- good touch targets
+- premium RIMILIVE styling
+
+Avoid oversized circles or excessive glow.
+
+==================================================
+PART 4 — KEYBOARD BEHAVIOR MUST REMAIN CORRECT
+==================================================
+
+When the SMS field is tapped and Android keyboard opens:
+
+- Do NOT push the entire Party Room upward.
+- Keep the main room visually stable.
+- Keep SMS | PK | Game | Gift | More together directly above the keyboard.
+- Do not cover the text input with the keyboard.
+- When keyboard closes, controls return to their normal bottom position.
+
+Use proper Jetpack Compose WindowInsets/IME handling.
+
+Do NOT use hardcoded keyboard heights or device-specific hacks.
+
+==================================================
+PART 5 — DO NOT DAMAGE COMPLETED WORK
+==================================================
+
+Preserve exactly:
+
+- current Party Room background system
+- all newly added Day/Night backgrounds
+- selected background persistence
+- 8-seat room layout
+- 15-seat room layout
+- current seat arrangement
+- seat functionality
+- Notice Board
+- room header
+- Share button and Share action
+- removed TOP PK state
+- BOTTOM PK
+- SMS functionality
+- Game functionality
+- Gift entry action
+- More menu
+- Settings menu
+- host/member logic
+- Firebase room logic
+- authentication/session persistence
+- Firestore user/profile data
+- Coin/Diamond existing data
+- Follow/Chat/Profile functionality
+
+Do NOT perform a broad refactor.
+
+Make the smallest safe changes necessary.
+
+==================================================
+PART 6 — RESPONSIVE UI
+==================================================
+
+This must work properly on Android phone screens.
+
+Verify:
+
+- no horizontal overflow
+- no clipped Gift tabs
+- no overlapping bottom controls
+- Gift bottom sheet fits correctly
+- gift grid can scroll when necessary
+- keyboard does not destroy Party Room layout
+- bottom controls remain usable
+- system navigation bar does not cover Send or bottom controls
+
+==================================================
+PART 7 — TEST
+==================================================
+
+Test all 6 Gift category tabs:
+
+Popular
+Lucky
+Luxury
+VIP
+Romantic
+Festival
+
+Verify each tab can be selected and the active state changes correctly.
+
+Test:
+
+- Gift button
+- Gift panel open/close
+- quantity buttons
+- Send button state
+- SMS field
+- keyboard open/close
+- PK
+- Game
+- More
+
+Also open both:
+- 8-seat room
+- 15-seat room
+
+and confirm their completed layouts have NOT changed.
+
+Check that the newly installed Party Room backgrounds still work.
+
+==================================================
+PART 8 — BUILD
+==================================================
+
+After completing and testing the changes run:
+
+./gradlew :app:assembleDebug
+
+Fix relevant errors until:
+
+BUILD SUCCESSFUL
+
+Then update/replace the root:
+
+RIMILIVE.apk
+
+with the newly built APK.
+
+Finally report:
+
+- Popular tab: WORKING / NOT WORKING
+- Lucky tab: WORKING / NOT WORKING
+- Luxury tab: WORKING / NOT WORKING
+- VIP tab: WORKING / NOT WORKING
+- Romantic tab: WORKING / NOT WORKING
+- Festival tab: WORKING / NOT WORKING
+- Gift panel: WORKING / NOT WORKING
+- SMS UI upgraded: YES / NO
+- PK UI upgraded: YES / NO
+- Game UI upgraded: YES / NO
+- Gift button upgraded: YES / NO
+- More UI upgraded: YES / NO
+- Keyboard behavior preserved: YES / NO
+- 8-seat layout preserved: YES / NO
+- 15-seat layout preserved: YES / NO
+- Background system preserved: YES / NO
+- Existing Firebase/backend functionality preserved: YES / NO
+- BUILD SUCCESSFUL
+- Final APK path

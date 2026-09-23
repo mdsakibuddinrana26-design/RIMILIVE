@@ -77,7 +77,7 @@ class FifteenSeatRoomScreenTest {
         }
         rule.onNodeWithText("Welcome to RIMILIVE!").assertIsDisplayed()
         rule.onNodeWithText("Guest joined the room").assertIsDisplayed()
-        rule.onNodeWithText("Enter something...").assertIsDisplayed()
+        rule.onNodeWithText("SMS · Message...").assertIsDisplayed()
         listOf("Message / Chat", "Gifts", "PK controls", "Turn camera on",
             "Mute microphone", "Leave room").forEach {
             rule.onNodeWithContentDescription(it).assertIsDisplayed()
