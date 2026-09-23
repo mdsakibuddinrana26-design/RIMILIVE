@@ -1,0 +1,263 @@
+IMPORTANT — MODIFY ONLY THE LOWER/BOTTOM SECTION OF THE EXISTING ROOM SCREEN.
+
+The room seat layouts are already completed and approved.
+
+DO NOT modify:
+- 8-seat layout
+- 15-seat layout
+- camera seats
+- audio seats
+- room header
+- Notice Board
+- existing seat sizes or positions
+
+This task is ONLY for the LOWER SECTION shown in the attached reference screenshot.
+
+Use the attached screenshot ONLY as the visual/layout reference.
+Do not copy its app name, user names, IDs, advertisements, branding, or personal data.
+
+==================================================
+1. ROOM WELCOME / NOTICE MESSAGE
+==================================================
+
+Below the seat area, create a compact rounded message/notice panel similar to the reference screenshot.
+
+It must use RIMILIVE branding.
+
+The message should start with:
+
+"Welcome to RIMILIVE!"
+
+Below that, leave space for a short RIMILIVE room safety/community notice.
+
+Do NOT write "Welcome to Gemgala Game Room".
+
+This is RIMILIVE.
+
+Keep this notice panel compact so it does not consume unnecessary screen space.
+
+==================================================
+2. USER JOIN ACTIVITY AREA
+==================================================
+
+Directly below the welcome/notice panel, add a SMALL compact activity/message strip similar to the reference.
+
+This area will show room activity such as when a user joins.
+
+Example behavior:
+
+[User Name] joined the room
+
+IMPORTANT:
+Do NOT hardcode any username or ID from the reference screenshot.
+
+Use the actual RIMILIVE user's current display name/data when available.
+
+This should be a dynamic room-event area so later room events/messages can appear here.
+
+Keep it small — approximately one compact line/strip like the reference.
+
+==================================================
+3. BOTTOM ACTION BAR — VERY IMPORTANT
+==================================================
+
+At the very bottom, reproduce the STRUCTURE and PROPORTIONS of the reference screenshot as closely as possible.
+
+The order MUST be:
+
+LEFT → RIGHT
+
+1. SMS / TEXT INPUT
+2. PK
+3. MESSAGE / CHAT
+4. GAME
+5. GIFT
+6. MORE
+
+Do not change this order.
+
+==================================================
+4. SMS / TEXT INPUT
+==================================================
+
+The left side should contain a rounded text-input area similar to the reference.
+
+Placeholder:
+
+"Enter something..."
+
+This input should occupy approximately HALF of the useful bottom-bar space before the circular action buttons begin.
+
+It must be a real usable text input, not just decorative text.
+
+==================================================
+5. PK BUTTON
+==================================================
+
+Immediately after the SMS input:
+
+PK button.
+
+Use a compact circular button.
+
+Connect it to the existing PK action if one already exists.
+
+Do not create duplicate PK logic.
+
+==================================================
+6. MESSAGE / CHAT BUTTON
+==================================================
+
+Immediately after PK:
+
+Message/Chat button.
+
+Use a compact circular button with a clear message/chat icon.
+
+Reuse the existing Chat/Message action where possible.
+
+==================================================
+7. GAME BUTTON
+==================================================
+
+Immediately after Message/Chat:
+
+Game button.
+
+Use a compact circular game-related icon/button.
+
+For now, create/use the UI entry point without unnecessarily building a new game system in this task.
+
+==================================================
+8. GIFT BUTTON
+==================================================
+
+Immediately after Game:
+
+Gift button.
+
+Use a compact circular Gift button.
+
+Connect it to the EXISTING RIMILIVE Gift action.
+
+Do NOT replace or duplicate the existing Gift logic.
+
+==================================================
+9. MORE BUTTON
+==================================================
+
+The LAST button on the right must be:
+
+MORE
+
+Use a compact circular More/menu icon similar in purpose to the final button in the reference.
+
+IMPORTANT:
+
+Later we will place the remaining room controls/settings inside this MORE menu.
+
+For THIS task, only make the More button/entry point correctly positioned and ready for that later work.
+
+Do NOT redesign or move extra settings into it yet unless necessary for compilation.
+
+==================================================
+STRICT VISUAL ORDER
+==================================================
+
+The bottom must visually read:
+
+[ Enter something... ] [ PK ] [ Message ] [ Game ] [ Gift ] [ More ]
+
+Keep all six elements on the same bottom row as closely as possible on a normal portrait Android screen.
+
+Match the reference for:
+- compact height
+- button scale
+- spacing
+- rounded shapes
+- vertical alignment
+- bottom positioning
+
+Do not create giant buttons.
+
+Do not allow the bottom bar to push the approved seat layouts off-screen.
+
+==================================================
+ONE-SCREEN REQUIREMENT
+==================================================
+
+The already-approved room seats AND this lower section should remain within the compact room design.
+
+Avoid unnecessary scrolling.
+
+Keep:
+
+Welcome notice
++
+Join activity strip
++
+bottom action row
+
+as compact as the reference screenshot.
+
+==================================================
+PRESERVE EXISTING FUNCTIONALITY
+==================================================
+
+Reuse existing RIMILIVE actions wherever they already exist.
+
+Do NOT break:
+- room joining/leaving
+- seats
+- host state
+- camera/mic state
+- PK
+- Chat
+- Gift
+- Firebase/Firestore room behavior
+- Back navigation
+
+Do not perform broad refactoring.
+
+==================================================
+DO NOT TOUCH APPROVED WORK
+==================================================
+
+Again:
+
+DO NOT MODIFY THE COMPLETED 8-SEAT ROOM LAYOUT.
+
+DO NOT MODIFY THE COMPLETED 15-SEAT ROOM LAYOUT.
+
+DO NOT CHANGE CAMERA/AUDIO SEAT COUNTS OR SIZES.
+
+ONLY modify the lower room section requested in this task.
+
+==================================================
+FINAL CHECK
+==================================================
+
+Before building verify:
+
+1. "Welcome to RIMILIVE!" is shown.
+2. A compact dynamic user-join activity strip exists below it.
+3. Bottom order is exactly:
+   SMS Input → PK → Message → Game → Gift → More
+4. SMS input says "Enter something..."
+5. Existing PK action is preserved.
+6. Existing Chat action is preserved.
+7. Existing Gift action is preserved.
+8. Game entry exists.
+9. More entry exists.
+10. Approved 8-seat and 15-seat layouts were not changed.
+11. Nothing overlaps or clips on a portrait phone.
+
+Then run:
+
+./gradlew :app:assembleDebug
+
+Continue until BUILD SUCCESSFUL.
+
+Replace the root RIMILIVE.apk with the successful new APK.
+
+Report the final APK path.

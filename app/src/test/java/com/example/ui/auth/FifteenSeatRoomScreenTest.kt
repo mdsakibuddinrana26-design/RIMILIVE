@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import org.junit.Assert.assertEquals
@@ -35,7 +36,7 @@ class FifteenSeatRoomScreenTest {
                     names = emptyMap(), photos = emptyMap(),
                     memberCameras = emptyMap(), memberMics = emptyMap(),
                     cameraOn = false, micOn = true, pkRunning = false,
-                    pkSeconds = 0, lastMessage = "Welcome to the room", chatInput = ""
+                    pkSeconds = 0, lastMessage = "Guest joined the room", chatInput = ""
                 ),
                 actions = EightSeatRoomActions(
                     onNotice = {}, onShare = {}, onLeave = {}, onPk = {},
@@ -68,12 +69,28 @@ class FifteenSeatRoomScreenTest {
                 assertTrue("Seats overlap: $seat and $other", !overlaps(seat, other))
             }
         }
-        listOf("Send message", "Gifts", "PK controls", "Turn camera on",
+        rule.onNodeWithText("Welcome to RIMILIVE!").assertIsDisplayed()
+        rule.onNodeWithText("Guest joined the room").assertIsDisplayed()
+        rule.onNodeWithText("Enter something...").assertIsDisplayed()
+        listOf("Message / Chat", "Gifts", "PK controls", "Turn camera on",
             "Mute microphone", "Leave room").forEach {
             rule.onNodeWithContentDescription(it).assertIsDisplayed()
         }
-        val send = rule.onNodeWithContentDescription("Send message").fetchSemanticsNode().boundsInRoot
-        assertTrue("Bottom actions overlap seats", seats.maxOf { it.bottom } < send.top)
+        val labels = listOf("SMS input", "PK controls", "Message / Chat",
+            "Games", "Gifts", "More room options")
+        val buttons = labels.map {
+            rule.onNodeWithContentDescription(it).assertIsDisplayed()
+                .fetchSemanticsNode().boundsInRoot
+        }
+        buttons.zipWithNext().forEach { (left, right) ->
+            assertTrue("Bottom row is out of order", left.right <= right.left)
+            assertTrue("Bottom controls are not on one row", left.top <= right.bottom && right.top <= left.bottom)
+        }
+        val notice = rule.onNodeWithText("Welcome to RIMILIVE!").fetchSemanticsNode().boundsInRoot
+        val activity = rule.onNodeWithText("Guest joined the room").fetchSemanticsNode().boundsInRoot
+        assertTrue("Lower section overlaps seats", seats.maxOf { it.bottom } < notice.top)
+        assertTrue("Activity must follow welcome", notice.bottom < activity.top)
+        assertTrue("Bottom actions must follow activity", activity.bottom < buttons.first().top)
         rule.onNodeWithContentDescription("Empty camera seat 5, invite").performClick()
         rule.onNodeWithContentDescription("Empty audio seat 15, invite").performClick()
         rule.onNodeWithContentDescription("Gifts").performClick()

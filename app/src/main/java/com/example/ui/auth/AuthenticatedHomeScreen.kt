@@ -896,6 +896,17 @@ fun AuthenticatedHomeScreen(
             )
         )
     }
+    var latestRoomActivity by remember(roomId) {
+        mutableStateOf("$currentName joined the room")
+    }
+    var observedMemberIds by remember(roomId) { mutableStateOf<Set<String>?>(null) }
+    var observedMessageCount by remember(roomId) { mutableIntStateOf(roomMessages.size) }
+    LaunchedEffect(roomId, roomMessages.size) {
+        if (roomMessages.size > observedMessageCount) {
+            latestRoomActivity = roomMessages.last()
+        }
+        observedMessageCount = roomMessages.size
+    }
 
     // Remove user from old room when room changes or screen closes
     
@@ -1075,6 +1086,16 @@ fun AuthenticatedHomeScreen(
         val memberListener = membersRef.addSnapshotListener { snapshot, _ ->
             if (snapshot != null) {
                 liveMemberCount = snapshot.size()
+                val currentMemberIds = snapshot.documents.map { it.id }.toSet()
+                val joinedUid = observedMemberIds?.let { previous ->
+                    (currentMemberIds - previous).firstOrNull { it != currentUid }
+                }
+                if (inRoom && joinedUid != null) {
+                    val joinedName = snapshot.documents.firstOrNull { it.id == joinedUid }
+                        ?.getString("name").orEmpty().ifBlank { "Someone" }
+                    latestRoomActivity = "$joinedName joined the room"
+                }
+                observedMemberIds = currentMemberIds
 
                 
 
@@ -2083,7 +2104,7 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
                     micOn = myMicEnabled,
                     pkRunning = pkRunning,
                     pkSeconds = pkSecondsRemaining,
-                    lastMessage = roomMessages.lastOrNull().orEmpty(),
+                    lastMessage = latestRoomActivity,
                     chatInput = chatInput
                 ),
                 actions = EightSeatRoomActions(
@@ -2139,7 +2160,7 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
                     micOn = myMicEnabled,
                     pkRunning = pkRunning,
                     pkSeconds = pkSecondsRemaining,
-                    lastMessage = roomMessages.lastOrNull().orEmpty(),
+                    lastMessage = latestRoomActivity,
                     chatInput = chatInput
                 ),
                 actions = EightSeatRoomActions(

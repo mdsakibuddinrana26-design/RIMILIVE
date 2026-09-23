@@ -155,54 +155,7 @@ internal fun FifteenSeatRoomScreen(
             }
 
             Spacer(Modifier.weight(1f))
-            Surface(Modifier.fillMaxWidth().height(if (tight) 38.dp else 68.dp),
-                shape = RoundedCornerShape(13.dp), color = DarkPanel) {
-                Column(Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                    verticalArrangement = Arrangement.Center) {
-                    if (pkScoreLine != null) {
-                        Text(pkScoreLine, color = Color(0xFFFFD88A), fontSize = 10.sp, maxLines = 1)
-                    }
-                    Text(state.lastMessage, color = Color(0xFFFFF1D9), fontSize = 11.sp,
-                        lineHeight = 14.sp, maxLines = if (tight) 2 else 4,
-                        overflow = TextOverflow.Ellipsis)
-                }
-            }
-            Spacer(Modifier.height(7.dp))
-            Row(Modifier.fillMaxWidth().height(43.dp), verticalAlignment = Alignment.CenterVertically) {
-                BasicTextField(
-                    value = state.chatInput, onValueChange = actions.onChatChange,
-                    modifier = Modifier.weight(1f).fillMaxHeight()
-                        .background(Color(0xAA5B392A), RoundedCornerShape(25.dp))
-                        .padding(horizontal = 14.dp, vertical = 11.dp),
-                    textStyle = TextStyle(color = LightText, fontSize = 12.sp),
-                    singleLine = true,
-                    decorationBox = { inner ->
-                        Box {
-                            if (state.chatInput.isEmpty()) {
-                                Text("Enter something...", color = Color(0xCCFFFFFF), fontSize = 12.sp)
-                            }
-                            inner()
-                        }
-                    }
-                )
-                Spacer(Modifier.width(6.dp))
-                FifteenIcon("➤", "Send message", actions.onSend)
-            }
-            Spacer(Modifier.height(5.dp))
-            Row(Modifier.fillMaxWidth().height(43.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically) {
-                FifteenIcon("PK", "PK controls", actions.onPk, enabled = state.isHost)
-                FifteenIcon("🎮", "Games", actions.onGame)
-                FifteenIcon("🎁", "Gifts", actions.onGift)
-                FifteenIcon("🪙", "Coins", actions.onCoin)
-                FifteenIcon("•••", "More room options", actions.onMore)
-                FifteenIcon("📷", if (state.cameraOn) "Turn camera off" else "Turn camera on",
-                    actions.onCameraToggle,
-                    enabled = state.mySeat?.let { it in 1..5 } == true, active = state.cameraOn)
-                FifteenIcon("🎙", if (state.micOn) "Mute microphone" else "Unmute microphone",
-                    actions.onMicToggle, active = state.micOn)
-            }
+            RoomLowerSection(state, actions, tight, cameraSeats = 1..5, pkScoreLine = pkScoreLine)
         }
     }
 }

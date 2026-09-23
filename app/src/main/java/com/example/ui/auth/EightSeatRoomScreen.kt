@@ -193,56 +193,7 @@ internal fun EightSeatRoomScreen(state: EightSeatRoomState, actions: EightSeatRo
             }
 
             Spacer(Modifier.weight(1f))
-            Surface(
-                modifier = Modifier.fillMaxWidth().height(if (tight) 38.dp else 68.dp),
-                shape = RoundedCornerShape(13.dp), color = Color(0x995B392A)
-            ) {
-                Box(Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                    contentAlignment = Alignment.CenterStart) {
-                    Text(state.lastMessage, color = Color(0xFFFFF1D9),
-                        fontSize = 11.sp, lineHeight = 14.sp, maxLines = if (tight) 2 else 4,
-                        overflow = TextOverflow.Ellipsis)
-                }
-            }
-            Spacer(Modifier.height(7.dp))
-            Row(Modifier.fillMaxWidth().height(43.dp), verticalAlignment = Alignment.CenterVertically) {
-                BasicTextField(
-                    value = state.chatInput,
-                    onValueChange = actions.onChatChange,
-                    modifier = Modifier.weight(1f).fillMaxHeight()
-                        .background(Color(0xAA5B392A), RoundedCornerShape(25.dp))
-                        .padding(horizontal = 14.dp, vertical = 11.dp),
-                    textStyle = TextStyle(color = RoomText, fontSize = 12.sp),
-                    singleLine = true,
-                    decorationBox = { inner ->
-                        Box {
-                            if (state.chatInput.isEmpty()) {
-                                Text("Enter something...", color = Color(0xCCFFFFFF), fontSize = 12.sp)
-                            }
-                            inner()
-                        }
-                    }
-                )
-                Spacer(Modifier.width(6.dp))
-                RoomIcon("➤", "Send message", actions.onSend)
-            }
-            Spacer(Modifier.height(5.dp))
-            Row(
-                Modifier.fillMaxWidth().height(43.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RoomIcon("PK", "PK controls", actions.onPk, enabled = state.isHost)
-                RoomIcon("🎮", "Games", actions.onGame)
-                RoomIcon("🎁", "Gifts", actions.onGift)
-                RoomIcon("🪙", "Coins", actions.onCoin)
-                RoomIcon("•••", "More room options", actions.onMore)
-                RoomIcon("📷", if (state.cameraOn) "Turn camera off" else "Turn camera on",
-                    actions.onCameraToggle,
-                    enabled = state.mySeat?.let { it in 1..3 } == true, active = state.cameraOn)
-                RoomIcon("🎙", if (state.micOn) "Mute microphone" else "Unmute microphone",
-                    actions.onMicToggle, active = state.micOn)
-            }
+            RoomLowerSection(state, actions, tight, cameraSeats = 1..3)
         }
     }
 }
