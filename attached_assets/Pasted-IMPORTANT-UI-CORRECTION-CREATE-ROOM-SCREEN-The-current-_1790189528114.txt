@@ -1,0 +1,71 @@
+IMPORTANT UI CORRECTION — CREATE ROOM SCREEN
+
+The current Create Room implementation does NOT visually match the attached reference screenshot.
+
+DO NOT redesign the whole screen again.
+Only correct the Room Layout selector and the related visual mismatch.
+
+The attached ORIGINAL REFERENCE SCREENSHOT is the visual source of truth.
+
+CURRENT WRONG IMPLEMENTATION:
+- Large rectangular layout cards
+- Text such as "8 seats • 3 cameras"
+- Text such as "15 seats • 5 cameras"
+- Seat/camera counts visibly written inside the selector
+
+REMOVE THIS VISUAL DESIGN.
+
+I DO NOT want seat counts or camera counts written on the Create Room screen.
+
+MATCH THE REFERENCE SCREENSHOT:
+
+Under "Room Layout", show the compact row of FOUR small white layout-preview icons, with approximately the same:
+- icon shapes
+- size
+- spacing
+- alignment
+- selected outline/highlight
+- position relative to the Create button
+
+The Room Layout area should visually look as close as possible to the attached original reference screenshot.
+
+IMPORTANT:
+The seat configuration still exists internally in the code, but DO NOT display those technical numbers as text to the user.
+
+Internally:
+
+The EXISTING old 12-seat layout has already been changed / must remain changed to:
+8 total seats = 3 camera/video + 5 audio.
+
+The 15-seat layout remains:
+15 total seats = 5 camera/video + 10 audio.
+
+These numbers are INTERNAL ROOM LOGIC.
+
+They should NOT appear as:
+"8 seats • 3 cameras"
+or
+"15 seats • 5 cameras"
+on the Create Room UI.
+
+The user should select the room layout visually through the compact layout icons exactly like the reference.
+
+Also match the reference Create Room screen more closely for:
+- Room Type container appearance
+- Room Type icon sizing
+- spacing
+- Room Layout positioning
+- selected layout outline
+- Create button proportions and placement
+
+Do NOT copy the person's photo, background photo, username, ID, or any personal data from the reference.
+
+Use the reference ONLY for UI layout/design.
+
+Do not break the already implemented room logic, authentication, Firebase, or other screens.
+
+After this correction:
+1. Build the project.
+2. Confirm BUILD SUCCESSFUL.
+3. Replace the root RIMILIVE.apk with the newly built APK.
+4. Give me the final APK path.

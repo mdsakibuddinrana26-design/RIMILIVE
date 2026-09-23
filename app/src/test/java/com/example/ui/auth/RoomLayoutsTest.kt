@@ -23,4 +23,10 @@ class RoomLayoutsTest {
         assertEquals((6..15).toList(), spec.audioSeats.toList())
         assertEquals(15, spec.audioSeats.last)
     }
+
+    @Test
+    fun allFourVisualPreviewsKeepTheTwoSupportedRoomCapacities() {
+        assertEquals(listOf("8-seat", "8-seat", "15-seat", "15-seat"),
+            (0..3).map(::roomLayoutForPreview))
+    }
 }

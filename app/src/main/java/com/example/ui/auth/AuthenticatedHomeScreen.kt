@@ -130,6 +130,7 @@ fun AuthenticatedHomeScreen(
     var createFriendsOnly by remember { mutableStateOf(false) }
     var createRoomType by remember { mutableStateOf("Race") }
     var createRoomLayout by remember { mutableStateOf("8-seat") }
+    var selectedLayoutPreview by remember { mutableIntStateOf(1) }
     var createPosterUrl by remember { mutableStateOf("") }
     var createError by remember { mutableStateOf("") }
     var creatingRoom by remember { mutableStateOf(false) }
@@ -296,75 +297,64 @@ fun AuthenticatedHomeScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(18.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Spacer(modifier = Modifier.height(14.dp))
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(22.dp),
+                color = Color(0x80606F69)
             ) {
-                listOf(
-                    "Number" to "🔢",
-                    "Race" to "🏁",
-                    "Lucky Race" to "🎲",
-                    "Teen Patti" to "🃏",
-                    "Chatroom" to "💬",
-                    "BlockMe PK" to "⚔️"
-                ).forEach { (name, icon) ->
-                    val selected = createRoomType == name
-
-                    Surface(
-                        modifier = Modifier
-                            .width(82.dp)
-                            .clickable { createRoomType = name },
-                        shape = RoundedCornerShape(18.dp),
-                        color = if (selected) Color(0xFF087D69) else Color(0x99606F69),
-                        border = if (selected)
-                            BorderStroke(2.dp, Color(0xFF35D0A8))
-                        else null
-                    ) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 8.dp, vertical = 9.dp),
+                    horizontalArrangement = Arrangement.spacedBy(7.dp)
+                ) {
+                    listOf(
+                        "Number" to "🔢",
+                        "Race" to "🏁",
+                        "Chatroom" to "💬",
+                        "BlockMe PK" to "⚔️",
+                        "Lucky Race" to "🎲",
+                        "Teen Patti" to "🃏"
+                    ).forEach { (name, icon) ->
+                        val selected = createRoomType == name
                         Column(
-                            modifier = Modifier.padding(vertical = 10.dp),
+                            modifier = Modifier.width(77.dp).clickable { createRoomType = name },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(icon, fontSize = 32.sp)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = name,
-                                color = Color.White,
-                                fontSize = 11.sp, maxLines = 1
-                            )
+                            Box(
+                                modifier = Modifier.size(58.dp)
+                                    .background(if (selected) Color(0xFF087D69) else Color(0xFF496D67),
+                                        RoundedCornerShape(10.dp))
+                                    .then(if (selected) Modifier.border(1.5.dp, Color(0xFF35D0A8),
+                                        RoundedCornerShape(10.dp)) else Modifier),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(icon, fontSize = 34.sp)
+                            }
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Text(name, color = Color.White, fontSize = 11.sp, maxLines = 1)
                         }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Room layout", color = Color(0xFF173F39), fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(10.dp))
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                listOf("8-seat" to "8 seats • 3 cameras", "15-seat" to "15 seats • 5 cameras")
-                    .forEach { (layout, label) ->
-                        FilterChip(
-                            selected = createRoomLayout == layout,
-                            onClick = { createRoomLayout = layout },
-                            label = { Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(if (layout == "8-seat") "▣ ▫ ▫\n● ● ● ● ●" else "▣ ▫ ▫ ▫ ▫\n● ● ● ● ●\n● ● ● ● ●",
-                                    lineHeight = 15.sp, fontSize = 13.sp)
-                                Text(label, fontSize = 10.sp)
-                            } },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+                Text("Room Layout", color = Color(0xFF173F39), fontSize = 17.sp,
+                    modifier = Modifier.weight(1f))
+                CreateRoomLayoutSelector(selectedLayoutPreview) { preview ->
+                    selectedLayoutPreview = preview
+                    createRoomLayout = roomLayoutForPreview(preview)
+                }
             }
             if (createError.isNotBlank()) {
                 Text(createError, color = Color(0xFFFF8A80), modifier = Modifier.padding(top = 8.dp))
             }
 
-            Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Button(
                 enabled = !creatingRoom && !posterUploading,
@@ -380,8 +370,9 @@ fun AuthenticatedHomeScreen(
                     }
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(58.dp),
+                    .fillMaxWidth(0.72f)
+                    .align(Alignment.CenterHorizontally)
+                    .height(52.dp),
                 shape = RoundedCornerShape(30.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B68F))
             ) {
