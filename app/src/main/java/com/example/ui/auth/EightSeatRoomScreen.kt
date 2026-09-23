@@ -71,7 +71,8 @@ private val RoomText = Color.White
 internal fun EightSeatRoomScreen(
     state: EightSeatRoomState,
     actions: EightSeatRoomActions,
-    imeInsets: WindowInsets = WindowInsets.ime
+    imeInsets: WindowInsets = WindowInsets.ime,
+    background: RoomBackgroundOption? = null
 ) {
     RoomImeWindowPolicy()
     BoxWithConstraints(
@@ -79,6 +80,7 @@ internal fun EightSeatRoomScreen(
             .background(Brush.verticalGradient(listOf(Color(0xFFFF9B40), Color(0xFFEF702E))))
             .navigationBarsPadding()
     ) {
+        RoomBackgroundLayer(background)
         // Fixed-sized seat rows leave the remaining height to the chat region,
         // rather than stretching seats or pushing the controls off-screen.
         val tight = maxHeight < 610.dp

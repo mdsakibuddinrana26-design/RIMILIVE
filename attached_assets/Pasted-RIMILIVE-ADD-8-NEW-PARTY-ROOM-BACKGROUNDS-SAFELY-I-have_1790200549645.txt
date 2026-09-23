@@ -1,0 +1,302 @@
+RIMILIVE — ADD 8 NEW PARTY ROOM BACKGROUNDS SAFELY
+
+I have uploaded 8 new background image files to this Replit project.
+
+The files are:
+
+01_Sunrise_Sea.jpg
+02_Nature_View.jpg
+03_Cozy_Day_Room.jpg
+04_Garden_View.jpg
+05_Moonlight_Sea.jpg
+06_City_Night.jpg
+07_Dream_Sky.jpg
+08_Luxury_Night_Room.jpg
+
+IMPORTANT:
+First inspect the project and locate the existing Party Room Background selector and its current implementation.
+
+Do NOT redesign the Party Room.
+Do NOT change unrelated screens or functionality.
+
+Before modifying any file, create a backup of every file that will be changed.
+
+==================================================
+1. ADD THE 8 BACKGROUNDS
+==================================================
+
+Add these 8 uploaded images to the existing:
+
+Party Room → More → Settings → Background
+
+background selector.
+
+Use the images as real selectable Party Room backgrounds.
+
+Organize them in this order:
+
+DAY / NORMAL:
+
+1. Sunrise Sea
+2. Nature View
+3. Cozy Day Room
+4. Garden View
+
+NIGHT:
+
+5. Moonlight Sea
+6. City Night
+7. Dream Sky
+8. Luxury Night Room
+
+Do NOT combine the images into a collage.
+
+Each image must remain an individual selectable background.
+
+==================================================
+2. USE CORRECT ANDROID RESOURCES
+==================================================
+
+Move/copy the uploaded image files into an appropriate Android drawable/resource location using valid Android resource filenames.
+
+If renaming is required, use safe lowercase Android resource names such as:
+
+rimi_bg_sunrise_sea
+rimi_bg_nature_view
+rimi_bg_cozy_day_room
+rimi_bg_garden_view
+rimi_bg_moonlight_sea
+rimi_bg_city_night
+rimi_bg_dream_sky
+rimi_bg_luxury_night_room
+
+Do NOT delete the original uploaded files until the new resources are verified.
+
+Do NOT overwrite unrelated existing resources.
+
+==================================================
+3. BACKGROUND SELECTOR UI
+==================================================
+
+Keep the existing Background bottom sheet/panel design.
+
+Do NOT completely redesign it.
+
+Add the 8 new backgrounds as clean thumbnail previews.
+
+The thumbnails should:
+
+- be clearly visible
+- have consistent size
+- have rounded corners
+- have balanced spacing
+- be easy to tap
+- scroll smoothly if all backgrounds do not fit on one screen
+
+Do NOT make the thumbnails excessively large.
+
+Keep any existing valid backgrounds unless there is a clear duplicate or broken placeholder.
+
+==================================================
+4. APPLY BACKGROUND IMMEDIATELY
+==================================================
+
+When the user taps one of the 8 thumbnails:
+
+1. Select that background.
+2. Immediately apply it to the CURRENT Party Room.
+3. Close the Background selector if that matches the current app behavior.
+4. Keep all room UI visible above the background.
+
+The selected background must NOT cover or hide:
+
+- room header
+- Notice Board
+- seats
+- usernames
+- camera/microphone controls
+- SMS
+- PK
+- Game
+- Gift
+- More
+
+The background must remain BEHIND the Party Room UI.
+
+==================================================
+5. CORRECT IMAGE SCALING
+==================================================
+
+Display the selected background properly on different Android portrait screen sizes.
+
+The background should fill the Party Room area without stretching or distorting the image.
+
+Use an appropriate crop/fill behavior while preserving the image aspect ratio.
+
+Do NOT leave unwanted blank/black areas around the background.
+
+Do NOT distort the picture.
+
+==================================================
+6. SAVE THE USER'S SELECTION
+==================================================
+
+The selected background must persist.
+
+If the user:
+
+- closes the Background panel
+- leaves the Party Room
+- returns to the Party Room
+- navigates to another screen and comes back
+
+the previously selected background should still be used.
+
+Use the safest existing local preference/state architecture already present in this project.
+
+Do NOT create an unnecessary Firestore write for every background selection if this is only a device-side visual preference.
+
+If an existing background preference system already exists, extend/reuse it instead of creating a second competing system.
+
+==================================================
+7. DO NOT AFFECT OTHER USERS' ROOMS
+==================================================
+
+Treat this as the current user's visual background preference unless the existing app architecture explicitly defines Party Room backgrounds as a host-controlled shared room setting.
+
+Do NOT accidentally change Firebase room data or force another user's room background without verifying the existing architecture first.
+
+==================================================
+8. DO NOT BREAK PREVIOUS PARTY ROOM WORK
+==================================================
+
+This task must NOT undo or modify the previously completed Party Room work.
+
+Preserve:
+
+- existing Party Room design
+- 8-seat layout
+- 15-seat layout
+- current seat arrangement
+- current seat functionality
+- slightly enlarged seat sizing
+- Notice Board
+- room header
+- TOP PK removal
+- BOTTOM PK
+- improved Share button
+- Share functionality
+- SMS
+- Game
+- Gift
+- More
+- Settings
+- keyboard/IME behavior
+- room backend logic
+- host/member logic
+
+Do NOT restore the removed TOP PK.
+
+==================================================
+9. DO NOT BREAK MAIN APP UI
+==================================================
+
+Do NOT modify the completed main-app visual consistency work.
+
+Preserve:
+
+- premium green RIMILIVE main theme
+- Follow screen
+- Party screen
+- Chat/SMS screen
+- Top screen
+- Profile screen
+- consistent RIMILIVE bottom-navigation icons
+- navigation actions
+
+This Background task is specifically for the PARTY ROOM Background feature.
+
+==================================================
+10. DO NOT BREAK FIREBASE OR USER DATA
+==================================================
+
+Do NOT unnecessarily modify:
+
+- Firebase Authentication
+- Firestore
+- login/session persistence
+- profile data
+- user IDs
+- Coin/Diamond data
+- Follow data
+- Chat data
+- existing room data
+
+Do not perform broad refactoring.
+
+Make the smallest safe changes necessary.
+
+==================================================
+11. TEST ALL 8 BACKGROUNDS
+==================================================
+
+After implementation, test EACH background individually:
+
+1. Sunrise Sea
+2. Nature View
+3. Cozy Day Room
+4. Garden View
+5. Moonlight Sea
+6. City Night
+7. Dream Sky
+8. Luxury Night Room
+
+For every background verify:
+
+- thumbnail displays correctly
+- thumbnail is clickable
+- correct image is selected
+- correct image appears in Party Room
+- image is not distorted
+- no unwanted black area appears
+- seats remain visible
+- controls remain visible
+
+Then select one background, leave the Party Room, return, and verify the selected background is still preserved.
+
+Also verify that the 8-seat and 15-seat room layouts are unchanged.
+
+==================================================
+12. BUILD AND VERIFY
+==================================================
+
+After implementation and testing, run:
+
+./gradlew :app:assembleDebug
+
+Fix any relevant compilation/resource errors until:
+
+BUILD SUCCESSFUL
+
+After BUILD SUCCESSFUL, replace/update the root:
+
+RIMILIVE.apk
+
+with the newly built APK.
+
+Do NOT report completion before the build succeeds.
+
+Finally report:
+
+- 8 image resources added: DONE / NOT DONE
+- All 8 thumbnails visible: DONE / NOT DONE
+- All 8 backgrounds selectable: DONE / NOT DONE
+- Background applies immediately: WORKING / NOT WORKING
+- Background scaling: CORRECT / NOT CORRECT
+- Selected background persistence: WORKING / NOT WORKING
+- Existing Party Room UI preserved: YES / NO
+- 8-seat layout preserved: YES / NO
+- 15-seat layout preserved: YES / NO
+- Main RIMILIVE UI preserved: YES / NO
+- BUILD SUCCESSFUL
+- Final APK path

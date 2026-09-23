@@ -34,7 +34,8 @@ internal fun FifteenSeatRoomScreen(
     state: EightSeatRoomState,
     actions: EightSeatRoomActions,
     pkScoreLine: String?,
-    imeInsets: WindowInsets = WindowInsets.ime
+    imeInsets: WindowInsets = WindowInsets.ime,
+    background: RoomBackgroundOption? = null
 ) {
     RoomImeWindowPolicy()
     BoxWithConstraints(
@@ -42,6 +43,7 @@ internal fun FifteenSeatRoomScreen(
             .background(Brush.verticalGradient(listOf(Color(0xFFFF9B40), Color(0xFFEF702E))))
             .navigationBarsPadding()
     ) {
+        RoomBackgroundLayer(background)
         val tight = maxHeight < 610.dp
         val cameraHeight = (maxHeight * 0.29f).coerceIn(106.dp, 186.dp)
         val audioRowHeight = if (tight) 53.dp else 58.dp

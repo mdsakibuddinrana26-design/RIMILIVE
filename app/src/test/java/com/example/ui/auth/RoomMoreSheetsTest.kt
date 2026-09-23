@@ -28,6 +28,7 @@ class RoomMoreSheetsTest {
     fun moreOpensSettingsWithRealMicrophoneAndCameraControls() {
         var more by mutableStateOf(true)
         var settings by mutableStateOf(false)
+        var backgrounds by mutableStateOf(false)
         var mic by mutableStateOf(false)
         var camera by mutableStateOf(false)
         rule.setContent {
@@ -43,7 +44,13 @@ class RoomMoreSheetsTest {
                 onDismiss = { settings = false },
                 onMicrophone = { mic = !mic },
                 onCamera = { camera = !camera },
+                onBackground = { settings = false; backgrounds = true },
                 onUnavailable = {}
+            )
+            if (backgrounds) RoomBackgroundSheet(
+                selectedId = null,
+                onSelect = { backgrounds = false },
+                onDismiss = { backgrounds = false }
             )
         }
         listOf("Ludo", "GAMI Race", "Settings", "Music", "Top-up", "Messages",
@@ -59,6 +66,8 @@ class RoomMoreSheetsTest {
         rule.onNodeWithText("Camera").performClick()
         assertTrue(mic)
         assertTrue(camera)
+        rule.onNodeWithText("Background").performScrollTo().performClick()
+        rule.onNodeWithText("Sunrise Sea").assertIsDisplayed()
     }
 
     @Test

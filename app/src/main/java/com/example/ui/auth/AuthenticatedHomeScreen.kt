@@ -719,6 +719,15 @@ fun AuthenticatedHomeScreen(
     }
 
     val currentUid = firebaseUser?.uid.orEmpty()
+    val backgroundPreferences = remember(androidContext) {
+        RoomBackgroundPreferences(androidContext)
+    }
+    var selectedRoomBackgroundId by remember(currentUid) {
+        mutableStateOf(backgroundPreferences.load(currentUid)?.id)
+    }
+    val selectedRoomBackground = roomBackgrounds.firstOrNull {
+        it.id == selectedRoomBackgroundId
+    }
     val currentName = user.fullName.ifBlank {
         user.username.ifBlank { "User" }
     }
@@ -761,6 +770,7 @@ fun AuthenticatedHomeScreen(
     var pkSecondsRemaining by remember { mutableStateOf(0) }
     var showMoreMenu by remember { mutableStateOf(false) }
     var showRoomSettingsMenu by remember { mutableStateOf(false) }
+    var showRoomBackgroundMenu by remember { mutableStateOf(false) }
     var roomFeatureNotice by remember { mutableStateOf<String?>(null) }
     var chatFocusRequest by remember { mutableIntStateOf(0) }
     var showJoinRoomDialog by remember { mutableStateOf(false) }
@@ -1700,10 +1710,27 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
                     roomFeatureNotice = "Join a camera seat to use the camera."
                 }
             },
+            onBackground = {
+                showRoomSettingsMenu = false
+                showRoomBackgroundMenu = true
+            },
             onUnavailable = { feature ->
                 showRoomSettingsMenu = false
                 roomFeatureNotice = "$feature is not available yet."
             }
+        )
+    }
+    if (inRoom && showRoomBackgroundMenu) {
+        RoomBackgroundSheet(
+            selectedId = selectedRoomBackgroundId,
+            onSelect = { id ->
+                selectedRoomBackgroundId = id
+                showRoomBackgroundMenu = false
+                if (!backgroundPreferences.save(currentUid, id)) {
+                    roomFeatureNotice = "Background could not be saved on this device."
+                }
+            },
+            onDismiss = { showRoomBackgroundMenu = false }
         )
     }
     roomFeatureNotice?.let { message ->
@@ -2064,6 +2091,7 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
 
         if (inRoom && layoutSpec.key == "8-seat") {
             EightSeatRoomScreen(
+                background = selectedRoomBackground,
                 state = EightSeatRoomState(
                     hostName = roomHostName,
                     hostPhoto = roomHostPhoto,
@@ -2121,6 +2149,7 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
             )
         } else if (inRoom && layoutSpec.key == "15-seat") {
             FifteenSeatRoomScreen(
+                background = selectedRoomBackground,
                 state = EightSeatRoomState(
                     hostName = roomHostName,
                     hostPhoto = roomHostPhoto,

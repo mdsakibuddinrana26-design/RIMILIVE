@@ -37,8 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private val SheetGreen = Color(0xFF152922)
-private val SheetText = Color(0xFFF5FFF9)
+internal val SheetGreen = Color(0xFF152922)
+internal val SheetText = Color(0xFFF5FFF9)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -214,6 +214,7 @@ internal fun RoomSettingsSheet(
     onDismiss: () -> Unit,
     onMicrophone: () -> Unit,
     onCamera: () -> Unit,
+    onBackground: () -> Unit,
     onUnavailable: (String) -> Unit
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss,
@@ -235,7 +236,7 @@ internal fun RoomSettingsSheet(
             SettingsSwitch("Switch camera", "⟳", false, onClick = {
                 onUnavailable("Camera switching")
             }, available = false)
-            SettingsAction("Background", "▧") { onUnavailable("Backgrounds") }
+            SettingsAction("Background", "▧", onClick = onBackground)
             Spacer(Modifier.height(18.dp))
         }
     }
