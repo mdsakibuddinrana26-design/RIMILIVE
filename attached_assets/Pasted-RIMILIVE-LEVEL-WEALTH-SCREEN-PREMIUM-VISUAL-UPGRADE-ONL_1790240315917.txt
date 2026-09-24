@@ -1,0 +1,473 @@
+RIMILIVE — LEVEL / WEALTH SCREEN PREMIUM VISUAL UPGRADE ONLY
+
+IMPORTANT:
+This task is ONLY for upgrading the visual design of the existing RIMILIVE Level / Wealth screen.
+
+DO NOT redesign or modify any other screen.
+DO NOT change the existing Level functionality.
+DO NOT change level thresholds, calculations, Firebase data, Coin balance logic, navigation, or backend.
+
+FIRST:
+Inspect the CURRENT Level/Wealth implementation carefully.
+
+Keep all existing working functionality and data exactly as it is.
+
+The current Level screen is too BASIC, FLAT and GENERIC.
+
+I DO NOT want another simple table with plain circles, plain numbers and basic cards.
+
+The final result must look like a HIGH-END, PREMIUM, DIGITAL VIP / WEALTH LEVEL SYSTEM suitable for a professional live/social application.
+
+==================================================
+1. MAIN VISUAL DIRECTION
+==================================================
+
+Completely upgrade the visual quality of the existing Level screen.
+
+Use RIMILIVE's premium dark emerald / deep green identity.
+
+The screen should feel:
+
+- Premium
+- Luxury
+- Digital
+- Modern
+- High quality
+- VIP
+- Polished
+- Visually rich
+
+Use tasteful combinations of:
+
+- metallic surfaces
+- subtle gradients
+- controlled glow
+- glass-like depth
+- highlights
+- shadows
+- layered borders
+- premium typography
+- dimensional badges
+- small sparkle/light accents where appropriate
+
+IMPORTANT:
+
+Do NOT make everything glow heavily.
+
+Higher levels should visually become more luxurious and brighter.
+
+The visual hierarchy must clearly communicate:
+
+HIGHER LEVEL = HIGHER STATUS.
+
+==================================================
+2. LEVEL BADGES MUST NOT LOOK BASIC
+==================================================
+
+The existing plain/simple level indicators are NOT acceptable.
+
+Create ORIGINAL RIMILIVE Level badges/emblems.
+
+Each Level badge should look like a designed digital status emblem, NOT simply:
+
+LV1 inside a circle
+LV2 inside a circle
+LV3 inside a circle
+
+Use combinations of:
+
+- shield/emblem shapes
+- metallic rings
+- layered borders
+- small wings/crown/crystal-style decorative geometry where appropriate
+- light reflections
+- subtle glow
+- premium number typography
+
+Do NOT copy badges/assets from another application.
+
+Create the design using original Compose/vector/shape techniques and existing safe project resources.
+
+==================================================
+3. VERY IMPORTANT — LEVELS MUST VISUALLY PROGRESS
+==================================================
+
+DO NOT give every Level the same badge with only a different number.
+
+Every higher Level must visually feel more valuable than the previous one.
+
+Use this progression:
+
+LV0
+Very simple starter level.
+Dark/subtle appearance.
+Almost no glow.
+
+LV1
+Basic Bronze appearance.
+Small metallic detail.
+
+LV2
+Improved Bronze / Bronze-Gold appearance.
+Slightly more premium than LV1.
+
+LV3
+Silver-style premium appearance.
+More depth and subtle shine.
+
+LV4
+Silver-Gold transition.
+More decorative detail than LV3.
+
+LV5
+Gold VIP appearance.
+Clearly brighter and richer.
+
+LV6
+Enhanced Gold.
+More glow, stronger border and more premium detailing.
+
+LV7
+Platinum / Crystal appearance.
+Clearly more prestigious than LV6.
+
+LV8
+Diamond-like premium appearance.
+Brighter crystal/reflection feeling.
+
+LV9
+Royal Diamond appearance.
+More luxurious and visually powerful.
+
+LV10
+Elite VIP / Royal Gold-Diamond appearance.
+This should immediately look like a major milestone.
+
+LV20
+ULTRA PREMIUM.
+Royal / Elite / Crown-level appearance.
+Much more prestigious than LV10.
+Use richer dimensional detailing and controlled premium glow.
+
+LV30
+HIGHEST STATUS DESIGN.
+
+LV30 must be unmistakably different from ALL other Levels.
+
+It should look like RIMILIVE's top Wealth status.
+
+Use an original combination such as:
+
+- royal emblem
+- crown-inspired geometry
+- diamond/crystal details
+- gold/platinum appearance
+- layered luminous border
+- controlled aura
+- premium highlight/reflection
+
+LV30 should look extremely prestigious WITHOUT becoming childish, cartoonish, messy or overloaded.
+
+==================================================
+4. PROGRESSION MUST BE OBVIOUS AT A GLANCE
+==================================================
+
+When the user looks at the Level list, even without reading the numbers, they should be able to understand:
+
+LV1 < LV2 < LV3 < LV4 < LV5 < LV6 < LV7 < LV8 < LV9 < LV10 < LV20 < LV30
+
+through visual quality.
+
+Do NOT simply increase brightness.
+
+Progress through:
+
+1. material quality
+2. border complexity
+3. emblem complexity
+4. depth
+5. highlights
+6. controlled glow
+7. decorative status details
+
+Higher levels should feel genuinely more prestigious.
+
+==================================================
+5. COIN / POINT REQUIREMENT DESIGN
+==================================================
+
+The Coin/Point requirement area is currently too plain.
+
+Redesign it.
+
+DO NOT show the requirement as just a boring number.
+
+Use a polished Coin/Wealth presentation.
+
+Each requirement should have:
+
+- premium small Coin icon
+- properly formatted number
+- clear typography hierarchy
+- subtle metallic/glow treatment
+- clean alignment
+
+For large values, preserve the REAL existing value.
+
+Do NOT change any threshold.
+
+If compact formatting is already safely supported, it may visually display values like:
+
+1M
+3M
+10M
+
+while preserving the exact underlying number.
+
+If exact values are important on the current screen, keep the full value.
+
+==================================================
+6. LEVEL RULE LIST / TABLE
+==================================================
+
+The current plain white/basic table appearance must be replaced.
+
+Do NOT make it look like an Excel spreadsheet.
+
+Create a premium Wealth progression list.
+
+Each Level row should feel like a polished status row/card.
+
+Recommended structure:
+
+[PREMIUM LEVEL EMBLEM]   [LEVEL NAME/NUMBER]   [COIN/POINT REQUIREMENT]
+
+Use:
+
+- dark emerald translucent surfaces
+- subtle separation between rows
+- rounded premium containers
+- controlled shadows
+- metallic accent according to the Level
+- clean spacing
+
+Higher-level rows may have stronger visual treatment.
+
+LV10, LV20 and LV30 should receive clear milestone emphasis.
+
+But keep the list easy to read and scroll.
+
+==================================================
+7. CURRENT USER LEVEL HERO CARD
+==================================================
+
+At the top of the Level page, make the user's CURRENT Level the visual hero.
+
+Show existing real data such as:
+
+- current Level badge
+- LV number
+- current progress
+- next Level
+- remaining requirement
+
+ONLY use data already available in the current implementation.
+
+Create a premium progress indicator.
+
+It should NOT look like a basic default Android ProgressBar.
+
+Use a polished custom progress appearance:
+
+- premium track
+- gradient/fill effect
+- subtle highlight
+- current → next level information
+
+Do NOT change the progress calculation.
+
+VISUAL UPGRADE ONLY.
+
+==================================================
+8. CURRENT LEVEL SHOULD FEEL ALIVE
+==================================================
+
+The currently achieved Level may receive a subtle premium emphasis.
+
+Examples:
+
+- soft breathing glow
+- small controlled shine
+- gentle highlight
+
+Avoid aggressive animation.
+
+Animations must not:
+
+- cause lag
+- consume excessive battery
+- constantly distract the user
+- break scrolling
+
+Keep it professional.
+
+==================================================
+9. LOCKED HIGHER LEVELS
+==================================================
+
+Higher Levels that the user has not reached should still display their beautiful Level design.
+
+But clearly indicate that they are not yet achieved.
+
+Use a tasteful:
+
+- lock indicator
+- reduced intensity
+- "Locked" state
+
+Do NOT completely hide their premium appearance.
+
+Seeing higher Level designs should make progression visually understandable.
+
+==================================================
+10. PERFORMANCE — VERY IMPORTANT
+==================================================
+
+Do NOT implement dozens of heavy animations.
+
+Do NOT use huge image assets unnecessarily.
+
+Prefer:
+
+- Jetpack Compose shapes
+- gradients
+- vector assets
+- lightweight draw operations
+- optimized small WebP/PNG only where actually needed
+
+The Level screen must scroll smoothly on normal Android phones.
+
+Visual quality must NOT destroy performance.
+
+==================================================
+11. PREPARE FOR FUTURE LEVEL FRAMES
+==================================================
+
+Prepare the visual architecture so Level-specific PROFILE FRAMES can be connected later.
+
+For example:
+
+LV1 → Level Frame 1
+LV2 → Level Frame 2
+...
+LV10 → Level Frame 10
+LV20 → Level Frame 20
+LV30 → Level Frame 30
+
+BUT:
+
+DO NOT create fake profile frames in this task if final frame assets do not exist yet.
+
+DO NOT modify the user's profile photo.
+
+Just keep the Level design/component structure reusable so later we can overlay a Level Frame around the real avatar.
+
+==================================================
+12. DO NOT TOUCH FUNCTIONALITY
+==================================================
+
+This is extremely important.
+
+DO NOT change:
+
+- Level calculation
+- Level thresholds
+- Coin values
+- Diamond values
+- Firebase structure
+- Firebase UID
+- public user ID
+- authentication
+- referral system
+- Top-up logic
+- Profile functionality
+- Party Room
+- Messages
+- Invite
+- Gift
+- Game
+- Follow
+- Home
+- navigation routes
+
+NO broad refactoring.
+
+Only modify files/components actually necessary for the Level/Wealth visual upgrade.
+
+Create automatic backups before modifying existing files.
+
+==================================================
+13. QUALITY CHECK BEFORE FINISHING
+==================================================
+
+Before declaring completion, visually inspect the implementation.
+
+Specifically verify:
+
+- It no longer looks like a basic table.
+- Level badges do not look like plain numbered circles.
+- Coin/Point requirements look premium.
+- LV2 looks more premium than LV1.
+- LV3 looks more premium than LV2.
+- LV5 clearly feels like Gold/VIP status.
+- LV7/LV8/LV9 clearly feel higher status.
+- LV10 looks like an important milestone.
+- LV20 looks significantly more prestigious.
+- LV30 is visually the most premium and unmistakably top-tier.
+- Text remains readable.
+- No clipping.
+- No overlapping.
+- Scrolling remains smooth.
+- Existing Level functionality still works.
+
+If the result still looks flat/basic/generic:
+DO NOT STOP.
+
+Continue refining the Level screen until the visual hierarchy and premium progression are clearly visible.
+
+==================================================
+14. BUILD
+==================================================
+
+After finishing:
+
+./gradlew :app:assembleDebug
+
+Fix any relevant errors until:
+
+BUILD SUCCESSFUL
+
+Then replace/update the root:
+
+RIMILIVE.apk
+
+with the successfully built APK.
+
+==================================================
+FINAL REPORT
+==================================================
+
+Report only after testing:
+
+1. Premium Level screen redesign completed: YES/NO
+2. Existing Level functionality preserved: YES/NO
+3. Level badges redesigned: YES/NO
+4. Visual prestige increases with Level: YES/NO
+5. Coin/Point presentation upgraded: YES/NO
+6. Current Level hero/progress upgraded: YES/NO
+7. LV10 milestone styling completed: YES/NO
+8. LV20 ultra-premium styling completed: YES/NO
+9. LV30 highest-status styling completed: YES/NO
+10. Other screens left unchanged: YES/NO
+11. BUILD SUCCESSFUL: YES/NO
+12. Final APK path
