@@ -7,3 +7,4 @@
 - [Party Room background preference](party-room-background-preference.md) — treat room artwork as a per-user local view; keep original orange available.
 - [Gift transaction boundary](gift-transaction-boundary.md) — showing an account's coin balance does not authorize a gift send; wait for verified server pricing and payment.
 - [One-shot room creation navigation](one-shot-room-creation.md) — consume pending Create Room requests before async work so returning to Home cannot re-enter a room.
+- [Camera status versus video](camera-status-vs-video.md) — do not present a Firestore camera flag as live video or physical camera switching without a media pipeline.

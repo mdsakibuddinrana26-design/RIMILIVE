@@ -47,7 +47,7 @@ internal fun FifteenSeatRoomScreen(
         val tight = maxHeight < 610.dp
         val cameraHeight = (maxHeight * 0.30f).coerceIn(108.dp, 190.dp)
         val audioRowHeight = if (tight) 55.dp else 60.dp
-        Column(Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = if (tight) 5.dp else 9.dp)) {
+        Column(Modifier.fillMaxSize().padding(horizontal = 10.dp, vertical = if (tight) 5.dp else 9.dp)) {
             Row(Modifier.fillMaxWidth().height(52.dp), verticalAlignment = Alignment.CenterVertically) {
                 Surface(Modifier.weight(1f).fillMaxHeight(), color = DarkPanel,
                     shape = RoundedCornerShape(26.dp)) {
@@ -89,14 +89,14 @@ internal fun FifteenSeatRoomScreen(
 
             // One host card and a compact two-by-two grid of the other four camera seats.
             Row(Modifier.fillMaxWidth().height(cameraHeight),
-                horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 FifteenCameraSeat(1, state, Modifier.weight(1.05f).fillMaxHeight(),
                     onClick = { actions.onCameraSeat(1) }, host = true)
                 Column(Modifier.weight(1f).fillMaxHeight(),
-                    verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                    verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     (0..1).forEach { row ->
                         Row(Modifier.fillMaxWidth().weight(1f),
-                            horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             (0..1).forEach { col ->
                                 val seat = 2 + row * 2 + col
                                 FifteenCameraSeat(seat, state, Modifier.weight(1f).fillMaxHeight(),
@@ -129,9 +129,9 @@ internal fun FifteenSeatRoomScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             if (occupied) {
-                                FifteenAvatar(photo, name, 38.dp)
+                                 FifteenAvatar(photo, name, 40.dp)
                             } else {
-                                Surface(Modifier.size(38.dp), shape = CircleShape,
+                                 Surface(Modifier.size(40.dp), shape = CircleShape,
                                     color = Color(0x8858392B)) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Text("+", color = LightText, fontSize = 21.sp)
@@ -192,8 +192,8 @@ private fun FifteenCameraSeat(
         color = Color(0x994C382C)) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                if (occupied) FifteenAvatar(photo, name, if (host) 54.dp else 36.dp)
-                else Surface(Modifier.size(37.dp), shape = CircleShape,
+                if (occupied) FifteenAvatar(photo, name, if (host) 56.dp else 39.dp)
+                else Surface(Modifier.size(40.dp), shape = CircleShape,
                     color = Color(0x8858392B)) {
                     Box(contentAlignment = Alignment.Center) {
                         Text("+", color = LightText, fontSize = 21.sp)

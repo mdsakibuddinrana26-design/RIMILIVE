@@ -3,8 +3,10 @@ package com.example.ui.auth
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +17,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -104,25 +109,32 @@ private fun RoomMenuTile(
     label: String, color: Color,
     modifier: Modifier, onClick: () -> Unit
 ) {
-    Column(modifier.clickable(onClick = onClick), horizontalAlignment = Alignment.CenterHorizontally) {
-        Surface(Modifier.size(54.dp), shape = RoundedCornerShape(16.dp),
-            color = color, border = BorderStroke(1.dp, Color(0xAAE8CB81))) {
-            androidx.compose.foundation.layout.Box(
-                Modifier.background(Brush.verticalGradient(listOf(
-                    Color.White.copy(alpha = 0.16f), color, color))),
-                contentAlignment = Alignment.Center
-            ) {
+    val shape = RoundedCornerShape(18.dp)
+    Column(
+        modifier.height(98.dp)
+            .shadow(3.dp, shape).clip(shape)
+            .background(Brush.verticalGradient(listOf(Color(0xFF24604F), Color(0xFF183B32))))
+            .border(1.dp, Color(0x667CC9A8), shape)
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Surface(Modifier.size(44.dp), shape = RoundedCornerShape(13.dp),
+            color = color, border = BorderStroke(1.dp, Color(0x999BE6C5))) {
+            Box(contentAlignment = Alignment.Center) {
                 RoomMenuGlyph(label)
             }
         }
-        Spacer(Modifier.height(6.dp))
-        Text(label, color = SheetText, fontSize = 11.sp, maxLines = 1)
+        Spacer(Modifier.height(8.dp))
+        Text(label, color = SheetText, fontSize = 11.sp, maxLines = 1,
+            fontWeight = FontWeight.Medium)
     }
 }
 
 @Composable
 private fun RoomMenuGlyph(label: String) {
-    Canvas(Modifier.size(26.dp)) {
+    Canvas(Modifier.size(23.dp)) {
         val u = size.minDimension / 24f
         val ink = Color(0xFFFFE9B2)
         val stroke = Stroke(1.8f*u, cap = StrokeCap.Round)
@@ -222,34 +234,26 @@ internal fun RoomSettingsSheet(
         containerColor = SheetGreen,
         contentColor = SheetText, dragHandle = null) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
-            .padding(horizontal = 22.dp, vertical = 16.dp)) {
+            .padding(horizontal = 18.dp, vertical = 16.dp)) {
             SheetTitle("Settings")
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
             SettingsAction("Sticker", "☺") { onUnavailable("Stickers") }
             SettingsAction("Beautification", "✧") { onUnavailable("Beautification") }
-            SettingsSwitch("Hide entrance effects", "≋", false, onClick = {
-                onUnavailable("Entrance effects")
-            }, available = false)
+            SettingsUnavailable("Hide entrance effects", "≋")
             SettingsSwitch("Microphone", "♬", micOn, onClick = onMicrophone)
             SettingsSwitch("Camera", "▣", cameraOn, onClick = onCamera,
                 available = cameraAvailable)
-            SettingsSwitch("Switch camera", "⟳", false, onClick = {
-                onUnavailable("Camera switching")
-            }, available = false)
+            SettingsCameraDirection()
             SettingsAction("Background", "▧", onClick = onBackground)
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(10.dp))
         }
     }
 }
 
 @Composable
 private fun SettingsAction(label: String, icon: String, onClick: () -> Unit) {
-    Row(Modifier.fillMaxWidth().height(59.dp).clickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically) {
-        Text(icon, color = Color(0xFFB3EFDC), fontSize = 25.sp,
-            modifier = Modifier.size(39.dp))
-        Text(label, Modifier.weight(1f), color = SheetText, fontSize = 15.sp)
-        Text("›", color = SheetText, fontSize = 26.sp)
+    SettingsRow(label, icon, onClick = onClick) {
+        Text("›", color = Color(0xFFC5EBDA), fontSize = 25.sp)
     }
 }
 
@@ -258,17 +262,71 @@ private fun SettingsSwitch(
     label: String, icon: String, checked: Boolean,
     onClick: () -> Unit, available: Boolean = true
 ) {
-    Row(Modifier.fillMaxWidth().height(59.dp)
-        .clickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically) {
-        Text(icon, color = Color(0xFFB3EFDC), fontSize = 25.sp,
-            modifier = Modifier.size(39.dp))
-        Text(label, Modifier.weight(1f), color = SheetText, fontSize = 15.sp)
-        if (available) {
-            Switch(checked = checked, onCheckedChange = { onClick() },
-                modifier = Modifier.height(36.dp))
-        } else {
-            Text("Unavailable", color = Color(0xFFB1C7BD), fontSize = 11.sp)
+    SettingsRow(label, icon,
+        subtitle = if (available) null else "Unavailable",
+        onClick = if (available) onClick else null) {
+        // The row owns the only click target; a nested switch must not fire twice.
+        Switch(checked = available && checked, onCheckedChange = null,
+            enabled = available, modifier = Modifier.height(36.dp),
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = Color(0xFF19A88D),
+                uncheckedTrackColor = Color(0xFF416259),
+                disabledUncheckedTrackColor = Color(0xFF344D45),
+                disabledUncheckedThumbColor = Color(0xFFB0C4BA)))
+    }
+}
+
+@Composable
+private fun SettingsUnavailable(label: String, icon: String) {
+    SettingsRow(label, icon, subtitle = "Unavailable") {
+        Text("—", color = Color(0xFF94ADA2), fontSize = 17.sp)
+    }
+}
+
+@Composable
+private fun SettingsCameraDirection() {
+    SettingsRow("Switch camera", "⟳", subtitle = "Unavailable") {
+        Surface(shape = RoundedCornerShape(10.dp), color = Color(0xFF29473D),
+            border = BorderStroke(1.dp, Color(0xFF466C5C))) {
+            Text("Front ↔ Back", Modifier.padding(horizontal = 8.dp, vertical = 7.dp),
+                color = Color(0xFFAEC6B9), fontSize = 11.sp, maxLines = 1)
         }
+    }
+}
+
+@Composable
+private fun SettingsRow(
+    label: String,
+    icon: String,
+    subtitle: String? = null,
+    onClick: (() -> Unit)? = null,
+    trailing: @Composable () -> Unit
+) {
+    val shape = RoundedCornerShape(14.dp)
+    val click = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
+    Row(
+        Modifier.fillMaxWidth().padding(bottom = 6.dp).height(58.dp)
+            .clip(shape)
+            .background(Brush.horizontalGradient(listOf(Color(0xFF244239), Color(0xFF1C362E))))
+            .border(1.dp, Color(0x4C82BCA1), shape)
+            .then(click)
+            .padding(horizontal = 11.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(Modifier.size(34.dp).clip(RoundedCornerShape(10.dp))
+            .background(Color(0xFF2C5747)),
+            contentAlignment = Alignment.Center) {
+            Text(icon, color = Color(0xFFD1F3DF), fontSize = 21.sp)
+        }
+        Spacer(Modifier.size(11.dp))
+        Column(Modifier.weight(1f)) {
+            Text(label, color = SheetText, fontSize = 14.sp,
+                fontWeight = FontWeight.Medium, maxLines = 1)
+            if (subtitle != null) {
+                Text(subtitle, color = Color(0xFFAAC8BA), fontSize = 10.sp)
+            }
+        }
+        trailing()
     }
 }

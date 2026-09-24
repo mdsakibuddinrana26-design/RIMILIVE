@@ -1,0 +1,494 @@
+RIMILIVE — FINAL CONTROLLED PARTY ROOM POLISH
+15-SEAT SIZE + MORE PANEL + SETTINGS CAMERA CONTROLS
+
+IMPORTANT:
+Read the complete instruction before changing anything.
+
+This is NOT a redesign of the Party Room.
+This is a small, controlled visual improvement of ONLY:
+
+1. 15-seat room seat size
+2. More panel appearance
+3. Settings panel appearance
+4. Camera / Switch Camera controls
+
+Everything else that is already working must remain unchanged.
+
+Before editing:
+- inspect the current implementation,
+- identify the exact affected composables/files,
+- create backups of every file that will be modified.
+
+DO NOT perform broad refactoring.
+
+==================================================
+1. 15-SEAT ROOM — VERY SMALL SIZE INCREASE ONLY
+==================================================
+
+The 15-seat room layout is already correct.
+
+DO NOT redesign it.
+DO NOT rearrange it.
+
+The only problem is that the individual seat/Invite areas still look slightly too small.
+
+Increase ONLY the visual size of the individual 15-seat containers by a SMALL amount.
+
+The increase should be noticeable, but subtle.
+
+IMPORTANT:
+Do NOT make the seats dramatically larger.
+
+After the change:
+
+✓ All 15 seats must remain visible on the phone screen.
+✓ Nothing may go outside the screen.
+✓ Nothing may be clipped.
+✓ Seats must not overlap.
+✓ Notice Board must remain visible.
+✓ Bottom controls must remain visible.
+✓ No horizontal scrolling.
+✓ Do not introduce unnecessary vertical scrolling.
+
+If extra room is required, slightly reduce EMPTY spacing/padding between seats instead of making the overall room larger.
+
+DO NOT MODIFY:
+
+- seat IDs
+- seat indexes
+- seat order
+- seat assignment
+- Invite actions
+- seat click actions
+- host seat
+- member seats
+- camera seat logic
+- microphone logic
+- join/leave logic
+- occupancy logic
+- Firebase room logic
+
+THIS IS A VISUAL SIZE CHANGE ONLY.
+
+DO NOT CHANGE THE 8-SEAT ROOM.
+
+==================================================
+2. MORE PANEL — PROFESSIONAL VISUAL POLISH
+==================================================
+
+Keep the current More panel structure.
+
+Do NOT remove or relocate existing functions.
+
+The panel currently contains important items such as:
+
+GAME:
+• Ludo
+• GAMI Race
+
+TOOLS:
+• Settings
+• Music
+• Top-up
+• Messages
+
+and the existing Room Actions below them.
+
+The functionality is already established.
+
+The problem is that the option tiles currently look too basic.
+
+Upgrade their VISUAL DESIGN ONLY.
+
+Create a more polished RIMILIVE appearance:
+
+• premium dark emerald/green styling
+• softly rounded cards
+• subtle border/highlight
+• subtle depth
+• clean icon containers
+• consistent icon dimensions
+• consistent tile dimensions
+• balanced spacing
+• clean labels
+• clear press/touch feedback
+
+The result should look modern and premium but NOT flashy.
+
+Avoid:
+• huge icons
+• oversized buttons
+• excessive glow
+• unnecessary animation
+• crowded layout
+
+Ludo and GAMI Race should visually belong to the same Game section.
+
+Settings, Music, Top-up and Messages should visually belong to the same Tools section.
+
+==================================================
+3. MORE PANEL — FUNCTIONALITY MUST NOT CHANGE
+==================================================
+
+VERY IMPORTANT:
+
+Do NOT change navigation while polishing these tiles.
+
+Each visible tile must have its OWN exact clickable area.
+
+Ludo → Ludo only
+GAMI Race → GAMI Race only
+Settings → Settings only
+Music → Music only
+Top-up → Top-up only
+Messages → Messages only
+
+Do NOT allow one tile's clickable area to overlap another tile.
+
+Do NOT use a large parent clickable container around multiple options.
+
+Preserve all existing Room Actions.
+
+==================================================
+4. SETTINGS PANEL — VISUAL UPGRADE
+==================================================
+
+Keep these existing Settings options:
+
+• Sticker
+• Beautification
+• Hide entrance effects
+• Microphone
+• Camera
+• Switch camera
+• Background
+
+Do NOT remove them.
+
+Do NOT rename them unnecessarily.
+
+Redesign ONLY their visual presentation so the Settings sheet feels like a finished professional app.
+
+Use:
+
+• clean rounded setting rows/cards
+• consistent row height
+• consistent left icon alignment
+• consistent text alignment
+• balanced vertical spacing
+• subtle separators/borders
+• clear right-side controls
+• premium dark-green RIMILIVE styling
+
+Every row should look like part of ONE consistent Settings design system.
+
+==================================================
+5. MICROPHONE — KEEP THE EXISTING ON/OFF SWITCH
+==================================================
+
+Microphone already has an ON/OFF switch.
+
+KEEP IT.
+
+Make the switch visually polished and consistent with the new Settings design.
+
+ON state:
+clearly active.
+
+OFF state:
+clearly inactive.
+
+Do NOT break the existing microphone functionality.
+
+==================================================
+6. CAMERA — ADD A REAL ON/OFF STYLE CONTROL
+==================================================
+
+The CAMERA row should have a clean ON/OFF toggle switch on the RIGHT SIDE.
+
+Visually it should follow the same design language as the Microphone switch.
+
+Example layout:
+
+[Camera icon]   Camera                     [ ON/OFF ]
+
+The entire row should be professionally aligned.
+
+When OFF:
+- show the switch in its inactive state.
+
+When ON:
+- show the switch in its active state.
+
+IMPORTANT:
+First inspect whether real camera functionality is already connected.
+
+If real camera functionality exists:
+connect this toggle to the existing camera enable/disable behavior.
+
+If camera functionality is NOT yet connected to a real video/RTC service:
+DO NOT fake a working camera.
+
+In that case:
+prepare the control/state architecture safely for later integration and clearly preserve the unavailable state where required.
+
+Do not create fake camera success.
+
+==================================================
+7. SWITCH CAMERA — USE A FRONT/BACK CAMERA CONTROL
+==================================================
+
+IMPORTANT:
+
+"Switch camera" is NOT the same function as Camera ON/OFF.
+
+Camera ON/OFF controls whether the camera is enabled.
+
+Switch Camera controls WHICH physical camera is being used.
+
+Therefore make the Switch Camera row professional like this:
+
+[Switch-camera icon]   Switch camera       [ Front ↔ Back ]
+
+or use a clean switch-camera action button on the right.
+
+The user should be able to understand immediately:
+
+FRONT = front/selfie camera
+BACK = rear camera
+
+When the camera is available and enabled:
+
+Tapping Switch Camera should change:
+
+Front → Back
+or
+Back → Front
+
+Do NOT turn "Switch Camera" into another duplicate Camera ON/OFF function.
+
+If the real camera/RTC implementation is not available yet:
+
+- keep the Front/Back control visually prepared,
+- keep it disabled/unavailable when appropriate,
+- DO NOT pretend that the physical camera switched successfully.
+
+This distinction is important:
+
+CAMERA:
+ON / OFF
+
+SWITCH CAMERA:
+FRONT / BACK
+
+==================================================
+8. STICKER
+==================================================
+
+Keep Sticker as its existing action/navigation row.
+
+Improve its visual presentation:
+
+• clean icon
+• clean rounded row
+• professional spacing
+• clear title
+• right-side chevron/arrow if it opens another panel
+
+Do NOT change its underlying action.
+
+==================================================
+9. BEAUTIFICATION
+==================================================
+
+Keep Beautification as its existing action/navigation row.
+
+Give it the same professional card/row treatment as Sticker.
+
+Use consistent:
+
+• icon size
+• spacing
+• row height
+• chevron
+• touch feedback
+
+Do NOT fake beauty-filter functionality that does not exist.
+
+==================================================
+10. HIDE ENTRANCE EFFECTS
+==================================================
+
+Preserve its existing state and behavior.
+
+Do NOT invent functionality.
+
+If the feature is currently unavailable, it may remain clearly marked unavailable.
+
+Only improve visual consistency.
+
+==================================================
+11. BACKGROUND
+==================================================
+
+Background must remain an action/navigation row.
+
+Keep the existing Background selector COMPLETELY FUNCTIONAL.
+
+Do NOT rebuild the Background system.
+
+Preserve:
+
+• existing Day backgrounds
+• existing Night backgrounds
+• thumbnails
+• selection
+• room background application
+• saved/persistent selection
+
+Only visually polish the Settings row that opens Background.
+
+==================================================
+12. DO NOT TOUCH OTHER COMPLETED WORK
+==================================================
+
+ABSOLUTELY PRESERVE:
+
+• existing Party Room structure
+• existing room background
+• 8-seat room
+• 15-seat seat arrangement
+• Notice Board
+• host/member behavior
+• Share button
+• Share action
+• TOP PK remains removed
+• BOTTOM PK remains
+• SMS
+• PK
+• Game
+• Gift
+• More
+• Gift panel
+• Gift categories
+• keyboard/IME behavior
+• Firebase room logic
+• Firebase Authentication
+• Firestore
+• login/session persistence
+• user profile data
+• Coin/Diamond data
+• Follow
+• Chat
+• Top
+• Profile
+
+Do NOT change unrelated Home screen UI.
+
+==================================================
+13. DO NOT REINTRODUCE WRONG-CLICK BUGS
+==================================================
+
+We previously had serious wrong-click/navigation problems.
+
+Do NOT reintroduce them.
+
+After changing More and Settings UI, verify that every visible option has an independent touch target.
+
+Test:
+
+Ludo → only Ludo
+GAMI Race → only GAMI Race
+Settings → only Settings
+Music → only Music
+Top-up → only Top-up
+Messages → only Messages
+
+Inside Settings:
+
+Sticker → only Sticker
+Beautification → only Beautification
+Microphone → only Microphone
+Camera → only Camera ON/OFF
+Switch Camera → only Front/Back camera action
+Background → only Background
+
+No invisible overlay may intercept taps.
+
+No oversized parent clickable container may cover neighboring buttons.
+
+==================================================
+14. RESPONSIVE PHONE-SCREEN CHECK
+==================================================
+
+Test specifically on portrait Android phone dimensions.
+
+15-seat room:
+• all 15 seats visible
+• slightly larger than before
+• no overlap
+• no clipping
+• nothing outside screen
+
+More:
+• all main options aligned
+• no clipped icons/text
+• good touch targets
+
+Settings:
+• rows aligned
+• Camera switch fully visible
+• Switch Camera Front/Back control fully visible
+• Background row visible
+• no control extends outside screen
+
+==================================================
+15. BUILD AND VERIFY
+==================================================
+
+After completing the changes, run:
+
+./gradlew :app:assembleDebug
+
+Fix relevant errors until:
+
+BUILD SUCCESSFUL
+
+Then update the root:
+
+RIMILIVE.apk
+
+with the newly built APK.
+
+DO NOT claim the task is complete before the build succeeds.
+
+Final report:
+
+1. 15-seat seats slightly enlarged: YES / NO
+2. All 15 seats visible: YES / NO
+3. No clipping/overlap: YES / NO
+4. 8-seat room unchanged: YES / NO
+5. More panel professionally upgraded: YES / NO
+6. Ludo action preserved: YES / NO
+7. GAMI Race action preserved: YES / NO
+8. Settings tile upgraded: YES / NO
+9. Music tile upgraded: YES / NO
+10. Top-up tile upgraded: YES / NO
+11. Messages tile upgraded: YES / NO
+12. Settings panel upgraded: YES / NO
+13. Microphone ON/OFF preserved: YES / NO
+14. Camera ON/OFF control added correctly: YES / NO
+15. Switch Camera Front/Back control added correctly: YES / NO
+16. Sticker row upgraded: YES / NO
+17. Beautification row upgraded: YES / NO
+18. Background system preserved: YES / NO
+19. Wrong-click/navigation bug not reintroduced: YES / NO
+20. Firebase/backend functionality preserved: YES / NO
+21. BUILD SUCCESSFUL
+22. Final APK path
+
+FINAL WARNING:
+Do not make unrelated improvements while doing this task.
+Do not rewrite working functionality.
+Do not redesign the Party Room.
+Make only the requested controlled changes.

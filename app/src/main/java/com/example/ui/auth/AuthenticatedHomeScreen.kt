@@ -1633,7 +1633,9 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
         RoomSettingsSheet(
             micOn = myMicEnabled,
             cameraOn = cameraEnabled,
-            cameraAvailable = myJoinedSeat in layoutSpec.cameraSeats,
+            // A camera seat only enables the room's stored status flag; no video/RTC
+            // capture is connected. Do not present that flag as a working camera.
+            cameraAvailable = false,
             onDismiss = { showRoomSettingsMenu = false },
             onMicrophone = { myMicEnabled = !myMicEnabled },
             onCamera = {
