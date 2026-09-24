@@ -1,0 +1,625 @@
+RIMILIVE — FINAL PREMIUM INVITE & REFERRAL SYSTEM
+ONE-PASS IMPLEMENTATION
+
+IMPORTANT:
+Complete this task carefully in ONE controlled pass.
+
+Use the supplied RIMILIVE Invite reference image as the MAIN VISUAL REFERENCE.
+
+I strongly like its:
+- dark navy/purple luxury background
+- gold lighting
+- diamond/crystal decoration
+- premium glow
+- crown/gift atmosphere
+- high-end digital VIP appearance
+
+Keep this overall visual direction very close to the reference.
+
+However:
+DO NOT simply place the entire screenshot as one static background image.
+The actual buttons, text, user data, invite counts, Diamond amounts,
+leaderboard and invite link must be REAL Android UI and dynamic.
+
+Do not copy fake people, names, photos or sample numbers from the reference.
+
+==================================================
+1. KEEP THE SCREEN SIMPLE
+==================================================
+
+Do NOT add unnecessary sections.
+
+The final Invite screen should mainly contain:
+
+1. Premium Invite Friends hero/header
+2. Invite reward message
+3. Real invite link
+4. Invite via WhatsApp button
+5. Copy Link button
+6. User's Invite statistics
+7. Top Inviters leaderboard
+
+Do NOT add an Invite ID/code section.
+
+The LINK is enough.
+
+Do NOT add unnecessary reward boxes/cards/milestone boxes.
+
+==================================================
+2. PREMIUM HERO
+==================================================
+
+At the top show:
+
+Invite Friends
+
+and clearly communicate:
+
+Earn 11,000 Diamonds for every Qualified Invite
+
+Use a premium Diamond icon.
+
+Make this hero visually rich and glamorous like the supplied reference:
+
+- dark purple/navy background
+- gold light accents
+- premium crystals/diamonds
+- subtle sparkles
+- layered depth
+- elegant glow
+
+Keep it professional and optimized for Android.
+
+Do not hardcode another app's artwork or branding.
+
+Use RIMILIVE branding only.
+
+==================================================
+3. REAL INVITE LINK
+==================================================
+
+Each authenticated RIMILIVE user must have a shareable referral/invite link.
+
+Example structure only:
+
+RIMILIVE invite link + secure referral identifier
+
+Do NOT expose sensitive Firebase UID unnecessarily.
+
+Reuse the existing public RIMILIVE user/referral identifier if appropriate.
+
+The same user's invite link must remain stable.
+
+Show the link in a premium link container.
+
+Provide exactly these primary actions:
+
+INVITE VIA WHATSAPP
+
+COPY LINK
+
+==================================================
+4. WHATSAPP BUTTON
+==================================================
+
+When the user taps:
+
+Invite via WhatsApp
+
+open Android sharing/WhatsApp with a prepared invitation message
+containing the user's real RIMILIVE invite link.
+
+Do NOT hardcode fake referral data.
+
+If WhatsApp is unavailable, fail gracefully or use the appropriate
+Android sharing fallback rather than crashing.
+
+==================================================
+5. COPY LINK
+==================================================
+
+Copy Link must copy the REAL invite link to the Android clipboard.
+
+After successful copy, show small feedback such as:
+
+Link copied
+
+Do not navigate away from the screen.
+
+==================================================
+6. QUALIFIED INVITE RULE
+==================================================
+
+CRITICAL:
+
+Do NOT award 11,000 Diamonds merely because someone taps the link.
+
+Do NOT award repeatedly for reinstalling/opening the app.
+
+The reward is:
+
+1 QUALIFIED INVITE = 11,000 DIAMONDS
+
+A referral should be counted only after the invited person becomes
+a legitimate eligible new RIMILIVE account according to the available
+verified referral/account system.
+
+A single referred account must NOT generate the same reward repeatedly.
+
+Do not allow self-referral.
+
+Do not allow duplicate reward processing.
+
+If the current backend does not yet contain enough server-side
+verification to securely determine a Qualified Invite:
+
+DO NOT invent or fake security.
+
+Implement the correct UI/data architecture and clearly report which
+server-side referral verification remains required.
+
+==================================================
+7. REAL DIAMOND REWARD
+==================================================
+
+This is extremely important.
+
+For every successfully QUALIFIED Invite:
+
+Reward the inviter:
+
++11,000 Diamonds
+
+These are REAL RIMILIVE Diamonds.
+
+Example:
+
+Current wallet Diamond balance:
+50,000
+
+One new Qualified Invite:
++11,000
+
+New wallet Diamond balance:
+61,000
+
+Two Qualified Invites in total:
+
+Total Invite reward:
+22,000
+
+If starting wallet was 50,000:
+wallet becomes 72,000.
+
+==================================================
+8. INVITE EARNED DIAMONDS IS SEPARATE DISPLAY DATA
+==================================================
+
+VERY IMPORTANT:
+
+The Invite page must NOT display the user's entire Diamond wallet
+as their Invite earnings.
+
+Keep these concepts separate:
+
+A) TOTAL WALLET DIAMONDS
+B) DIAMONDS EARNED FROM QUALIFIED INVITES
+
+Example:
+
+User originally has:
+50,000 Wallet Diamonds
+
+Then gets 1 Qualified Invite.
+
+Wallet:
+61,000 Diamonds
+
+Invite page:
+11,000 Invite-earned Diamonds
+
+Then gets a second Qualified Invite.
+
+Wallet:
+72,000 Diamonds
+
+Invite page:
+22,000 Invite-earned Diamonds
+
+Formula:
+
+Invite Earned Diamonds =
+Qualified Invite Count × 11,000
+
+The Invite screen must show ONLY the Invite-earned amount in its
+Invite reward/statistics/leaderboard context.
+
+Do NOT show 72,000 there merely because the wallet contains 72,000.
+
+==================================================
+9. INVITE STATISTICS
+==================================================
+
+Create a beautiful compact statistics area.
+
+Show REAL values such as:
+
+Qualified Invites
+Invite Diamonds Earned
+
+Example presentation:
+
+Qualified Invites
+3
+
+Invite Diamonds Earned
+💎 33,000
+
+Do not hardcode these sample numbers.
+
+Use authenticated user's real data.
+
+Avoid unnecessary large boxes.
+
+Integrate this naturally into the premium design.
+
+==================================================
+10. TOP INVITERS LEADERBOARD
+==================================================
+
+Below the invite controls, make:
+
+TOP INVITERS
+
+This should be one of the main visual sections.
+
+Rank users by:
+
+highest number of QUALIFIED INVITES.
+
+Display real leaderboard data.
+
+For each user show:
+
+- rank
+- real profile photo
+- real display name
+- Qualified Invite count
+- total Diamonds earned specifically from Invite rewards
+
+Formula for each row:
+
+Qualified Invite Count × 11,000
+
+Examples ONLY:
+
+1 Qualified Invite
+→ 💎11,000
+
+2
+→ 💎22,000
+
+3
+→ 💎33,000
+
+10
+→ 💎110,000
+
+100
+→ 💎1,100,000
+
+Do NOT display every user's full wallet Diamond balance here.
+
+Only display their Invite-earned Diamond total.
+
+==================================================
+11. TOP 3 MUST LOOK SPECIAL
+==================================================
+
+Make:
+
+#1
+#2
+#3
+
+visually more prestigious.
+
+Use tasteful:
+
+#1 Gold
+#2 Silver
+#3 Bronze
+
+with premium crown/rank treatment.
+
+Do NOT overdo animation.
+
+Ranks below #3 should remain elegant and readable.
+
+==================================================
+12. NO FAKE USERS
+==================================================
+
+The reference image contains sample people.
+
+DO NOT put those sample people into RIMILIVE.
+
+No:
+
+Jisan Ahmed
+Sara Khan
+Rifat Hasan
+or any other fake reference user
+
+unless that person actually exists in RIMILIVE data.
+
+Leaderboard must use real eligible RIMILIVE users.
+
+If no real leaderboard data exists yet:
+
+show a proper empty state.
+
+Do NOT populate fake leaderboard entries.
+
+==================================================
+13. REFERRAL ATTRIBUTION
+==================================================
+
+When a new user comes through an invite link,
+preserve the inviter/referral relationship safely.
+
+The invited account should only be attributed to one valid inviter
+according to the referral rules.
+
+Do not allow users to repeatedly change inviter after qualification
+just to generate rewards.
+
+Do not reward the same qualified referral twice.
+
+Use unique transaction/event identifiers where appropriate.
+
+==================================================
+14. SECURITY — CRITICAL
+==================================================
+
+Diamond rewards have real value inside RIMILIVE.
+
+Therefore:
+
+DO NOT trust the Android client to award itself Diamonds.
+
+Do NOT create a client-side button/function that can simply write:
+
+diamondBalance += 11000
+
+or
+
+qualifiedInvites += 1
+
+without authoritative verification.
+
+Rewarding Diamonds and marking a referral as Qualified should ultimately
+be server-authoritative / trusted-backend controlled.
+
+The reward operation should be atomic/idempotent:
+
+1. Verify referral qualifies.
+2. Verify this referral has not already been rewarded.
+3. Record qualification.
+4. Add exactly 11,000 Diamonds to inviter wallet.
+5. Record exactly 11,000 as Invite reward earnings.
+6. Mark the reward transaction completed.
+
+The same qualification event must never pay twice.
+
+If secure server-side functionality is not currently available:
+
+DO NOT pretend it is complete.
+
+Implement only the safe parts available and report:
+
+SERVER-SIDE REFERRAL REWARD PROCESSING REQUIRED.
+
+==================================================
+15. DATA SEPARATION
+==================================================
+
+Keep data concepts clearly separate.
+
+Examples conceptually:
+
+diamondWalletBalance
+qualifiedInviteCount
+inviteDiamondEarned
+
+Do not unnecessarily duplicate existing project fields if equivalent
+safe fields already exist.
+
+Inspect the existing Firebase/data model first and reuse appropriate
+existing fields.
+
+Do not perform destructive Firebase schema changes.
+
+==================================================
+16. DESIGN QUALITY
+==================================================
+
+The final screen must NOT look like a basic Android settings page.
+
+Use the supplied image as the visual quality target.
+
+Desired feeling:
+
+- glamorous
+- VIP
+- premium
+- digital
+- polished
+- luxurious
+- high-quality live/social app
+
+Use:
+
+dark navy/purple background
+gold accents
+diamond/crystal highlights
+controlled pink/purple glow
+premium typography hierarchy
+rounded premium surfaces
+subtle depth/shadows
+high-quality buttons
+
+But keep text readable.
+
+Do not overcrowd the screen.
+
+==================================================
+17. PERFORMANCE
+==================================================
+
+Do NOT use dozens of heavy animations.
+
+Use optimized Compose/vector/gradient assets where possible.
+
+Any decorative assets should be optimized.
+
+The Invite page must scroll smoothly on a normal Android phone.
+
+==================================================
+18. DO NOT MODIFY OTHER FEATURES
+==================================================
+
+This task is ONLY for Invite/Referral.
+
+DO NOT redesign or break:
+
+Recharge Level
+Gift Level
+Home
+Follow
+Party
+Top
+Messages
+Profile
+Login
+Create Room
+8-seat room
+15-seat room
+PK
+Game
+Gift system
+More
+Settings
+Backgrounds
+Coin balance
+existing Diamond accounting
+authentication
+navigation
+
+Preserve all recent working Level changes.
+
+Create automatic backups before modifying existing files.
+
+==================================================
+19. TEST
+==================================================
+
+Test the UI and available logic.
+
+Verify:
+
+Copy Link works.
+
+WhatsApp/share action works safely.
+
+Invite link belongs to the correct logged-in user.
+
+Invite page does not display full Wallet Diamond as Invite earnings.
+
+Test calculation:
+
+0 Qualified
+→ Invite Earned = 0
+
+1 Qualified
+→ 11,000
+
+2 Qualified
+→ 22,000
+
+3 Qualified
+→ 33,000
+
+10 Qualified
+→ 110,000
+
+100 Qualified
+→ 1,100,000
+
+Verify 64-bit-safe arithmetic.
+
+Verify leaderboard sorts by Qualified Invite count.
+
+Verify the Top 3 rank visuals are correct.
+
+Verify no fake users are displayed.
+
+Where backend test support exists, verify a qualification cannot
+pay the same referral twice.
+
+==================================================
+20. BUILD
+==================================================
+
+After implementation run:
+
+./gradlew :app:assembleDebug
+
+Fix relevant errors until:
+
+BUILD SUCCESSFUL
+
+Then update/copy the successfully built APK to:
+
+RIMILIVE.apk
+
+in the project root.
+
+==================================================
+FINAL REPORT
+==================================================
+
+Report clearly:
+
+1. Premium Invite design completed: YES/NO
+2. Supplied purple/gold visual direction followed: YES/NO
+3. Invite ID removed/not added: YES/NO
+4. Real Invite Link implemented: YES/NO/PARTIAL
+5. Copy Link working: YES/NO
+6. WhatsApp/share working: YES/NO
+7. Reward configured as 11,000 Diamonds per Qualified Invite: YES/NO
+8. Wallet Diamonds and Invite-earned Diamonds kept separate: YES/NO
+9. Qualified Invite count implemented: YES/NO/PARTIAL
+10. Invite-earned Diamond total implemented: YES/NO/PARTIAL
+11. Top Inviters leaderboard implemented: YES/NO/PARTIAL
+12. Leaderboard uses Qualified Invite count: YES/NO
+13. Leaderboard displays Invite-earned Diamonds, NOT wallet total: YES/NO
+14. Top 3 premium ranking design completed: YES/NO
+15. Fake/sample users excluded: YES/NO
+16. Duplicate referral reward protection: YES/NO/PARTIAL
+17. Self-referral protection: YES/NO/PARTIAL
+18. Server-authoritative Diamond reward processing: YES/NO/PARTIAL
+19. Existing Level screens preserved: YES/NO
+20. Other screens unchanged: YES/NO
+21. Tests passed: YES/NO
+22. BUILD SUCCESSFUL: YES/NO
+23. Final APK path
+
+IMPORTANT:
+Do not claim the referral/Diamond backend is secure merely because
+the UI or local calculation works.
+
+Clearly distinguish:
+UI COMPLETE
+REAL DATA CONNECTED
+SERVER-SIDE REWARD SECURITY COMPLETE/PENDING
