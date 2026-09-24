@@ -1,0 +1,590 @@
+RIMILIVE — FINAL ONE-PASS ULTRA-PREMIUM LEVEL POLISH
+RECHARGE LV1–LV30 + GIFT LV0–LV10
+
+IMPORTANT:
+This is intended to be the FINAL visual refinement pass.
+
+Do not make a quick/basic first version that requires another redesign.
+Before editing, inspect the CURRENT implemented Recharge Level and Gift Level screens,
+their components, badges, calculations, Firebase fields and navigation.
+
+Preserve all working logic.
+
+Then complete the visual refinement thoroughly in ONE controlled pass.
+
+==================================================
+A. KEEP THE TWO TOP TABS
+==================================================
+
+Keep:
+
+RECHARGE LEVEL | GIFT LEVEL
+
+Do not add extra level tabs.
+
+Recharge Level:
+existing LV1–LV30 system.
+
+Gift Level:
+existing/new LV0–LV10 received-gift system.
+
+The selected tab must have an elegant premium indicator.
+
+Switching tabs must be smooth and must preserve each tab's state.
+
+==================================================
+B. RECHARGE LEVEL — KEEP LV1–LV30 FUNCTIONALITY
+==================================================
+
+IMPORTANT:
+
+Recharge Level remains LV1–LV30.
+
+Do NOT change:
+
+- existing thresholds
+- existing Recharge calculation
+- lifetime recharge/top-up meaning
+- existing Firebase data
+- current user progress
+
+However:
+
+VISUALLY UPGRADE the Recharge Level screen further.
+
+The current version is improved, but it is still not premium enough.
+
+Make the existing Recharge Level LV1–LV30 look significantly more:
+
+- luxurious
+- digital
+- dimensional
+- prestigious
+- high-end
+- polished
+- modern
+
+Do not rebuild the working logic.
+
+VISUAL MODIFICATION ONLY.
+
+==================================================
+C. GIFT LEVEL — RECEIVED GIFTS ONLY
+==================================================
+
+Gift Level remains separate.
+
+Gift Level progress increases from successfully RECEIVED eligible gifts.
+
+SENDING a gift must NOT increase the sender's Gift Level.
+
+Example:
+
+A sends gift to B.
+
+A:
+Gift Level does NOT increase.
+
+B:
+Gift Level progress increases by the eligible value of that successfully received gift.
+
+Do not change this rule.
+
+==================================================
+D. DIAMOND ICON FOR GIFT LEVEL
+==================================================
+
+IMPORTANT VISUAL REQUIREMENT:
+
+Inside the GIFT LEVEL screen, every displayed Gift Level requirement/progress amount
+must have a premium DIAMOND icon beside the number.
+
+For example visually:
+
+[Diamond icon] 1,000,000
+[Diamond icon] 3,000,000
+[Diamond icon] 10,000,000
+
+Use one consistent ORIGINAL RIMILIVE diamond asset/style.
+
+Do NOT copy the diamond/gem artwork from the reference application.
+
+The Diamond icon must look:
+
+- polished
+- crystalline
+- premium
+- high-resolution
+- consistent in size
+- properly aligned with the amount
+
+Do not use emoji.
+
+IMPORTANT:
+This Diamond icon requirement is primarily VISUAL.
+
+Do NOT silently change RIMILIVE's existing Coin/Diamond accounting,
+wallet balances or transaction conversion rules merely because a Diamond icon is displayed.
+
+==================================================
+E. MOST IMPORTANT — LEVEL-BY-LEVEL VISUAL ESCALATION
+==================================================
+
+The prestige must increase visibly with EACH higher level.
+
+DO NOT make all badges equally bright.
+
+DO NOT create one badge and only replace the number.
+
+The visual progression should feel like climbing through status tiers.
+
+Each next Level must be slightly more impressive than the previous Level.
+
+Use controlled progression in:
+
+- brightness
+- metallic richness
+- emblem complexity
+- border layers
+- crystal detail
+- depth
+- reflection
+- highlights
+- aura/glow
+- crown/wing geometry at advanced levels
+
+IMPORTANT:
+The difference should be visible but gradual.
+
+Example:
+
+LV1
+low-intensity premium starter badge.
+
+LV2
+slightly brighter and more detailed than LV1.
+
+LV3
+more prestigious than LV2.
+
+LV4
+another visible increase.
+
+LV5
+clear VIP milestone.
+
+LV6
+richer than LV5.
+
+LV7
+stronger premium/crystal appearance.
+
+LV8
+more luminous Diamond status.
+
+LV9
+Royal status.
+
+LV10
+major premium milestone.
+
+Continue the same principle through Recharge LV11–LV30.
+
+DO NOT randomly jump between styles.
+
+==================================================
+F. RECHARGE LV1–LV30 VISUAL HIERARCHY
+==================================================
+
+Recharge Level has 30 Levels.
+
+Create a coherent premium progression across ALL 30.
+
+Suggested visual families:
+
+LV1–LV4:
+Bronze / starter metallic family.
+Each Level progressively improves.
+
+LV5–LV9:
+Silver / Gold transition.
+More detail and brighter highlights.
+
+LV10:
+major GOLD VIP milestone.
+
+LV11–LV14:
+advanced Gold / Platinum progression.
+
+LV15:
+major Platinum milestone.
+
+LV16–LV19:
+Platinum / Crystal progression.
+
+LV20:
+major Diamond VIP milestone.
+
+LV21–LV24:
+advanced Diamond / Royal progression.
+
+LV25:
+major Royal milestone.
+
+LV26:
+stronger Royal.
+
+LV27:
+Royal Crystal.
+
+LV28:
+Royal Diamond.
+
+LV29:
+Elite Royal / near-maximum prestige.
+
+LV30:
+ABSOLUTE HIGHEST RECHARGE STATUS.
+
+LV30 must be unmistakably more prestigious than LV29.
+
+Use an original RIMILIVE top-tier emblem with controlled combinations of:
+
+- royal crown-inspired geometry
+- layered gold/platinum
+- diamond/crystal details
+- premium aura
+- multiple dimensional borders
+- tasteful luminous highlights
+
+Do NOT make LV30 cartoonish.
+
+It should look expensive, exclusive and professional.
+
+==================================================
+G. GIFT LV1–LV10 VISUAL HIERARCHY
+==================================================
+
+Gift Level should have its OWN identity.
+
+Do not simply reuse Recharge badges.
+
+Gift LV1:
+subtle premium starter.
+
+Gift LV2:
+slightly brighter.
+
+Gift LV3:
+more detailed.
+
+Gift LV4:
+stronger premium status.
+
+Gift LV5:
+clear Gift VIP milestone.
+
+Gift LV6:
+more luminous and dimensional.
+
+Gift LV7:
+Platinum/Crystal.
+
+Gift LV8:
+Diamond.
+
+Gift LV9:
+Royal Diamond.
+
+Gift LV10:
+ULTIMATE RIMILIVE GIFT STATUS.
+
+Gift LV10 must be substantially more premium than LV1,
+while still remaining visually related to the same Gift Level family.
+
+==================================================
+H. CURRENT LEVEL HERO — MAKE IT MORE GORGEOUS
+==================================================
+
+The current Level hero/card is already better.
+
+DO NOT throw it away.
+
+KEEP its successful structure.
+
+But make it MORE GORGEOUS and premium.
+
+Improve:
+
+- current Level emblem
+- profile/avatar presentation
+- card depth
+- premium background
+- progress indicator
+- current amount
+- next Level
+- remaining requirement
+- highlights
+- border details
+- hierarchy and spacing
+
+The CURRENT achieved Level should be the visual focus of the page.
+
+It should feel like a digital VIP status card,
+not a normal information card.
+
+Use subtle animated shine/glow ONLY if lightweight and tasteful.
+
+Do not use distracting continuous animation.
+
+==================================================
+I. BADGES MUST LOOK LIKE REAL STATUS EMBLEMS
+==================================================
+
+Avoid:
+
+- plain circles
+- plain pills
+- simple text labels
+- default Material icons as the primary badge
+- flat single-color shapes
+
+Badges should feel like collectible digital status emblems.
+
+Use original combinations of:
+
+- shield geometry
+- wings
+- crown-inspired accents
+- crystal facets
+- metallic rings
+- layered outlines
+- small light reflections
+- dimensional center plate
+
+Keep all text readable.
+
+==================================================
+J. LEVEL RULE LIST MUST ALSO FEEL PREMIUM
+==================================================
+
+Do not polish only the top hero and leave the Level Rule list basic.
+
+Recharge Level Rule:
+ALL LV1–LV30 rows should follow the new premium hierarchy.
+
+Gift Level Rule:
+ALL LV0–LV10 rows should follow its premium hierarchy.
+
+Each row should have:
+
+- correct premium badge
+- Level number
+- requirement amount
+- correct icon
+- locked/current/unlocked state
+
+For Gift Level:
+use the premium Diamond icon beside every amount.
+
+For Recharge Level:
+preserve the existing correct Recharge/Coin visual semantics.
+
+Do NOT accidentally use Diamond accounting for Recharge.
+
+==================================================
+K. LOCKED / CURRENT / COMPLETED STATES
+==================================================
+
+Clearly distinguish:
+
+COMPLETED LEVEL
+CURRENT LEVEL
+LOCKED LEVEL
+
+Completed:
+premium but calm.
+
+Current:
+strongest appropriate emphasis for that Level.
+
+Locked:
+slightly reduced intensity + tasteful lock,
+but still allow the user to see how premium future Levels become.
+
+Do not make locked badges completely gray and ugly.
+
+==================================================
+L. PERFORMANCE
+==================================================
+
+Premium does NOT mean heavy.
+
+Prefer:
+
+- Compose drawing
+- vector shapes
+- gradients
+- lightweight effects
+- optimized WebP/PNG only when necessary
+
+Avoid:
+
+- huge images
+- dozens of infinite animations
+- expensive blur everywhere
+- effects that make scrolling lag
+
+The Level Rule list must remain smooth on normal Android phones.
+
+==================================================
+M. DO NOT CHANGE ECONOMY LOGIC
+==================================================
+
+DO NOT change:
+
+Recharge thresholds
+Recharge calculation
+Gift thresholds
+Gift received-only rule
+Coin wallet balance
+Diamond wallet balance
+gift sending deductions
+gift receiving transactions
+Firebase Auth
+Firebase UID
+public user ID
+
+The Diamond icon on Gift Level is NOT permission to alter the economy.
+
+==================================================
+N. DO NOT TOUCH UNRELATED SCREENS
+==================================================
+
+Do not redesign:
+
+Home
+Follow
+Party
+Top
+Messages
+Invite
+Profile
+Create Room
+Party Room
+Gift panel
+Game
+PK
+More
+Settings
+Backgrounds
+Login
+
+Do not reintroduce navigation bugs.
+
+Create automatic backups before editing existing files.
+
+==================================================
+O. VISUAL SELF-CHECK — DO NOT STOP TOO EARLY
+==================================================
+
+Before finishing, inspect the implementation against this checklist.
+
+Ask internally:
+
+Does Recharge LV1 look clearly less prestigious than LV10?
+
+Does LV10 look clearly less prestigious than LV20?
+
+Does LV20 look clearly less prestigious than LV30?
+
+Does Recharge LV30 look like the highest Recharge status?
+
+Does Gift LV1 look less prestigious than Gift LV5?
+
+Does Gift LV5 look less prestigious than Gift LV10?
+
+Does Gift LV10 look like the highest Gift status?
+
+Does every Gift requirement amount have the Diamond icon?
+
+Does the Current Level hero look significantly more gorgeous than before?
+
+Does the Level Rule area still look premium when scrolling down?
+
+If any answer is NO:
+continue refining BEFORE reporting completion.
+
+Do not stop with a basic/flat result.
+
+==================================================
+P. TEST FUNCTIONALITY
+==================================================
+
+Verify:
+
+Recharge Level LV1–LV30 still calculates exactly as before.
+
+Gift Level uses received eligible gifts.
+
+Sending gift:
+sender Gift Level does NOT increase.
+
+Receiving successful gift:
+receiver Gift Level progress increases correctly.
+
+Repeated processing of the same gift transaction:
+must not duplicate progress where transaction IDs/backend support deduplication.
+
+Switch:
+
+Recharge Level → Gift Level → Recharge Level
+
+must work repeatedly without losing state.
+
+==================================================
+Q. BUILD
+==================================================
+
+Run:
+
+./gradlew :app:assembleDebug
+
+Fix relevant errors until:
+
+BUILD SUCCESSFUL
+
+Update the root:
+
+RIMILIVE.apk
+
+==================================================
+FINAL REPORT
+==================================================
+
+Report:
+
+1. Recharge LV1–LV30 logic preserved: YES/NO
+2. Recharge LV1–LV30 visual progression upgraded: YES/NO
+3. Recharge LV30 is highest visual status: YES/NO
+4. Gift Level received-gift rule preserved: YES/NO
+5. Gift LV1–LV10 premium progression upgraded: YES/NO
+6. Gift LV10 highest Gift status: YES/NO
+7. Diamond icon displayed beside Gift Level amounts: YES/NO
+8. Diamond icon did NOT alter wallet accounting: YES/NO
+9. Current Level hero made more premium/gorgeous: YES/NO
+10. Level Rule rows upgraded: YES/NO
+11. Locked/current/completed states working: YES/NO
+12. Existing Firebase/user data preserved: YES/NO
+13. Other screens unchanged: YES/NO
+14. Tests passed: YES/NO
+15. BUILD SUCCESSFUL: YES/NO
+16. Final APK path
+
+FINAL REQUIREMENT:
+Do not finish with a basic first-pass design.
+
+This should be the final polished visual pass:
+each higher Level must look progressively more prestigious,
+and both Recharge Level and Gift Level must feel like high-quality
+RIMILIVE VIP systems.
