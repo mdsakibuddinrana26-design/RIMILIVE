@@ -3,6 +3,7 @@ package com.example.ui.auth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,61 +63,100 @@ private fun wealthAmount(value: Long): String =
 internal fun WealthLevelScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    eligibleTotal: Long? = null
+    eligibleTotal: Long? = null,
+    verifiedReceivedGiftTotal: Long? = null
 ) {
     val progress = WealthLevelConfig.progressFor(eligibleTotal)
+    var selectedTab by rememberSaveable { mutableStateOf("Recharge Level") }
+    val rechargeScroll = rememberScrollState()
+    val giftScroll = rememberScrollState()
     Surface(modifier = modifier.fillMaxSize(), color = WealthBackground) {
-        Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-                .padding(horizontal = 18.dp, vertical = 12.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.fillMaxSize()) {
+            Row(Modifier.fillMaxWidth().padding(start = 8.dp, top = 10.dp, end = 18.dp),
+                verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = WealthText)
                 }
-                Text("WEALTH  /  LEVEL", color = WealthText, fontSize = 18.sp,
-                    letterSpacing = 1.4.sp,
-                    fontWeight = FontWeight.Bold)
+                Text("RIMILIVE  /  LEVEL", color = WealthText, fontSize = 17.sp,
+                    letterSpacing = 1.3.sp, fontWeight = FontWeight.Bold)
             }
-            Spacer(Modifier.height(12.dp))
-            WealthHero(progress)
-            Spacer(Modifier.height(27.dp))
-            Row(verticalAlignment = Alignment.Bottom) {
-                Column(Modifier.weight(1f)) {
-                    Text("THE ASCENT", color = WealthGold, fontSize = 11.sp,
-                        letterSpacing = 2.2.sp, fontWeight = FontWeight.Bold)
-                    Spacer(Modifier.height(4.dp))
-                    SectionTitle("Level Rule")
+            Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp)
+                .clip(RoundedCornerShape(16.dp)).background(Color(0xFF102E2B))
+                .border(1.dp, Color(0xFF2E594F), RoundedCornerShape(16.dp))
+                .padding(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                listOf("Recharge Level", "Gift Level").forEach { tab ->
+                    val active = selectedTab == tab
+                    val accent = if (tab == "Gift Level") Color(0xFF8EDCEB) else WealthGold
+                    Column(Modifier.weight(1f).clip(RoundedCornerShape(12.dp))
+                        .background(if (active) accent.copy(alpha = .14f) else Color.Transparent)
+                        .clickable { selectedTab = tab }
+                        .testTag(if (tab == "Gift Level") "gift-level-tab" else "recharge-level-tab")
+                        .padding(top = 10.dp, bottom = 7.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(tab.uppercase(), color = if (active) accent else WealthMuted,
+                            fontWeight = if (active) FontWeight.Bold else FontWeight.Medium,
+                            fontSize = 11.sp, letterSpacing = .8.sp, maxLines = 1)
+                        Spacer(Modifier.height(6.dp))
+                        Box(Modifier.width(35.dp).height(2.dp).clip(RoundedCornerShape(2.dp))
+                            .background(if (active) accent else Color.Transparent))
+                    }
                 }
-                Text("${WealthLevelConfig.levels.size} LEVELS", color = WealthMuted, fontSize = 10.sp,
-                    letterSpacing = 1.5.sp, modifier = Modifier.padding(bottom = 5.dp))
             }
-            Text("Verified eligible lifetime top-up · wallet coins are not used",
-                color = WealthMuted, fontSize = 12.sp, lineHeight = 17.sp)
-            Spacer(Modifier.height(14.dp))
-            WealthLevelConfig.levels.forEach { level ->
-                WealthStatusRow(level, progress.level?.number)
+            if (selectedTab == "Recharge Level") {
+                RechargeLevelContent(progress,
+                    Modifier.weight(1f).verticalScroll(rechargeScroll)
+                        .padding(horizontal = 18.dp))
+            } else {
+                GiftLevelContent(GiftLevelConfig.progressFor(verifiedReceivedGiftTotal),
+                    Modifier.weight(1f).verticalScroll(giftScroll)
+                        .padding(horizontal = 18.dp))
             }
-            Spacer(Modifier.height(25.dp))
-            SectionTitle("Privileges")
-            Text("Features remain unavailable until the underlying service is ready.",
-                color = WealthMuted, fontSize = 12.sp,
-                modifier = Modifier.padding(top = 5.dp, bottom = 9.dp))
-            WealthLevelConfig.privileges.forEach { privilege ->
-                PrivilegeRow(privilege, progress.level?.number)
-            }
-            Spacer(Modifier.height(18.dp))
-            Button(
-                onClick = {},
-                enabled = false,
-                modifier = Modifier.fillMaxWidth().height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    disabledContainerColor = WealthPanel2,
-                    disabledContentColor = WealthMuted
-                )
-            ) { Text("Top Up Unavailable") }
-            Spacer(Modifier.height(10.dp))
         }
+    }
+}
+
+@Composable
+private fun RechargeLevelContent(progress: WealthProgress, modifier: Modifier) {
+    Column(modifier) {
+        Spacer(Modifier.height(7.dp))
+        WealthHero(progress)
+        Spacer(Modifier.height(27.dp))
+        Row(verticalAlignment = Alignment.Bottom) {
+            Column(Modifier.weight(1f)) {
+                Text("THE ASCENT", color = WealthGold, fontSize = 11.sp,
+                    letterSpacing = 2.2.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(4.dp))
+                SectionTitle("Level Rule")
+            }
+            Text("${WealthLevelConfig.levels.size} LEVELS", color = WealthMuted, fontSize = 10.sp,
+                letterSpacing = 1.5.sp, modifier = Modifier.padding(bottom = 5.dp))
+        }
+        Text("Verified eligible lifetime top-up · wallet coins are not used",
+            color = WealthMuted, fontSize = 12.sp, lineHeight = 17.sp)
+        Spacer(Modifier.height(14.dp))
+        WealthLevelConfig.levels.forEach { level ->
+            WealthStatusRow(level, progress.level?.number)
+        }
+        Spacer(Modifier.height(25.dp))
+        SectionTitle("Privileges")
+        Text("Features remain unavailable until the underlying service is ready.",
+            color = WealthMuted, fontSize = 12.sp,
+            modifier = Modifier.padding(top = 5.dp, bottom = 9.dp))
+        WealthLevelConfig.privileges.forEach { privilege ->
+            PrivilegeRow(privilege, progress.level?.number)
+        }
+        Spacer(Modifier.height(18.dp))
+        Button(
+            onClick = {},
+            enabled = false,
+            modifier = Modifier.fillMaxWidth().height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                disabledContainerColor = WealthPanel2,
+                disabledContentColor = WealthMuted
+            )
+        ) { Text("Top Up Unavailable") }
+        Spacer(Modifier.height(20.dp))
     }
 }
 
@@ -121,19 +165,23 @@ private fun WealthHero(progress: WealthProgress) {
     val shape = RoundedCornerShape(27.dp)
     Box(
         modifier = Modifier.fillMaxWidth().clip(shape)
-            .background(Brush.linearGradient(listOf(Color(0xFF1C5344), Color(0xFF102F2D), Color(0xFF0A2926))))
-            .border(1.dp, WealthGold.copy(alpha = .44f), shape)
+            .background(Brush.linearGradient(listOf(Color(0xFF255E4C), Color(0xFF153D39), Color(0xFF082824))))
+            .border(1.dp, WealthGold.copy(alpha = .65f), shape)
             .testTag("wealth-hero")
     ) {
         Canvas(Modifier.matchParentSize()) {
-            drawCircle(WealthMint.copy(alpha = .075f), size.width * .55f,
+            drawCircle(WealthMint.copy(alpha = .11f), size.width * .55f,
                 center = Offset(size.width * .95f, -size.height * .2f))
+            drawCircle(WealthGold.copy(alpha = .06f), size.width * .36f,
+                center = Offset(size.width * .15f, size.height * 1.1f))
             drawLine(WealthGold.copy(alpha = .55f),
                 Offset(size.width * .06f, 1f), Offset(size.width * .47f, 1f), 2f)
         }
         Column(Modifier.fillMaxWidth().padding(20.dp)) {
             Text("RIMILIVE   /   WEALTH STATUS", color = WealthGold, fontSize = 10.sp,
                 letterSpacing = 1.8.sp, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(5.dp))
+            Text("RECHARGE LEVEL", color = WealthMuted, fontSize = 10.sp, letterSpacing = 1.sp)
             Spacer(Modifier.height(17.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 WealthEmblem(progress.level?.number)
@@ -152,6 +200,10 @@ private fun WealthHero(progress: WealthProgress) {
                 }
             }
             Spacer(Modifier.height(19.dp))
+            Text(if (progress.level == null) "STATUS AWAITING VERIFICATION" else "CURRENT STATUS",
+                color = WealthGold, fontSize = 10.sp, letterSpacing = 1.3.sp,
+                fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.height(8.dp))
             if (progress.currentTotal == null) {
                 Box(Modifier.fillMaxWidth().height(1.dp).background(WealthGold.copy(alpha = .28f)))
                 Spacer(Modifier.height(14.dp))
@@ -188,6 +240,9 @@ private fun WealthHero(progress: WealthProgress) {
 @Composable
 private fun WealthStatusRow(level: WealthLevel, currentLevel: Int?) {
     val style = wealthEmblemStyle(level.number)
+    val current = currentLevel == level.number
+    val completed = currentLevel != null && level.number < currentLevel
+    val locked = currentLevel != null && level.number > currentLevel
     val milestone = when (level.number) {
         10 -> "ELITE MILESTONE"
         20 -> "ROYAL MILESTONE"
@@ -199,12 +254,12 @@ private fun WealthStatusRow(level: WealthLevel, currentLevel: Int?) {
         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clip(shape)
             .background(Brush.horizontalGradient(
                 listOf(
-                    style.metal.copy(alpha = if (milestone != null) .30f else .19f),
+                    style.metal.copy(alpha = if (current) .40f else if (milestone != null) .30f else if (locked) .13f else .19f),
                     WealthPanel,
                     Color(0xFF0A2826)
                 )
             ))
-            .border(1.dp, style.metal.copy(alpha = if (milestone != null) .65f else .27f), shape)
+            .border(1.dp, style.metal.copy(alpha = if (current) .9f else if (milestone != null) .65f else .27f), shape)
             .testTag("wealth-level-${level.number}")
             .padding(horizontal = 11.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -213,7 +268,12 @@ private fun WealthStatusRow(level: WealthLevel, currentLevel: Int?) {
         Column(Modifier.weight(1f).padding(start = 8.dp)) {
             Text("LV${level.number}", color = WealthText, fontSize = 17.sp,
                 fontWeight = FontWeight.Bold)
-            Text(milestone ?: if (currentLevel != null && level.number <= currentLevel) "ACHIEVED" else "WEALTH LEVEL",
+            Text(when {
+                current -> "CURRENT"
+                completed -> "COMPLETED"
+                locked -> "LOCKED"
+                else -> milestone ?: "WEALTH LEVEL"
+            },
                 color = style.light, fontSize = 9.sp, fontWeight = FontWeight.SemiBold,
                 letterSpacing = .5.sp, maxLines = 1)
         }
@@ -222,7 +282,7 @@ private fun WealthStatusRow(level: WealthLevel, currentLevel: Int?) {
                 letterSpacing = .5.sp, textAlign = TextAlign.End)
             Spacer(Modifier.height(3.dp))
             WealthCoinAmount(level.requiredEligibleTopUp, style.light)
-            if (currentLevel != null && level.number > currentLevel) {
+            if (locked) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Lock, contentDescription = null,
                         tint = WealthMuted, modifier = Modifier.size(10.dp))
