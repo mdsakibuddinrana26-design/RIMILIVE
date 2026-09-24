@@ -393,8 +393,6 @@ fun AuthenticatedHomeScreen(
 
     else {
     // GAMI_HOME_ONLY_WHEN_SETUP_CLOSED
-    val tabs = listOf("Follow", "Party", "Chat", "Top")
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -428,40 +426,7 @@ fun AuthenticatedHomeScreen(
         }
 
         // Follow / Party / Chat / Top
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            tabs.forEach { tab ->
-                Column(
-                    modifier = Modifier
-                        .clickable { selectedTab = tab }
-                        .padding(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = tab,
-                        fontSize = 17.sp,
-                        fontWeight = if (selectedTab == tab) FontWeight.Bold else FontWeight.Normal,
-                        color = if (selectedTab == tab) Color.White else Color(0xFFD4EEE7)
-                    )
-                    if (selectedTab == tab) {
-                        Box(
-                            Modifier
-                                .padding(top = 5.dp)
-                                .width(32.dp)
-                                .height(3.dp)
-                                .background(
-                                    Color.White,
-                                    RoundedCornerShape(18.dp)
-                                )
-                        )
-                    }
-                }
-            }
-        }
+        HomeSectionTabs(selectedTab) { selectedTab = it }
 
         // Party discovery filters
         if (selectedTab == "Party") {
@@ -790,6 +755,9 @@ fun AuthenticatedHomeScreen(
     // GAMI_CREATE_ROOM_REQUEST_HANDLER
     LaunchedEffect(createRoomRequest) {
         if (createRoomRequest > 0 && !inRoom && currentUid.isNotBlank()) {
+            // Consume this one-shot request before the async write: returning to Home/Party
+            // must never recreate or reopen a room from an earlier Create tap.
+            createRoomRequest = 0
             val newRoomId = (100000..999999).random().toString()
 
             val newRoomRef = firestore
@@ -1418,37 +1386,20 @@ androidx.activity.compose.BackHandler(enabled = inRoom || showRoomBrowser || sho
     }
 
     if (showGameMenu) {
-        AlertDialog(
-            onDismissRequest = { showGameMenu = false },
-            title = { Text("Games") },
-            text = {
-                Column {
-                    TextButton(onClick = {
-                        showGameMenu = false
-                        if (isHost) showPkMenu = true
-                        else roomMessages = roomMessages + "System: Only the host can start PK"
-                    }) {
-                        Text("PK Game")
-                    }
-                    TextButton(onClick = {
-                        showGameMenu = false
-                        roomFeatureNotice = "Ludo is not available yet."
-                    }) {
-                        Text("Ludo")
-                    }
-                    TextButton(onClick = {
-                        showGameMenu = false
-                        roomFeatureNotice = "GAMI Race is not available yet."
-                    }) {
-                        Text("GAMI Race")
-                    }
-                }
+        RoomGameMenu(
+            onDismiss = { showGameMenu = false },
+            onPkGame = {
+                showGameMenu = false
+                if (isHost) showPkMenu = true
+                else roomMessages = roomMessages + "System: Only the host can start PK"
             },
-            confirmButton = {},
-            dismissButton = {
-                TextButton(onClick = { showGameMenu = false }) {
-                    Text("Close")
-                }
+            onLudo = {
+                showGameMenu = false
+                roomFeatureNotice = "Ludo is not available yet."
+            },
+            onGamiRace = {
+                showGameMenu = false
+                roomFeatureNotice = "GAMI Race is not available yet."
             }
         )
     }
@@ -3236,24 +3187,8 @@ Column(
             }
 
             // Create room
-        if (!inRoom && selectedTab != "Profile") Button(
-            onClick = {
-                    showCreateRoomSetup = true
-                },
-                modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 28.dp, vertical = 8.dp)
-                .height(54.dp),
-            shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF057C67)
-            )
-        ) {
-            Text(
-                "🎮  Create a Room",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold
-            )
+        if (!inRoom && selectedTab != "Profile") {
+            CreateRoomEntryButton { showCreateRoomSetup = true }
         }
 
         // One navigation component, including Profile. Subtabs are part of Home.

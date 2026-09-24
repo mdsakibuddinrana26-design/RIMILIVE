@@ -141,7 +141,7 @@ internal fun RoomControlBar(
         }
     }
     Row(modifier.fillMaxWidth().height(44.dp), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+        horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(
             Modifier.weight(1f).fillMaxHeight().shadow(2.dp, RoundedCornerShape(22.dp))
                 .background(Brush.horizontalGradient(listOf(Color(0xFF074D44), Color(0xFF106B5B))),
@@ -198,12 +198,12 @@ private fun BottomRoomIcon(
     glyph: String, label: String, onClick: () -> Unit,
     enabled: Boolean = true, color: Color, accent: Color, countdown: String? = null
 ) {
-    Surface(Modifier.size(44.dp).shadow(2.dp, RoundedCornerShape(13.dp))
+    Surface(Modifier.size(44.dp).shadow(1.dp, RoundedCornerShape(14.dp))
         .semantics { contentDescription = label }
         .clickable(enabled = enabled, onClick = onClick),
-        shape = RoundedCornerShape(13.dp), color = color,
-        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.8f))) {
-        Box(Modifier.background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.22f),
+        shape = RoundedCornerShape(14.dp), color = color,
+        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.9f))) {
+        Box(Modifier.background(Brush.verticalGradient(listOf(accent.copy(alpha = 0.16f),
             color, color.copy(alpha = 0.94f)))), contentAlignment = Alignment.Center) {
             if (glyph == "PK") Column(horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center) {

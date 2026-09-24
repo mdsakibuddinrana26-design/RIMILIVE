@@ -45,8 +45,8 @@ internal fun FifteenSeatRoomScreen(
     ) {
         RoomBackgroundLayer(background)
         val tight = maxHeight < 610.dp
-        val cameraHeight = (maxHeight * 0.29f).coerceIn(106.dp, 186.dp)
-        val audioRowHeight = if (tight) 53.dp else 58.dp
+        val cameraHeight = (maxHeight * 0.30f).coerceIn(108.dp, 190.dp)
+        val audioRowHeight = if (tight) 55.dp else 60.dp
         Column(Modifier.fillMaxSize().padding(horizontal = 12.dp, vertical = if (tight) 5.dp else 9.dp)) {
             Row(Modifier.fillMaxWidth().height(52.dp), verticalAlignment = Alignment.CenterVertically) {
                 Surface(Modifier.weight(1f).fillMaxHeight(), color = DarkPanel,
@@ -129,9 +129,9 @@ internal fun FifteenSeatRoomScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             if (occupied) {
-                                FifteenAvatar(photo, name, 35.dp)
+                                FifteenAvatar(photo, name, 38.dp)
                             } else {
-                                Surface(Modifier.size(35.dp), shape = CircleShape,
+                                Surface(Modifier.size(38.dp), shape = CircleShape,
                                     color = Color(0x8858392B)) {
                                     Box(contentAlignment = Alignment.Center) {
                                         Text("+", color = LightText, fontSize = 21.sp)
@@ -192,8 +192,8 @@ private fun FifteenCameraSeat(
         color = Color(0x994C382C)) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                if (occupied) FifteenAvatar(photo, name, if (host) 51.dp else 32.dp)
-                else Surface(Modifier.size(33.dp), shape = CircleShape,
+                if (occupied) FifteenAvatar(photo, name, if (host) 54.dp else 36.dp)
+                else Surface(Modifier.size(37.dp), shape = CircleShape,
                     color = Color(0x8858392B)) {
                     Box(contentAlignment = Alignment.Center) {
                         Text("+", color = LightText, fontSize = 21.sp)

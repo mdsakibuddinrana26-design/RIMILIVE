@@ -1,0 +1,510 @@
+RIMILIVE — STRICT UI CONSISTENCY + NAVIGATION BUG FIX + 15-SEAT SIZE + PARTY ROOM CONTROLS
+
+IMPORTANT:
+Read this entire instruction before changing ANY code.
+
+I am attaching 3 screenshots from the CURRENT RIMILIVE APK.
+
+Screenshot 1 = PARTY screen
+Screenshot 2 = CHAT screen
+Screenshot 3 = TOP screen
+
+SCREENSHOT 1 IS THE VISUAL REFERENCE FOR THE ROOM/PROFILE CARD SIZE AND GRID STYLE.
+
+There are also serious navigation/click-routing bugs that must be fixed.
+
+DO NOT perform a broad redesign.
+DO NOT change unrelated functionality.
+DO NOT change Firebase data structures unnecessarily.
+
+Before modifying any file:
+1. Inspect the existing implementation.
+2. Identify the exact files/composables/navigation routes involved.
+3. Create backups of every file that will be changed.
+
+==================================================
+TASK 1 — CHAT AND TOP CARDS MUST MATCH PARTY CARD STYLE
+==================================================
+
+Look carefully at Screenshot 1.
+
+On the PARTY screen, room/profile entries are displayed as large portrait cards in a 2-column grid.
+
+This is the card/grid presentation I want to use for CHAT and TOP as well.
+
+CURRENT PROBLEM:
+
+Screenshot 2:
+CHAT currently displays users as long horizontal white list cards.
+
+Screenshot 3:
+TOP currently displays users as long horizontal white ranking cards.
+
+I DO NOT WANT THESE LONG HORIZONTAL WHITE CARDS.
+
+CHANGE THEM.
+
+--------------------------------------------------
+CHAT SCREEN
+--------------------------------------------------
+
+Replace the long horizontal Chat cards with portrait-style cards matching the visual dimensions, corner radius, spacing, and 2-column grid structure of the PARTY cards shown in Screenshot 1.
+
+IMPORTANT:
+Do NOT simply copy Party functionality.
+
+Only reuse/match the CARD PRESENTATION.
+
+Each Chat card must still contain the correct Chat/Call information and preserve the existing Chat/Call behavior.
+
+A Chat card can contain, in a clean compact layout:
+
+- user's real profile photo/avatar
+- user's real display name
+- online/offline state where available
+- existing call/action control
+
+Do NOT show fake user data.
+
+Do NOT change the underlying Chat/Call destination or business logic.
+
+The visual goal is:
+
+PARTY CARD SIZE/SHAPE/GRID
++
+CHAT'S OWN DATA/FUNCTION
+
+Use 2 columns like the Party screen.
+
+--------------------------------------------------
+TOP SCREEN
+--------------------------------------------------
+
+Replace the current long horizontal Top ranking cards with portrait-style cards matching Screenshot 1 Party cards.
+
+Use the same general:
+
+- card width
+- card height
+- rounded corners
+- spacing
+- 2-column grid
+- profile/room image presentation
+
+But preserve TOP'S OWN ranking information.
+
+Each Top card can display cleanly:
+
+- ranking number
+- real profile/room image
+- real name
+- relevant existing ranking/room information
+
+Do NOT remove ranking numbers.
+
+Do NOT convert Top functionality into Party functionality.
+
+The visual goal is:
+
+PARTY CARD SIZE/SHAPE/GRID
++
+TOP'S OWN RANKING DATA/FUNCTION
+
+==================================================
+TASK 2 — DO NOT CHANGE THE PARTY SCREEN CARDS
+==================================================
+
+Screenshot 1 Party card/grid presentation is already the reference.
+
+Do NOT unnecessarily redesign the existing Party cards.
+
+Use it as the reference for Chat and Top.
+
+Do not create three unrelated card styles.
+
+The three screens should now feel visually consistent.
+
+==================================================
+TASK 3 — SERIOUS CLICK / NAVIGATION ROUTING BUG
+==================================================
+
+THIS IS A HIGH-PRIORITY FUNCTIONAL BUG.
+
+There are currently incorrect click targets/routes in the app.
+
+Examples observed:
+
+- entering/using Game can trigger incorrect destinations
+- tapping one area inside Game can open a different unrelated destination
+- tapping HOME can incorrectly enter/open a Party Room
+- some buttons/areas appear to trigger another screen's action
+
+THIS MUST NOT HAPPEN.
+
+Do NOT patch this by disabling random buttons.
+
+Inspect the navigation and click handling properly.
+
+Check:
+
+- clickable modifiers
+- pointer/touch handlers
+- nested clickable containers
+- transparent overlays
+- Box/Row/Column click areas
+- zIndex
+- navigation callbacks
+- route constants
+- shared callbacks
+- bottom navigation callbacks
+- Party Room click handlers
+- Game click handlers
+- Create Room click handlers
+
+Find the ROOT CAUSE.
+
+==================================================
+STRICT NAVIGATION RULE
+==================================================
+
+Every visible button/tab must trigger ONLY its intended action.
+
+HOME:
+Home must ONLY navigate to the normal Home destination.
+
+HOME MUST NOT:
+- enter a Party Room
+- open Game
+- trigger Create Room
+- trigger another invisible/overlapping button
+
+PARTY:
+Party tab must ONLY open the Party destination.
+
+CHAT:
+Chat tab must ONLY open Chat.
+
+TOP:
+Top tab must ONLY open Top.
+
+PROFILE:
+Profile must ONLY open Profile.
+
+CREATE A ROOM:
+Create a Room must ONLY start/open the intended Create Room flow.
+
+GAME:
+Game must ONLY open the intended Game destination/menu.
+
+Inside Game:
+each visible game control must respond ONLY to its own intended action.
+
+PK:
+PK must ONLY trigger PK.
+
+GIFT:
+Gift must ONLY open Gift.
+
+MORE:
+More must ONLY open More.
+
+SMS:
+SMS field/control must ONLY perform its intended message/input action.
+
+NO invisible click layer may overlap another control.
+
+NO giant parent clickable area may intercept unrelated taps.
+
+NO reused callback should accidentally route two different controls to the same destination.
+
+==================================================
+TASK 4 — TEST TOUCH TARGETS, NOT JUST COMPILATION
+==================================================
+
+Do not consider the navigation bug fixed simply because the project compiles.
+
+Inspect and test each click path individually.
+
+Specifically test:
+
+Home → Home
+Party → Party
+Chat → Chat
+Top → Top
+Profile → Profile
+Create Room → Create Room
+Room card → correct room
+Game → Game
+Gift → Gift
+More → More
+PK → PK
+SMS → SMS
+
+Then test multiple different clickable areas INSIDE Game.
+
+Tapping empty/non-clickable visual space must NOT accidentally trigger another action.
+
+Test going:
+
+Home → Party → Room → Back → Home
+
+Home must remain Home and must not automatically reopen the room.
+
+==================================================
+TASK 5 — 15-SEAT PARTY ROOM: SLIGHTLY ENLARGE SEATS
+==================================================
+
+The existing 15-seat room is already functionally designed.
+
+DO NOT redesign it.
+
+CURRENT PROBLEM:
+The individual seat areas are still slightly too small.
+
+ONLY make the individual seat/slot areas SLIGHTLY larger.
+
+IMPORTANT:
+
+I said SLIGHTLY larger.
+
+NOT dramatically larger.
+
+The final result must still show ALL 15 seats within the available Party Room screen area.
+
+Do NOT create horizontal scrolling.
+
+Do NOT require the user to scroll just to see the room layout.
+
+Do NOT allow seats to overlap.
+
+Do NOT clip seats.
+
+Do NOT hide the bottom Party Room controls.
+
+Do NOT move/reorder the existing 15-seat arrangement unnecessarily.
+
+Do NOT change:
+
+- seat IDs
+- seat indexing
+- seat click actions
+- join/leave logic
+- camera logic
+- microphone logic
+- host logic
+- member logic
+- Firebase room logic
+- occupancy logic
+
+This is primarily a controlled VISUAL SIZE adjustment.
+
+Increase the seat/avatar/seat-container dimensions only by the smallest useful amount.
+
+Then rebalance spacing/padding slightly if necessary so ALL 15 seats remain visible and clean.
+
+==================================================
+TASK 6 — DO NOT CHANGE THE APPROVED 8-SEAT ROOM
+==================================================
+
+Do NOT redesign the completed 8-seat room.
+
+This seat-size adjustment is specifically for the 15-seat layout.
+
+If shared components are used by both layouts, make sure the change does NOT accidentally enlarge/break the 8-seat layout.
+
+==================================================
+TASK 7 — POLISH PARTY ROOM BOTTOM CONTROLS
+==================================================
+
+Visually improve this existing Party Room control row:
+
+SMS | PK | Game | Gift | More
+
+KEEP THIS EXACT ORDER.
+
+Do NOT remove any of these controls.
+
+Do NOT change their actions.
+
+I want them to look more polished, modern, premium, and professionally aligned with RIMILIVE.
+
+--------------------------------------------------
+SMS
+--------------------------------------------------
+
+Improve the SMS/message box:
+
+- modern rounded/pill shape
+- clean border/background
+- readable hint/text
+- comfortable touch/input area
+- not excessively tall
+- enough horizontal space for typing
+
+SMS should remain the widest control in the row.
+
+--------------------------------------------------
+PK / GAME / GIFT / MORE
+--------------------------------------------------
+
+Improve these four compact controls:
+
+- cleaner original icons
+- consistent icon size
+- consistent control size
+- balanced spacing
+- good Android touch targets
+- subtle premium appearance
+- visually aligned with the Party Room
+
+Do NOT use huge circles.
+
+Do NOT use excessive glow.
+
+Do NOT copy proprietary icons from another app.
+
+Use RIMILIVE-original/generic icons.
+
+--------------------------------------------------
+IMPORTANT PK RULE
+--------------------------------------------------
+
+The previously removed TOP PK must remain REMOVED.
+
+ONLY the BOTTOM PK beside SMS should remain.
+
+Do NOT accidentally restore the top PK.
+
+==================================================
+TASK 8 — PRESERVE KEYBOARD FIX
+==================================================
+
+The existing SMS/keyboard behavior must remain correct.
+
+When keyboard opens:
+
+- do not push the entire Party Room upward
+- SMS + PK + Game + Gift + More should remain together above the keyboard
+- input must remain visible
+- room layout should remain visually stable
+
+When keyboard closes:
+the controls return to their normal position.
+
+Use correct Compose IME/WindowInsets behavior.
+
+Do NOT introduce hardcoded keyboard-height hacks.
+
+==================================================
+TASK 9 — DO NOT BREAK COMPLETED FEATURES
+==================================================
+
+PRESERVE:
+
+- real existing Party screen data
+- existing Party Room functionality
+- 8-seat room
+- 15-seat room functionality
+- Notice Board
+- Share
+- room backgrounds
+- newly added Day/Night backgrounds
+- selected background persistence
+- Gift panel work
+- Gift categories
+- More menu
+- Settings
+- host/member logic
+- Firebase Authentication
+- Firestore
+- login/session persistence
+- user profile data
+- Coin/Diamond data
+- existing room data
+- Follow functionality
+
+Do not replace real data with demo/sample/hardcoded data.
+
+Do not make unnecessary Firebase schema changes.
+
+==================================================
+TASK 10 — RESPONSIVE CHECK
+==================================================
+
+Test on the current Android phone-size layout.
+
+Verify:
+
+CHAT:
+- 2-column portrait cards
+- no horizontal overflow
+- no text overlap
+- no clipped cards
+
+TOP:
+- 2-column portrait cards
+- ranking remains readable
+- no horizontal overflow
+- no clipping
+
+15-SEAT ROOM:
+- all 15 seats visible
+- seats slightly larger than before
+- no overlap
+- no clipping
+- no unwanted scrolling
+- bottom controls remain visible
+
+PARTY ROOM BOTTOM:
+- SMS visible
+- PK visible
+- Game visible
+- Gift visible
+- More visible
+- balanced spacing
+
+==================================================
+TASK 11 — BUILD AND FINAL VERIFICATION
+==================================================
+
+After all changes, run:
+
+./gradlew :app:assembleDebug
+
+Fix all relevant compilation/resource errors until:
+
+BUILD SUCCESSFUL
+
+After BUILD SUCCESSFUL, update/replace the root:
+
+RIMILIVE.apk
+
+with the newly built APK.
+
+DO NOT report completion merely because code was edited.
+
+Final report must explicitly state:
+
+1. Chat long cards replaced with Party-style 2-column cards: YES / NO
+2. Top long cards replaced with Party-style 2-column cards: YES / NO
+3. Chat functionality preserved: YES / NO
+4. Top ranking functionality preserved: YES / NO
+5. Home incorrectly opening room: FIXED / NOT FIXED
+6. Game incorrect click routing: FIXED / NOT FIXED
+7. Other overlapping/wrong click targets checked: YES / NO
+8. 15-seat seats slightly enlarged: YES / NO
+9. All 15 seats still visible: YES / NO
+10. 8-seat layout unchanged: YES / NO
+11. SMS UI improved: YES / NO
+12. Bottom PK UI improved: YES / NO
+13. Game UI improved: YES / NO
+14. Gift UI improved: YES / NO
+15. More UI improved: YES / NO
+16. TOP PK remains removed: YES / NO
+17. Keyboard behavior preserved: YES / NO
+18. Background system preserved: YES / NO
+19. Firebase/backend functionality preserved: YES / NO
+20. BUILD SUCCESSFUL
+21. Final APK path
+
+ABSOLUTELY DO NOT mark a navigation issue FIXED unless the actual click callback/route/overlap responsible for it has been inspected and corrected.
