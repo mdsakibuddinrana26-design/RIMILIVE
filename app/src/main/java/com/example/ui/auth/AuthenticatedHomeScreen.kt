@@ -123,7 +123,7 @@ fun AuthenticatedHomeScreen(
     androidx.activity.compose.BackHandler(
         enabled = selectedTab != "Party" && !showCreateRoomSetup && !inRoom
     ) {
-        selectedTab = "Party"
+        selectedTab = if (selectedTab == "Invite" || selectedTab == "Wealth") "Profile" else "Party"
     }
     // Keep the setup choices outside the conditional screen so they survive
     // recomposition and can be written to the room document.
@@ -403,7 +403,7 @@ fun AuthenticatedHomeScreen(
     ) {
         // Top app header removed to maximize room/content space
 
-    if (!inRoom && selectedTab != "Profile") {
+    if (!inRoom && selectedTab !in listOf("Profile", "Message", "Invite", "Wealth")) {
         // Banner
         Box(
             modifier = Modifier
@@ -616,26 +616,17 @@ fun AuthenticatedHomeScreen(
 
             
             "Message" -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
-                ) {
-                    Text(
-                        text = "Message",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                RimiMessagesScreen(modifier = Modifier.weight(1f))
+            }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+            "Invite" -> {
+                RimiInviteScreen(onBack = { selectedTab = "Profile" },
+                    modifier = Modifier.weight(1f))
+            }
 
-                    Text(
-                        text = "Your conversations will appear here",
-                        fontSize = 14.sp,
-                        color = Color(0xFFE0FFF3)
-                    )
-                }
+            "Wealth" -> {
+                WealthLevelScreen(onBack = { selectedTab = "Profile" },
+                    modifier = Modifier.weight(1f))
             }
 
             
@@ -3183,18 +3174,19 @@ Column(
         }
 
         // GAMI_FINAL_BOTTOM_SPACER
-            if (selectedTab !in listOf("Party", "Chat", "Top", "Profile") || inRoom ||
+            if (selectedTab !in listOf("Party", "Chat", "Top", "Profile", "Message",
+                    "Invite", "Wealth") || inRoom ||
                 (selectedTab == "Party" && !partyHasRooms)) {
                 Spacer(modifier = Modifier.weight(1f))
             }
 
             // Create room
-        if (!inRoom && selectedTab != "Profile") {
+        if (!inRoom && selectedTab !in listOf("Profile", "Message", "Invite", "Wealth")) {
             CreateRoomEntryButton { showCreateRoomSetup = true }
         }
 
         // One navigation component, including Profile. Subtabs are part of Home.
-        if (!inRoom) RimiMainBottomBar(selectedTab = selectedTab,
+        if (!inRoom && selectedTab !in listOf("Invite", "Wealth")) RimiMainBottomBar(selectedTab = selectedTab,
             onNavigate = { selectedTab = it })
     }
     }

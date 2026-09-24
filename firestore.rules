@@ -3,10 +3,39 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // User profile
+    // Profile fields remain editable by their owner. Wallet and verified purchase
+    // totals are server-owned; Admin SDK writes bypass these client rules.
     match /users/{userId} {
-      allow read, write: if request.auth != null
-                         && request.auth.uid == userId;
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && !request.resource.data.keys().hasAny(
+                      ['coins', 'diamonds', 'lifetimeEligibleTopUp']);
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(
+                      ['coins', 'diamonds', 'lifetimeEligibleTopUp']);
+      allow delete: if false;
+    }
+
+    // Immutable referral relationship. The invitee creates exactly one record,
+    // while an inviter may query only records pointing to their own UID.
+    match /referrals/{inviteeUid} {
+      allow get: if request.auth != null
+                 && (request.auth.uid == inviteeUid
+                     || resource.data.inviterUid == request.auth.uid);
+      allow list: if request.auth != null
+                  && resource.data.inviterUid == request.auth.uid;
+      allow create: if request.auth != null
+                    && request.auth.uid == inviteeUid
+                    && request.resource.data.keys().hasOnly(['inviterUid', 'inviteeUid', 'createdAt'])
+                    && request.resource.data.inviteeUid == request.auth.uid
+                    && request.resource.data.inviterUid is string
+                    && request.resource.data.inviterUid.size() > 0
+                    && request.resource.data.inviterUid != request.auth.uid
+                    && request.resource.data.createdAt == request.time
+                    && exists(/databases/$(database)/documents/users/$(request.resource.data.inviterUid));
+      allow update, delete: if false;
     }
 
     // Party Rooms

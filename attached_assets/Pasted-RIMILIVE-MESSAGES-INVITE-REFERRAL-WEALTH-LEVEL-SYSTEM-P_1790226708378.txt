@@ -1,0 +1,751 @@
+RIMILIVE — MESSAGES + INVITE/REFERRAL + WEALTH LEVEL SYSTEM
+PROFESSIONAL UI + REAL FUNCTIONALITY
+
+IMPORTANT:
+Read this entire instruction before changing any code.
+
+I am attaching reference screenshots for:
+1. Messages
+2. Invite a Friend / Referral
+3. Wealth / Level Rule
+4. Wealth Privileges
+5. Wealth Level Progress
+
+These screenshots are VISUAL/STRUCTURAL REFERENCES ONLY.
+
+DO NOT copy:
+- another app's branding
+- logos
+- personal names
+- profile photos
+- exact artwork
+- proprietary icons
+- sample user IDs
+- sample balances
+- exact text that belongs to another app
+
+Build an ORIGINAL RIMILIVE implementation using RIMILIVE's existing premium green design language and REAL Firebase/user data.
+
+IMPORTANT:
+This task includes FUNCTIONALITY where the existing RIMILIVE backend/data supports it.
+
+Do NOT create fake success states.
+Do NOT invent fake users, referrals, balances, messages, or levels.
+
+Before changing anything:
+
+1. Inspect the current project.
+2. Find the existing:
+   - Messages implementation
+   - Profile/User model
+   - public RIMILIVE User ID
+   - Firebase Auth
+   - Firestore user documents
+   - Coin balance
+   - Diamond balance
+   - Invite/referral fields if they already exist
+   - Level fields if they already exist
+   - navigation routes
+3. Reuse existing data/models whenever possible.
+4. Avoid destructive Firestore schema changes.
+5. Create backups of every file that will be modified.
+
+==================================================
+PART A — PROFESSIONAL MESSAGES SCREEN
+==================================================
+
+Redesign the current RIMILIVE Messages screen using Screenshot 1 as the layout reference.
+
+Keep RIMILIVE's own premium green identity.
+
+HEADER:
+
+Display:
+
+Messages
+
+Use a clean professional header.
+
+Keep any right-side actions only when they correspond to real RIMILIVE functions.
+
+==================================================
+MESSAGE CATEGORIES
+==================================================
+
+At the top of the message list provide these organized categories:
+
+1. System Message
+2. Agent Messages
+3. Stranger Messages
+
+Then display normal user conversations underneath.
+
+VISUAL STRUCTURE:
+
+Each conversation should show:
+
+- circular real avatar
+- real display name
+- latest message preview
+- date/time
+- unread badge/count when available
+- online/status indicator only if real data exists
+
+Use a clean integrated list.
+
+DO NOT use huge white horizontal cards.
+
+The visual feeling should be close to the reference:
+clean, spacious and easy to scan.
+
+==================================================
+MESSAGES FUNCTIONALITY
+==================================================
+
+Preserve any messaging functionality that already exists.
+
+Each conversation must have an independent click target.
+
+User A → User A conversation only.
+
+User B → User B conversation only.
+
+System Message → System messages only.
+
+Agent Messages → Agent messages only.
+
+Stranger Messages → Stranger message area only.
+
+Do NOT reintroduce the previous wrong-click/navigation problem.
+
+If a complete real-time text messaging backend is NOT currently implemented:
+
+DO NOT pretend that it is.
+
+Build/preserve the UI and connect only functionality that actually exists.
+
+==================================================
+PART B — INVITE A FRIEND / REFERRAL
+==================================================
+
+Create or upgrade the RIMILIVE Invite page using Screenshot 2 as the STRUCTURAL reference.
+
+This must NOT be a copied page.
+
+Create an original RIMILIVE version.
+
+The page should contain:
+
+- premium RIMILIVE invitation header/banner
+- Invite a Friend title
+- user's personal referral/invite information
+- Share button
+- My Referrals section
+- Rules section
+
+==================================================
+REAL REFERRAL ID / LINK
+==================================================
+
+Each authenticated RIMILIVE account must use its existing unique identity.
+
+Prefer the existing permanent public RIMILIVE User ID if one already exists.
+
+Do NOT generate a new public ID every time the app opens.
+
+Do NOT use device ID.
+
+Do NOT use username as the secure account identifier.
+
+Internally preserve Firebase UID as the authoritative account identifier.
+
+If a referral system already exists:
+reuse it.
+
+If it does not exist:
+implement the minimum safe referral relationship required for this page without destructively changing existing user documents.
+
+A referral must be permanently associated with the correct inviter.
+
+==================================================
+SHARE FUNCTION
+==================================================
+
+The Share button must use the Android native share sheet.
+
+It should share RIMILIVE invitation information.
+
+Where the app already has a valid install/deep link, include it.
+
+Also include the inviter's referral code/public RIMILIVE ID as appropriate.
+
+DO NOT invent a fake Play Store URL if RIMILIVE is not yet published.
+
+DO NOT claim a referral succeeded simply because a link was shared.
+
+Sharing and successful referral registration are two separate events.
+
+==================================================
+MY REFERRALS
+==================================================
+
+"My Referrals" must show REAL referred accounts only.
+
+For each referral, show available real data such as:
+
+- avatar
+- display name
+- RIMILIVE public ID where appropriate
+- country if available
+- level if available
+
+DO NOT use the sample users from the screenshot.
+
+DO NOT hardcode a fake referral count.
+
+"My Referrals X" must derive X from real referral data.
+
+If the user has zero referrals:
+show a professional empty state.
+
+==================================================
+REFERRAL DUPLICATE PROTECTION
+==================================================
+
+A user must NOT be repeatedly counted as a new referral.
+
+Do not allow:
+
+- repeated app launches to create referrals
+- repeated link clicks to create multiple referral records
+- the same account to be counted repeatedly for one inviter
+- a user to refer themselves
+
+Use stable account identifiers.
+
+Where server-authoritative protection is required but the current backend does not support it safely, implement the client/UI portion without pretending it is fraud-proof and clearly report the remaining backend requirement.
+
+==================================================
+REFERRAL REWARD SAFETY
+==================================================
+
+DO NOT hardcode the reference screenshot's reward such as "10,000 Gems = $1".
+
+DO NOT introduce cash-value claims from the reference app.
+
+RIMILIVE's Coin/Diamond economy is separate.
+
+If RIMILIVE already has a configured referral reward:
+use that real configuration.
+
+If no real referral reward has been finalized:
+display the Invite/Referral system WITHOUT automatically crediting invented Coin/Diamond rewards.
+
+Prepare the architecture so an administrator/server configuration can define referral rewards later.
+
+Coin/Diamond balance changes must not rely only on a client-side button.
+
+==================================================
+PART C — WEALTH / LEVEL PAGE
+==================================================
+
+Create a professional RIMILIVE Level area inspired structurally by Screenshots 3, 4 and 5.
+
+Do NOT copy the other app's artwork or level badges.
+
+Create original RIMILIVE level badges/icons.
+
+The Level area should have a premium appearance.
+
+The screen should contain:
+
+- current level
+- current progress
+- progress toward next level
+- Level Rule
+- level requirement table
+- privileges/benefits section
+- appropriate Top-up entry point if RIMILIVE already has one
+
+==================================================
+LEVEL SYSTEM — IMPORTANT
+==================================================
+
+Do NOT blindly copy the exact level numbers shown in the screenshots.
+
+Create the system in a configurable way.
+
+The level calculation must have ONE authoritative metric.
+
+For the first implementation use:
+
+LIFETIME ELIGIBLE TOP-UP / PURCHASED COINS
+
+NOT current Coin wallet balance.
+
+This distinction is critical.
+
+Example:
+
+If a user purchased/top-upped 3,000,000 eligible Coins over time and later spent those Coins, their accumulated Wealth progress should NOT disappear merely because the wallet balance decreased.
+
+Therefore store/derive separately:
+
+currentCoinBalance
+
+and
+
+lifetimeEligibleTopUp
+
+Do NOT use currentCoinBalance as lifetime level progress.
+
+If the project already has an equivalent lifetime top-up field, reuse it instead of creating a duplicate.
+
+==================================================
+INITIAL RIMILIVE WEALTH LEVEL THRESHOLDS
+==================================================
+
+Use these initial configurable thresholds unless an existing RIMILIVE configuration already defines them:
+
+LV0 = 0
+
+LV1 = 1,000,000
+
+LV2 = 3,000,000
+
+LV3 = 10,000,000
+
+LV4 = 30,000,000
+
+LV5 = 100,000,000
+
+LV6 = 300,000,000
+
+LV7 = 1,000,000,000
+
+LV8 = 3,000,000,000
+
+LV9 = 10,000,000,000
+
+LV10 = 30,000,000,000
+
+LV20 = 100,000,000,000
+
+LV30 = 300,000,000,000
+
+IMPORTANT:
+Treat these as configuration, NOT scattered hardcoded UI constants.
+
+Create one centralized level configuration/model so we can easily change the amounts later.
+
+Do not invent LV11-LV19 or LV21-LV29 progression unless the current system requires them.
+
+If continuous levels are required technically, STOP and report the missing thresholds instead of silently inventing financial progression.
+
+==================================================
+CURRENT LEVEL CALCULATION
+==================================================
+
+Determine the user's level from lifetimeEligibleTopUp.
+
+Conceptually:
+
+highest threshold <= lifetimeEligibleTopUp
+=
+current Wealth Level.
+
+Example:
+
+2,000,000 eligible lifetime top-up
+→ LV1
+
+5,000,000
+→ LV2
+
+15,000,000
+→ LV3
+
+Do NOT manually save arbitrary level values that can become inconsistent with the underlying total.
+
+Where practical, derive/recalculate the level from the authoritative total.
+
+==================================================
+LEVEL PROGRESS
+==================================================
+
+Display:
+
+Current level
+Current eligible lifetime top-up
+Next level
+Amount required for next level
+Progress bar
+
+Example:
+
+If:
+
+LV2 = 3,000,000
+LV3 = 10,000,000
+
+and user has:
+
+5,000,000
+
+then progress must represent the user's position between:
+
+3,000,000 → 10,000,000
+
+Do NOT calculate progress against zero for every level.
+
+Use:
+
+(currentTotal - currentThreshold)
+/
+(nextThreshold - currentThreshold)
+
+Clamp visual progress safely between 0 and 1.
+
+==================================================
+LEVEL RULE PAGE
+==================================================
+
+Create a clean Level Rule section/table similar in STRUCTURE to the reference.
+
+Show:
+
+Level | Required eligible top-up
+
+Use RIMILIVE-original level badges.
+
+Make the table scrollable when necessary.
+
+Do NOT make text tiny just to fit everything.
+
+==================================================
+PART D — WEALTH PRIVILEGES
+==================================================
+
+Create a Privileges section inspired by the reference structure.
+
+Possible rows can include:
+
+- Information Background
+- View Visitors
+- Party Room Background
+- Entrance Effect
+- Privilege Gift
+- Party Room Privilege
+- Entry Bar
+- Portrait Frame
+
+BUT:
+
+Do NOT falsely activate these features merely because they appear in the UI.
+
+Each privilege must have a defined required level.
+
+Use centralized configuration such as:
+
+Privilege
+requiredLevel
+availability
+destination/action
+
+If the underlying feature already exists:
+connect it.
+
+If the underlying feature does NOT exist:
+show it as:
+
+Coming Soon
+or
+Locked
+
+as appropriate.
+
+DO NOT fake functionality.
+
+==================================================
+LOCKED / UNLOCKED PRIVILEGES
+==================================================
+
+For each privilege:
+
+If currentLevel >= requiredLevel:
+show it as unlocked only when the underlying feature is actually available.
+
+If currentLevel < requiredLevel:
+show a lock state and required level.
+
+Example:
+
+🔒 Unlocks at LV5
+
+Do NOT charge Coins merely for tapping a privilege.
+
+==================================================
+TOP-UP BUTTON
+==================================================
+
+Include a clean "Top Up" / "Top Up Now" action where appropriate.
+
+If RIMILIVE already has a Top-up destination:
+navigate to that existing destination.
+
+DO NOT create fake payment completion.
+
+DO NOT automatically add Coins when the user presses Top Up.
+
+Real payment verification and balance crediting must remain tied to the proper backend/payment flow.
+
+==================================================
+IMPORTANT — DO NOT COPY THE REFERENCE'S BALANCE RULE
+==================================================
+
+The reference screenshot contains a rule about a level becoming invalid when Coin balance falls below a certain amount.
+
+DO NOT automatically copy that rule into RIMILIVE.
+
+RIMILIVE Wealth Level should initially be based on lifetime eligible top-up and should NOT disappear simply because the user spends Coins.
+
+We can add a separate status rule later if required.
+
+==================================================
+PART E — ORIGINAL RIMILIVE DESIGN
+==================================================
+
+Messages:
+premium emerald RIMILIVE style.
+
+Invite:
+premium RIMILIVE green promotional style.
+
+Level:
+use a premium dark emerald / deep green RIMILIVE style rather than copying the purple reference.
+
+Create original:
+
+- badges
+- cards
+- icons
+- progress styling
+- level frames
+
+Do not copy proprietary assets from the reference screenshots.
+
+==================================================
+PART F — DATA INTEGRITY
+==================================================
+
+VERY IMPORTANT:
+
+Do NOT damage existing account data.
+
+Preserve:
+
+- Firebase UID
+- permanent RIMILIVE public ID
+- Profile
+- avatar
+- name
+- gender
+- DOB
+- country
+- Coin
+- Diamond
+- Follow
+- room data
+- existing authentication/session
+
+Any new fields must be added safely.
+
+Do NOT reset existing users.
+
+Do NOT overwrite existing Coin/Diamond balances.
+
+Do NOT create a new user document for an already existing authenticated account.
+
+==================================================
+PART G — SECURITY
+==================================================
+
+Referral rewards and eligible top-up totals affect the economy.
+
+Do NOT trust arbitrary client values for these operations.
+
+The Android client must NOT be able to simply write:
+
+"give me referral reward"
+
+or:
+
+"my lifetime top-up is 100000000"
+
+and receive the benefit.
+
+Where the current backend cannot securely verify these values, implement the UI/data-reading architecture and clearly identify the server-authoritative work still required.
+
+Never claim economy-sensitive functionality is secure if it remains client-authoritative.
+
+==================================================
+PART H — DO NOT TOUCH UNRELATED COMPLETED WORK
+==================================================
+
+Do NOT redesign or break:
+
+- Home
+- Follow
+- Party
+- Top
+- Profile
+- Create Room
+- Party Room
+- 8-seat layout
+- 15-seat layout
+- Notice Board
+- SMS
+- PK
+- Game
+- Gift
+- More
+- Settings
+- Camera controls
+- Background selector
+- Day/Night backgrounds
+- keyboard/IME fix
+- room host/member logic
+- existing navigation fixes
+- Google/Facebook login code
+- Firebase Auth/session persistence
+
+No broad refactoring.
+
+==================================================
+PART I — NAVIGATION
+==================================================
+
+Add/connect the appropriate existing RIMILIVE entry points so:
+
+Messages → Messages
+
+Invite → Invite/Referral
+
+My Level / Wealth → Level
+
+Top Up → existing Top-up destination
+
+Each route must be independent.
+
+Do NOT use overlapping click areas.
+
+Do NOT allow:
+
+Messages → Room
+Invite → unrelated screen
+Level → unrelated screen
+Top Up → Room/Game
+
+Test every route.
+
+==================================================
+PART J — TESTING
+==================================================
+
+MESSAGES:
+- screen opens correctly
+- real data used where available
+- categories render correctly
+- conversation touch targets are independent
+- scrolling works
+
+INVITE:
+- current authenticated user's referral identity loads
+- native Share works
+- no fake Play Store URL
+- referral count comes from real data
+- self-referral prevented
+- duplicate referral protection implemented where backend permits
+
+LEVEL:
+Test threshold boundaries.
+
+Examples:
+
+0 → LV0
+999,999 → LV0
+1,000,000 → LV1
+2,999,999 → LV1
+3,000,000 → LV2
+9,999,999 → LV2
+10,000,000 → LV3
+
+Continue boundary tests for all configured thresholds.
+
+Verify spending current Coins does NOT incorrectly reduce lifetime Wealth progress.
+
+Verify progress calculation between levels.
+
+PRIVILEGES:
+- locked states correct
+- required level displayed
+- unavailable functionality is not presented as working
+- existing real features navigate correctly
+
+==================================================
+PART K — BUILD
+==================================================
+
+After implementation run:
+
+./gradlew :app:assembleDebug
+
+Fix relevant errors until:
+
+BUILD SUCCESSFUL
+
+Then update/replace:
+
+RIMILIVE.apk
+
+in the project root with the new APK.
+
+==================================================
+FINAL REPORT
+==================================================
+
+Report clearly:
+
+1. Messages redesigned: YES/NO
+2. Real message data preserved: YES/NO
+3. System/Agent/Stranger categories added or connected: YES/NO
+4. Invite page completed: YES/NO
+5. Native Share connected: YES/NO
+6. Permanent referral identity used: YES/NO
+7. Real referral list/count used: YES/NO
+8. Duplicate/self-referral protection: YES/NO/PARTIAL
+9. Automatic referral reward implemented securely: YES/NO/NOT YET
+10. Wealth/Level page completed: YES/NO
+11. Centralized level thresholds created: YES/NO
+12. Lifetime eligible top-up separated from current Coin balance: YES/NO
+13. Level calculation working: YES/NO
+14. Level progress working: YES/NO
+15. Level Rule table completed: YES/NO
+16. Privilege UI completed: YES/NO
+17. Locked/unlocked states working: YES/NO
+18. Existing Top-up route preserved: YES/NO
+19. Existing Coin/Diamond balances preserved: YES/NO
+20. Firebase Auth/session preserved: YES/NO
+21. Existing Party Room functionality unchanged: YES/NO
+22. Existing navigation fixes preserved: YES/NO
+23. BUILD SUCCESSFUL
+24. Final APK path
+
+IMPORTANT:
+Do not report a feature as functional merely because its UI exists.
+Clearly distinguish:
+UI COMPLETE
+from
+BACKEND FUNCTIONAL
+from
+BACKEND STILL REQUIRED.

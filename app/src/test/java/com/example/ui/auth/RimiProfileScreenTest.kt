@@ -57,4 +57,19 @@ class RimiProfileScreenTest {
         rule.onNodeWithText("Settings").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("Sign-in PK").performScrollTo().assertIsDisplayed()
     }
+
+    @Test
+    fun inviteAndWealthOpenSeparateDestinations() {
+        val routes = mutableListOf<String>()
+        rule.setContent {
+            RimiProfileContent(
+                RimiProfileData(name = "Member", email = "member@example.test"),
+                onNavigate = { routes += it }, onLogout = {}
+            )
+        }
+        rule.onNodeWithText("Invite").performScrollTo().performClick()
+        assertEquals(listOf("Invite"), routes)
+        rule.onNodeWithText("My Level").performScrollTo().performClick()
+        assertEquals(listOf("Invite", "Wealth"), routes)
+    }
 }

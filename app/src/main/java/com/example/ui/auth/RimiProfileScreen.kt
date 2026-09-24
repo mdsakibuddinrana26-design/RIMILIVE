@@ -1,6 +1,5 @@
 package com.example.ui.auth
 
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -107,7 +105,6 @@ internal fun RimiProfileContent(
     onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     var openMenu by remember { mutableStateOf<String?>(null) }
     Box(
         modifier.fillMaxWidth().background(
@@ -211,13 +208,8 @@ internal fun RimiProfileContent(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
                         .clickable {
                             when (title) {
-                                "Invite" -> {
-                                    val share = Intent(Intent.ACTION_SEND).apply {
-                                        type = "text/plain"
-                                        putExtra(Intent.EXTRA_TEXT, "Join me on RIMILIVE!")
-                                    }
-                                    context.startActivity(Intent.createChooser(share, "Invite to RIMILIVE"))
-                                }
+                                "Invite" -> onNavigate("Invite")
+                                "My Level" -> onNavigate("Wealth")
                                 else -> openMenu = title
                             }
                         },
